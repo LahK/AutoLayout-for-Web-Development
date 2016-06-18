@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>AutoLayout-for-Web-Development</title>
+
+	<link rel="stylesheet" type="text/css" href="./css/style.css">
+</head>
+<body>
+	<div class="container">
+		
+		<div id="Label">
+		</div>
+		<div id="Test">
+		    abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+		</div>
+
+		<div class="input-area">
+			<input id="label-test" type="text" oninput="onInputEvent(event)" onpropertychange="onPropChanged(event)"><br>
+			<div>
+				<input type="radio" name="label-alignment" value="left">left<br>
+				<input type="radio" name="label-alignment" value="center">center<br>
+				<input type="radio" name="label-alignment" value="right">right<br>
+			</div>
+			<div>
+				<input type="radio" name="label-type" value="single">single<br>
+				<input type="radio" name="label-type" value="multiple">multiple<br>
+			</div>
+		</div>
+	</div>
+
+	<script src = "./js/test.js" ></script>
+</body>
+</html>
