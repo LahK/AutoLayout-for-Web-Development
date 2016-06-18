@@ -6,22 +6,34 @@
 	<link rel="stylesheet" type="text/css" href="./css/style.css">
 </head>
 <body>
-	<div class="container">
+	<div class="container" id="container-test">
 		
 		<div id="Label">
 		</div>
 		<div id="Test">
 		</div>
-		
+
 		<div id="Image-Container">
 			<img src="" id="Image-Image">
 		</div>
 
-		<div class="Autolayout-View" id="View" style="left: 50px; top: 50px;">
+		<div id="Autolayout-View Autolayout-View-Label">
+		</div>
+
+		<div class="Autolayout-View Autolayout-View-Image">
+			<img src="" class="Autolayout-View View-Content-Image">
+		</div>
+
+		<div class="Autolayout-View Autolayout-View-View" id="View" style="left: 50px; top: 50px;">
 			<div class="Autolayout-View View-Resize-Button View-Resize-Button-TL" draggable="true"></div>
 			<div class="Autolayout-View View-Resize-Button View-Resize-Button-TR" draggable="true"></div>
 			<div class="Autolayout-View View-Resize-Button View-Resize-Button-BL" draggable="true"></div>
 			<div class="Autolayout-View View-Resize-Button View-Resize-Button-BR" draggable="true"></div>
+		</div>
+
+
+		<div class="Autolayout-View Autolayout-View-Button" id="Button" style="left: 150px; top: 50px;">
+			Button
 		</div>
 
 		<div class="input-area">
@@ -48,8 +60,13 @@
 		</div>
 	</div>
 
-	<script src = "./js/autolayout-label.js" ></script>
-	<script src = "./js/autolayout-image.js" ></script>
-	<script src = "./js/autolayout-view.js" ></script>
+	<script src = "./js/autolayout.js" ></script>
+	<script src = "./js/autolayout-initview.js" ></script>
+	<script src = "./js/autolayout-updateview.js" ></script>
+	<!-- <script src = "./js/autolayout-label.js" ></script> -->
+	<!-- <script src = "./js/autolayout-image.js" ></script> -->
+	<!-- <script src = "./js/autolayout-view.js" ></script> -->
+	<!-- <script src = "./js/autolayout-button.js" ></script> -->
+	<script src = "./js/autolayout-test.js" ></script>
 </body>
 </html>

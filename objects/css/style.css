@@ -118,7 +118,7 @@ body {
 
 /* View */
 
-#View {
+.Autolayout-View-View {
 	position: absolute;
 
 	resize: both;
@@ -131,7 +131,7 @@ body {
 }
 
 .View-Resize-Button {
-	position: absolute;
+	position: fixed;
 
 	display: none;
 
@@ -158,14 +158,58 @@ body {
 	cursor: sw-resize;
 }
 .View-Resize-Button-BR {
+	/*
+	position: absolute;
 	bottom: -7px;
 	right: -7px;
+	*/
+	/*position: fixed;*/
 	cursor: se-resize;
 }
 
 
 
+/* Button */
 
+.Autolayout-View-Button {
+	position: absolute;
 
+	resize: both;
+	/*overflow: hidden;*/
 
+	text-align: center;
+	line-height: 20px;
+
+	width: 50px;
+	height: 20px;
+
+	/*background-color: #fff;*/
+	/*border: 1px solid #000;*/
+	/*border-radius: 5px;*/
+}
+
+/* Image */
+
+.Autolayout-View-Image {
+	position: absolute;
+
+	overflow: hidden;
+
+	width: 120px;
+	height: 100px;
+}
+
+.View-Content-Image {
+	position: absolute;
+}
+
+/* Label */
+
+.Autolayout-View-Label {
+    position: absolute;
+    /*visibility: hidden;*/
+    width: 45px;
+    height: 15px;
+    white-space: nowrap;
+}
 
