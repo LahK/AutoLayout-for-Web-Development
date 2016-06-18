@@ -97,13 +97,13 @@ function redrawImage(url) {
 function updateWidthForImage(event) {
 	var newWidth = event.target.value;
 
-	var Image = getImageImage();
-	Image.style.width = newWidth + "px";
+	var ImageDiv = getImageDiv();
+	ImageDiv.style.width = newWidth + "px";
 }
 
 function updateHeightForImage(event) {
 	var newHeight = event.target.value;
 
-	var Image = getImageImage();
-	Image.style.height = newHeight + "px";
+	var ImageDiv = getImageDiv();
+	ImageDiv.style.height = newHeight + "px";
 }

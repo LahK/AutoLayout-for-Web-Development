@@ -64,6 +64,8 @@ body {
 	background-color: #eee;
 }
 
+/* Label */
+
 #Label {
 	position: absolute;
 
@@ -92,6 +94,7 @@ body {
 }
 
 
+/* Image */
 #Image {
 	position: absolute;
 
@@ -113,7 +116,52 @@ body {
 }
 
 
+/* View */
 
+#View {
+	position: absolute;
+
+	resize: both;
+	/*overflow: hidden;*/
+
+	width: 50px;
+	height: 50px;
+
+	background-color: #fff;
+}
+
+.View-Resize-Button {
+	position: absolute;
+
+	display: none;
+
+	width: 5px;
+	height: 5px;
+
+	font-size: 1px;
+    background: #EEE;
+    border: 1px solid #333;
+}
+.View-Resize-Button-TL {
+	top: -7px;
+	left: -7px;
+	cursor: nw-resize;
+}
+.View-Resize-Button-TR {
+	top: -7px;
+	right: -7px;
+	cursor: ne-resize;
+}
+.View-Resize-Button-BL {
+	bottom: -7px;
+	left: -7px;
+	cursor: sw-resize;
+}
+.View-Resize-Button-BR {
+	bottom: -7px;
+	right: -7px;
+	cursor: se-resize;
+}
 
 
 
