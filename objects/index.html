@@ -11,7 +11,11 @@
 		<div id="Label">
 		</div>
 		<div id="Test">
-		    abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ
+		</div>
+
+		<img src="" id="Image">
+		<div id="Image-Container">
+			<img src="" id="Image-Image">
 		</div>
 
 		<div class="input-area">
@@ -25,9 +29,20 @@
 				<input type="radio" name="label-type" value="single">single<br>
 				<input type="radio" name="label-type" value="multiple">multiple<br>
 			</div>
+			<div>
+				Image URL: <input type="text" oninput="updateURLForImage(event)"><br>
+				Image Width: <input type="text" oninput="updateWidthForImage(event)"><br>
+				Image Height: <input type="text" oninput="updateHeightForImage(event)"><br>
+			</div>
+			<div>
+				<input type="radio" name="image-mode" value="Aspect Fit">left<br>
+				<input type="radio" name="image-mode" value="Aspect Fill">center<br>
+				<input type="radio" name="image-mode" value="Scall to Fill">right<br>
+			</div>
 		</div>
 	</div>
 
-	<script src = "./js/test.js" ></script>
+	<script src = "./js/autolayout-label.js" ></script>
+	<script src = "./js/autolayout-image.js" ></script>
 </body>
 </html>

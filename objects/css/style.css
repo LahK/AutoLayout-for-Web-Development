@@ -92,8 +92,25 @@ body {
 }
 
 
+#Image {
+	position: absolute;
 
+	width: 120px;
+	height: 100px;
+}
 
+#Image-Container {
+	position: absolute;
+
+	overflow: hidden;
+
+	width: 120px;
+	height: 100px;
+}
+
+#Image-Image {
+	position: absolute;
+}
 
 
 
