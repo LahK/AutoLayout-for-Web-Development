@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Autolayout for Web Development</title>
+    <style>
+    body {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        z-index: 0;
+    }
+    
+    .header {
+        flex: 0 0 30px;
+        border: solid 1px #aaa;
+        border-width: 0 0 1px 0;
+        background: #e6e6e6;
+        z-index: 99999;
+        box-shadow: 0 0 20px #777;
+    }
+    
+    .logo {
+        display: inline-block;
+        height: 30px;
+        width: 30px;
+        background: url(image/autolayout.png);
+        background-size: 30px;
+        background-repeat: no-repeat;
+        margin: -8px 35px;
+    }
+    
+    .action-bar {
+        height: 24px;
+        line-height: 24px;
+        margin: 3px 0;
+        padding: 0;
+        display: inline-block;
+    }
+    
+    .action-bar li {
+        display: inline-block;
+        box-sizing: border-box;
+        border: 1px solid #d6d6d6;
+        border-radius: 4px;
+        padding: 0 5px;
+        cursor: pointer;
+        background: repeating-linear-gradient(#fff, #f9f9f9 5%, #e6e6e6 30%, #d6d6d6 100%)
+    }
+    
+    .action-bar li:hover {
+        box-shadow: 1px 1px 1px #798;
+    }
+    
+    .container {
+        display: flex;
+        flex: 1 1 auto;
+        background: #c9c9c9;
+        z-index: 0;
+    }
+    
+    .navigation-bar {
+        overflow: auto;
+        resize: horizontal;
+        order: 1;
+        width: 150px;
+        z-index: 99999;
+        background: #e6e6e6;
+        box-shadow: 0 0 20px #777;
+    }
+    
+    .canvas {
+        order: 2;
+        flex: 1 1 auto;
+        /*background: #c5c5c5;*/
+        min-width: 600px;
+        position: relative;
+        z-index: 0;
+        /*margin: 10px;*/
+        overflow: hidden;
+    }
+    .scale-bar{
+        position: absolute;
+        left: 50px;
+        bottom: 50px;
+        -webkit-user-select:none;
+        height: 30px;
+        width: 140px;
+        z-index: 99999;
+    }
+    .scale-small,.scale-status,.scale-large{
+        font-family: "微软雅黑";
+        font-size: 15px;
+        display: inline-block;
+        -webkit-user-select:none;
+        width: 30px;
+        height: 25px;
+        box-sizing: border-box;
+    }
+    .scale-status{
+        text-align: center;
+        vertical-align: middle;
+    }
+    
+    .tools-bar {
+        order: 3;
+        flex: 0 0 20vw;
+        z-index: 99999;
+        background: #e6e6e6;
+        box-shadow: 0 0 20px #777;
+    }
+    
+    .tools-moudle {
+        height: 300px;
+        width: 100%;
+        /*background: #798;*/
+        border: 1px solid #9c9c9c;
+        box-sizing: border-box;
+        padding: 5px;
+    }
+    
+    .module {
+        border: 1px solid #c5c5c5;
+        border-radius: 5px;
+        margin: 5px;
+        float: left;
+        background: #f9f9f9;
+        width: 50px;
+        height: 50px;
+        cursor: pointer;
+    }
+    
+    .module-lable {
+        background: #798;
+    }
+    
+    .module-image {
+        background: #473;
+    }
+    
+    .module-button {
+        background: blue;
+    }
+    
+    .footer {
+        flex: 0 0 5vh;
+        border: solid 1px #aaa;
+        border-width: 1px 0 0 0;
+        background: #e6e6e6;
+        z-index: 99999;
+        box-shadow: 0 0 20px #777;
+    }
+    
+    .screen {
+        position: absolute;
+        top: 50px;
+        left: 50px;
+        box-shadow: 0 0 10px #777;
+        z-index: 1;
+        zoom :1;
+    }
+    
+    .w414-h736 {
+        height: 736px;
+        width: 414px;
+        background: #fff;
+    }
+    .test{
+        width: 30px;
+        height: 30px;
+        position: absolute;
+        top: 200px;
+        left: 150px;
+        background: red;
+        border-radius: 3px;
+    }
+    </style>
+</head>
+
+<body>
+    <header class="header">
+        <div class="logo"></div>
+        <ul class="action-bar">
+            <li>文件</li>
+            <li>编辑</li>
+            <li>选择</li>
+            <li>工具</li>
+            <li>帮助</li>
+        </ul>
+    </header>
+    <div class="container">
+        <div class="navigation-bar">1</div>
+        <div class="canvas" id="canvasArea">
+            <div class="screen w414-h736" id="screenArea">
+                <div class="test"></div>
+            </div>
+            <div class="scale-bar">
+                <button class="scale-small" id="scaleSmall">-</button>
+                <span class="scale-status" id="scaleStatus">1.0</span>
+                <button class="scale-large" id="scaleLarge">+</button>
+            </div>
+        </div>
+        <div class="tools-bar">
+            <div class="tools-moudle">
+                <div class="module module-lable" id="module-lable"></div>
+                <div class="module module-image" id="module-image"></div>
+                <div class="module module-button" id="module-button"></div>
+                <div class="module module-view" id="module-view"></div>
+            </div>
+        </div>
+    </div>
+    <footer class="footer"></footer>
+</body>
+<script>
+var __KeyDown = -1;
+var __KeyUp = -1;
+var __MouseX = 0;
+var __MouseY = 0;
+var __MouseOver = "";
+var __Selected = "";
+var __Released = "";
+var __ScreenScale = 1;
+
+var __ScreenStartPosition = {x:50,y:50};
+var __MouseStartPosition = {x:0,y:0};
+
+
+var canvasArea  = document.getElementById('canvasArea');
+var screenArea = document.getElementById('screenArea');
+
+function setPositionWithMouse (obj, mousePosition) {
+
+    obj.style.left = (mousePosition.x/__ScreenScale  + __ScreenStartPosition.x) + "px";
+    obj.style.top = (mousePosition.y/__ScreenScale  + __ScreenStartPosition.y) + "px";
+}
+
+function isParent (obj, parentObj){
+    while (obj != "" && obj != undefined && obj != null && obj.tagName.toUpperCase() != 'BODY'){
+        if (obj == parentObj){
+            return true;
+        }
+        obj = obj.parentNode;
+    }
+    return false;
+}
+
+document.onkeydown = function (event) {
+
+    var e = event || window.event || arguments.callee.caller.arguments[0];
+    __KeyDown = e.keyCode;
+    
+    if (isParent(__MouseOver, screenArea)&&(__KeyDown == 32)) {
+        screenArea.style.cursor = "move"
+    }else{
+        screenArea.style.cursor = "auto"
+    };
+}
+document.onkeyup = function (event) {
+
+    var e = event || window.event || arguments.callee.caller.arguments[0];
+    if(__KeyDown == e.keyCode){
+        __KeyDown = -1
+    };
+    __KeyUp = e.keyCode;
+    if (isParent(__MouseOver, screenArea)&&(__KeyUp == 32)) {
+        screenArea.style.cursor = "auto";
+    };
+}
+document.onmousemove = function (event) {
+
+    var e = event || window.event || arguments.callee.caller.arguments[0];
+    __MouseOver = e.target;
+    __MouseX = e.pageX;
+    __MouseY = e.pageY;
+
+    if (isParent(__Selected, screenArea) && (__KeyDown == 32)) {
+        setPositionWithMouse(screenArea,{
+            x : __MouseX - __MouseStartPosition.x,
+            y : __MouseY - __MouseStartPosition.y
+        });
+    };
+}
+
+document.onmousedown = function (event) {
+    // console.log('onmousedown')
+    var e = event || window.event || arguments.callee.caller.arguments[0];
+    if(__KeyDown == 32 && isParent(e.target, screenArea)){
+        __Selected = e.target;
+        __MouseStartPosition.x = e.pageX;
+        __MouseStartPosition.y = e.pageY;
+        __ScreenStartPosition.x =  parseFloat(window.getComputedStyle(screenArea).left);
+        __ScreenStartPosition.y = parseFloat(window.getComputedStyle(screenArea).top);
+    }
+}
+
+document.onmouseup = function (event) {
+    // console.log('mouseup')
+    var e = event || window.event || arguments.callee.caller.arguments[0];
+    __Released = e.target;
+    __Selected = "";
+}
+
+
+var scaleSmallBtn = document.getElementById("scaleSmall");
+var scaleLargeBtn = document.getElementById("scaleLarge");
+var scaleStatusSpan = document.getElementById("scaleStatus");
+
+scaleSmallBtn.addEventListener("click",function () {
+    scaleSmallBtn.blur()
+    scaleStatusSpan.textContent = 
+        screenArea.style.zoom = (__ScreenScale = (parseFloat(scaleStatusSpan.textContent) - 0.1).toFixed(1))+ "";
+});
+
+scaleLargeBtn.addEventListener("click",function () {
+    scaleLargeBtn.blur()
+    scaleStatusSpan.textContent = 
+        screenArea.style.zoom = (__ScreenScale = (parseFloat(scaleStatusSpan.textContent) + 0.1).toFixed(1))+ "";
+});
+</script>
+
+</html>
