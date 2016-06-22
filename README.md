@@ -10,7 +10,7 @@ A tool for web developers to fast set website UI using Xcode-like-AutoLayout.
 
 ## Reading List
 
-### About Namespacing
+*About Namespacing*
 - [Namespacing in JavaScript](https://javascriptweblog.wordpress.com/2010/12/07/namespacing-in-javascript/)
 - [【译】JavaScript 中的命名空间(Namespacing in JavaScript)](http://chengkang.me/2016/06/21/Namespacing%20in%20JavaScript/)
 - [JavaScript Namespacing](http://peter.michaux.ca/articles/javascript-namespacing)
