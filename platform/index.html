@@ -58,27 +58,39 @@
         display: flex;
         flex: 1 1 auto;
         background: #c9c9c9;
+        min-width: 600px;
         z-index: 0;
     }
     
     .navigation-bar {
         overflow: auto;
         resize: horizontal;
-        order: 1;
+        /*order: 1;*/
         width: 150px;
         z-index: 99999;
         background: #e6e6e6;
         box-shadow: 0 0 20px #777;
     }
-    
+    .navigation-head{
+        height: 25px;
+        margin: 10px 0 0 0;
+        width: 100%;
+        background: #c9c9c9;
+        /*text-align: center;*/
+        font-size: 15px;
+        line-height: 25px;
+    }
+    .layer-item{
+        height: 50px;
+        width: 100%;
+        margin: 1px 0;
+        background: #fff;
+    }
     .canvas {
         order: 2;
         flex: 1 1 auto;
-        /*background: #c5c5c5;*/
-        min-width: 600px;
         position: relative;
         z-index: 0;
-        /*margin: 10px;*/
         overflow: hidden;
     }
     .scale-bar{
@@ -122,6 +134,13 @@
     }
     
     .module {
+        position: absolute;
+        border-radius: 5px;
+        width: 50px;
+        height: 50px;
+        cursor: pointer;
+    }
+    .module-symbol{
         border: 1px solid #c5c5c5;
         border-radius: 5px;
         margin: 5px;
@@ -131,7 +150,6 @@
         height: 50px;
         cursor: pointer;
     }
-    
     .module-lable {
         background: #798;
     }
@@ -176,6 +194,7 @@
         background: red;
         border-radius: 3px;
     }
+    
     </style>
 </head>
 
@@ -191,10 +210,12 @@
         </ul>
     </header>
     <div class="container">
-        <div class="navigation-bar">1</div>
+        <div class="navigation-bar">
+            <div class="navigation-head">图层</div>
+            <div class="layer-list" id="layerList"></div>
+        </div>
         <div class="canvas" id="canvasArea">
             <div class="screen w414-h736" id="screenArea">
-                <div class="test"></div>
             </div>
             <div class="scale-bar">
                 <button class="scale-small" id="scaleSmall">-</button>
@@ -204,120 +225,169 @@
         </div>
         <div class="tools-bar">
             <div class="tools-moudle">
-                <div class="module module-lable" id="module-lable"></div>
-                <div class="module module-image" id="module-image"></div>
-                <div class="module module-button" id="module-button"></div>
-                <div class="module module-view" id="module-view"></div>
+                <div class="module-symbol module-lable" name="module-symbol" id="module-lable"></div>
+                <div class="module-symbol module-image" name="module-symbol" id="module-image"></div>
+                <div class="module-symbol module-button" name="module-symbol" id="module-button"></div>
+                <div class="module-symbol module-view" name="module-symbol" id="module-view"></div>
             </div>
         </div>
     </div>
     <footer class="footer"></footer>
 </body>
 <script>
-var __KeyDown = -1;
-var __KeyUp = -1;
-var __MouseX = 0;
-var __MouseY = 0;
 var __MouseOver = "";
-var __Selected = "";
-var __Released = "";
-var __ScreenScale = 1;
-
+var __MouseDownPosition = {x:0,y:0};
 var __ScreenStartPosition = {x:50,y:50};
-var __MouseStartPosition = {x:0,y:0};
+var __ScreenSize = {w:414,h:736}
+var __KeyDown = "";
+var __ScreenMoving = false;
+var __ScreenScale = 1;
+var __ModuleSelected = "";
+var __ModuleMoving = false;
+var __ModuleStartPosition = {x:0,y:0}
+var __ShowAllModule = false;
 
 
-var canvasArea  = document.getElementById('canvasArea');
-var screenArea = document.getElementById('screenArea');
+var screenArea  = document.getElementById('screenArea');
+var scaleSmallBtn = document.getElementById("scaleSmall");
+var scaleLargeBtn = document.getElementById("scaleLarge");
+var scaleStatusSpan = document.getElementById("scaleStatus");
+var layerList = document.getElementById('layerList');
 
-function setPositionWithMouse (obj, mousePosition) {
+document.onmouseover = function (event) {
+    var e = event || window.event || arguments.callee.caller.arguments[0];
+    __MouseOver = e.target;
+}
+document.onmousemove =function (event) {
+    var e = event || window.event || arguments.callee.caller.arguments[0];
 
-    obj.style.left = (mousePosition.x/__ScreenScale  + __ScreenStartPosition.x) + "px";
-    obj.style.top = (mousePosition.y/__ScreenScale  + __ScreenStartPosition.y) + "px";
+    if (__KeyDown == 32 && __ScreenMoving) {
+
+        screenArea.style.left = ((e.pageX - __MouseDownPosition.x)/__ScreenScale  + __ScreenStartPosition.x) + "px";
+        screenArea.style.top = ((e.pageY - __MouseDownPosition.y)/__ScreenScale  + __ScreenStartPosition.y) + "px";
+    }else if(__ModuleMoving){
+        __ModuleSelected.style.left = ((e.pageX - __MouseDownPosition.x)/__ScreenScale  + __ModuleStartPosition.x) + "px";
+        __ModuleSelected.style.top = ((e.pageY - __MouseDownPosition.y)/__ScreenScale  + __ModuleStartPosition.y) + "px";
+       
+    }
+}
+document.onmousedown = function (event) {
+    var e = event || window.event || arguments.callee.caller.arguments[0];
+    __MouseDownPosition.x = e.pageX;
+    __MouseDownPosition.y = e.pageY;
+
+    if (isChildOfScreen(e.target) && __KeyDown == 32) {
+        __ScreenMoving = true;
+        __ScreenStartPosition.x =  parseFloat(window.getComputedStyle(screenArea).left) || 50;
+        __ScreenStartPosition.y = parseFloat(window.getComputedStyle(screenArea).top) || 50;
+
+    }else if (e.target == scaleSmallBtn) {
+        scaleSmallBtn.blur()
+        scaleStatusSpan.textContent = 
+              screenArea.style.zoom = (__ScreenScale = (parseFloat(scaleStatusSpan.textContent) - 0.1).toFixed(1))+ "";
+
+    }else if (e.target == scaleLargeBtn) {
+        scaleLargeBtn.blur()
+        scaleStatusSpan.textContent = 
+              screenArea.style.zoom = (__ScreenScale = (parseFloat(scaleStatusSpan.textContent) + 0.1).toFixed(1))+ "";
+       
+    }else if (e.target.name == "module-symbol" || e.target.getAttribute("name") == "module-symbol") {
+        newModule = getNewModule(e.target.id);
+        screenArea.appendChild(newModule[0]);
+        layerList.appendChild(newModule[1]);
+    }else if (e.target.name == "module" || e.target.getAttribute("name") == "module") {
+        __ModuleSelected = e.target;
+        __ModuleMoving = true;
+        __ModuleStartPosition.x =  parseFloat(window.getComputedStyle(__ModuleSelected).left) || 0;
+        __ModuleStartPosition.y = parseFloat(window.getComputedStyle(__ModuleSelected).top) || 0;
+    }else{
+        __ModuleSelected = "";
+    }
+}
+document.onmouseup = function (event) {
+    var e = event || window.event || arguments.callee.caller.arguments[0];
+
+    if(__ModuleMoving && !isInScreen(__ModuleSelected)){
+        var choice = confirm("要删除该元素吗?");
+        if (choice) {
+            var connectId = "L" + __ModuleSelected.id.substring(1);
+            var connectLayer = document.getElementById(connectId);
+            connectLayer.parentNode.removeChild(connectLayer);
+            __ModuleSelected.parentNode.removeChild(__ModuleSelected);
+            __ModuleSelected = "";
+        }else{
+            __ModuleSelected.style.left = "0px";
+            __ModuleSelected.style.top = "0px";
+        }
+    }
+    __ScreenMoving = false;
+    __ModuleMoving = false;
+}
+document.onkeydown = function (event) {
+    var e = event || window.event || arguments.callee.caller.arguments[0];
+    __KeyDown = e.keyCode;
+
+    if ( isChildOfScreen(__MouseOver) && e.keyCode == 32) {
+        screenArea.style.cursor = "move";
+    } else if(e.keyCode == 86){
+        if (__ShowAllModule) {
+            screenArea.style.overflow = "hidden";
+            __ShowAllModule = false
+        }else{
+            screenArea.style.overflow = ""
+            __ShowAllModule = true;
+        }
+    }
 }
 
-function isParent (obj, parentObj){
-    while (obj != "" && obj != undefined && obj != null && obj.tagName.toUpperCase() != 'BODY'){
-        if (obj == parentObj){
-            return true;
-        }
-        obj = obj.parentNode;
+document.onkeyup = function (event) {
+    var e = event || window.event || arguments.callee.caller.arguments[0];
+    __KeyDown = "";
+    if (e.keyCode == 32) {
+        screenArea.style.cursor = "auto"
+    }
+}
+
+function isChildOfScreen (obj){
+
+    if(obj == screenArea || obj.parentNode == screenArea){
+        return true;
     }
     return false;
 }
 
-document.onkeydown = function (event) {
-
-    var e = event || window.event || arguments.callee.caller.arguments[0];
-    __KeyDown = e.keyCode;
+function isInScreen (obj) {
+    var objStatus = {
+        x : parseFloat(window.getComputedStyle(obj).left) || 0,
+        y : parseFloat(window.getComputedStyle(obj).top) || 0,
+        w : parseFloat(window.getComputedStyle(obj).width) || 50,
+        h : parseFloat(window.getComputedStyle(obj).height) || 50,
+    };
     
-    if (isParent(__MouseOver, screenArea)&&(__KeyDown == 32)) {
-        screenArea.style.cursor = "move"
+    if(objStatus.x + objStatus.w <= 0 || objStatus.y + objStatus.h <= 0 || objStatus.x > __ScreenSize.w || objStatus.y > __ScreenSize.h){
+        return false;
     }else{
-        screenArea.style.cursor = "auto"
-    };
-}
-document.onkeyup = function (event) {
-
-    var e = event || window.event || arguments.callee.caller.arguments[0];
-    if(__KeyDown == e.keyCode){
-        __KeyDown = -1
-    };
-    __KeyUp = e.keyCode;
-    if (isParent(__MouseOver, screenArea)&&(__KeyUp == 32)) {
-        screenArea.style.cursor = "auto";
-    };
-}
-document.onmousemove = function (event) {
-
-    var e = event || window.event || arguments.callee.caller.arguments[0];
-    __MouseOver = e.target;
-    __MouseX = e.pageX;
-    __MouseY = e.pageY;
-
-    if (isParent(__Selected, screenArea) && (__KeyDown == 32)) {
-        setPositionWithMouse(screenArea,{
-            x : __MouseX - __MouseStartPosition.x,
-            y : __MouseY - __MouseStartPosition.y
-        });
-    };
-}
-
-document.onmousedown = function (event) {
-    // console.log('onmousedown')
-    var e = event || window.event || arguments.callee.caller.arguments[0];
-    if(__KeyDown == 32 && isParent(e.target, screenArea)){
-        __Selected = e.target;
-        __MouseStartPosition.x = e.pageX;
-        __MouseStartPosition.y = e.pageY;
-        __ScreenStartPosition.x =  parseFloat(window.getComputedStyle(screenArea).left);
-        __ScreenStartPosition.y = parseFloat(window.getComputedStyle(screenArea).top);
+        return true;
     }
+    
 }
 
-document.onmouseup = function (event) {
-    // console.log('mouseup')
-    var e = event || window.event || arguments.callee.caller.arguments[0];
-    __Released = e.target;
-    __Selected = "";
+function getNewModule (moduleId) {
+    var num = parseInt(Math.random()*10000);
+    var module = document.createElement("div");
+    module.className = "module " + moduleId;
+    module.id = "M-" + num; 
+    module.style.left = "0px";
+    module.style.top = "0px";
+    module.setAttribute("name","module");
+
+    var layer = document.createElement("div");
+    layer.className = "layer-item";
+    layer.id = "L-" + num;
+    layer.innerText = num;
+
+    return [module, layer];
 }
-
-
-var scaleSmallBtn = document.getElementById("scaleSmall");
-var scaleLargeBtn = document.getElementById("scaleLarge");
-var scaleStatusSpan = document.getElementById("scaleStatus");
-
-scaleSmallBtn.addEventListener("click",function () {
-    scaleSmallBtn.blur()
-    scaleStatusSpan.textContent = 
-        screenArea.style.zoom = (__ScreenScale = (parseFloat(scaleStatusSpan.textContent) - 0.1).toFixed(1))+ "";
-});
-
-scaleLargeBtn.addEventListener("click",function () {
-    scaleLargeBtn.blur()
-    scaleStatusSpan.textContent = 
-        screenArea.style.zoom = (__ScreenScale = (parseFloat(scaleStatusSpan.textContent) + 0.1).toFixed(1))+ "";
-});
 </script>
 
 </html>
