@@ -80,3 +80,17 @@ A tool for web developers to fast set website UI using Xcode-like-AutoLayout.
 				-createdAt
 				-updatedAt
 ```
+
+
+```
+function createNewObject (type) {
+	var id = nextId();
+	var newObject = document.createElement("div");
+	newObject.className = "module ";
+	newObject.id = "M-" + id; 
+	newObject.style.left = "0px";
+	newObject.style.top = "0px";
+	newObject.setAttribute("name","module");
+	return newObject;
+}
+```
