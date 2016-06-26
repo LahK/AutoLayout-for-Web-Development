@@ -86,6 +86,9 @@
         margin: 1px 0;
         background: #fff;
     }
+    .layer-selected{
+        background: #03a9f4;
+    }
     .canvas {
         order: 2;
         flex: 1 1 auto;
@@ -118,14 +121,14 @@
     
     .tools-bar {
         order: 3;
-        flex: 0 0 20vw;
+        flex: 0 0 270px;
         z-index: 99999;
         background: #e6e6e6;
         box-shadow: 0 0 20px #777;
     }
     
-    .tools-moudle {
-        height: 300px;
+    .tools-module {
+        height: 200px;
         width: 100%;
         /*background: #798;*/
         border: 1px solid #9c9c9c;
@@ -161,7 +164,22 @@
     .module-button {
         background: blue;
     }
-    
+    .module-view{
+        background: red;
+    }
+    .attributes-editor{
+        border: 1px solid #9c9c9c;
+        box-sizing: border-box;
+        padding: 5px;
+    }
+    .attribute-warp{
+        text-align: right;
+        margin: 10px auto;
+        width: 230px;
+    }
+    .attribute-warp input{
+        width: 130px;
+    }
     .footer {
         flex: 0 0 5vh;
         border: solid 1px #aaa;
@@ -215,7 +233,7 @@
             <div class="layer-list" id="layerList"></div>
         </div>
         <div class="canvas" id="canvasArea">
-            <div class="screen w414-h736" id="screenArea">
+            <div class="screen w414-h736" id="screenArea" al-type="Screen">
             </div>
             <div class="scale-bar">
                 <button class="scale-small" id="scaleSmall">-</button>
@@ -224,170 +242,328 @@
             </div>
         </div>
         <div class="tools-bar">
-            <div class="tools-moudle">
-                <div class="module-symbol module-lable" name="module-symbol" id="module-lable"></div>
-                <div class="module-symbol module-image" name="module-symbol" id="module-image"></div>
-                <div class="module-symbol module-button" name="module-symbol" id="module-button"></div>
-                <div class="module-symbol module-view" name="module-symbol" id="module-view"></div>
+            <div class="tools-module">
+                <div class="module-symbol module-lable" al-name="module-symbol" al-type="Lable"></div>
+                <div class="module-symbol module-image" al-name="module-symbol" al-type="Image"></div>
+                <div class="module-symbol module-button" al-name="module-symbol" al-type="Button"></div>
+                <div class="module-symbol module-view" al-name="module-symbol" al-type="View"></div>
+            </div>
+            <div class="attributes-editor" id="attributesEditor">
+                
             </div>
         </div>
     </div>
     <footer class="footer"></footer>
 </body>
 <script>
-var __MouseOver = "";
-var __MouseDownPosition = {x:0,y:0};
-var __ScreenStartPosition = {x:50,y:50};
-var __ScreenSize = {w:414,h:736}
-var __KeyDown = "";
-var __ScreenMoving = false;
-var __ScreenScale = 1;
-var __ModuleSelected = "";
-var __ModuleMoving = false;
-var __ModuleStartPosition = {x:0,y:0}
-var __ShowAllModule = false;
 
 
-var screenArea  = document.getElementById('screenArea');
-var scaleSmallBtn = document.getElementById("scaleSmall");
-var scaleLargeBtn = document.getElementById("scaleLarge");
-var scaleStatusSpan = document.getElementById("scaleStatus");
-var layerList = document.getElementById('layerList');
 
-document.onmouseover = function (event) {
-    var e = event || window.event || arguments.callee.caller.arguments[0];
-    __MouseOver = e.target;
-}
-document.onmousemove =function (event) {
-    var e = event || window.event || arguments.callee.caller.arguments[0];
+(function () {
+    var canvasArea = document.getElementById('canvasArea');
+    var screenArea  = document.getElementById('screenArea');
+    var scaleSmallBtn = document.getElementById("scaleSmall");
+    var scaleLargeBtn = document.getElementById("scaleLarge");
+    var scaleStatusSpan = document.getElementById("scaleStatus");
+    var layerList = document.getElementById('layerList');
+    var attributesEditor = document.getElementById('attributesEditor');
 
-    if (__KeyDown == 32 && __ScreenMoving) {
-
-        screenArea.style.left = ((e.pageX - __MouseDownPosition.x)/__ScreenScale  + __ScreenStartPosition.x) + "px";
-        screenArea.style.top = ((e.pageY - __MouseDownPosition.y)/__ScreenScale  + __ScreenStartPosition.y) + "px";
-    }else if(__ModuleMoving){
-        __ModuleSelected.style.left = ((e.pageX - __MouseDownPosition.x)/__ScreenScale  + __ModuleStartPosition.x) + "px";
-        __ModuleSelected.style.top = ((e.pageY - __MouseDownPosition.y)/__ScreenScale  + __ModuleStartPosition.y) + "px";
-       
-    }
-}
-document.onmousedown = function (event) {
-    var e = event || window.event || arguments.callee.caller.arguments[0];
-    __MouseDownPosition.x = e.pageX;
-    __MouseDownPosition.y = e.pageY;
-
-    if (isChildOfScreen(e.target) && __KeyDown == 32) {
-        __ScreenMoving = true;
-        __ScreenStartPosition.x =  parseFloat(window.getComputedStyle(screenArea).left) || 50;
-        __ScreenStartPosition.y = parseFloat(window.getComputedStyle(screenArea).top) || 50;
-
-    }else if (e.target == scaleSmallBtn) {
-        scaleSmallBtn.blur()
-        scaleStatusSpan.textContent = 
-              screenArea.style.zoom = (__ScreenScale = (parseFloat(scaleStatusSpan.textContent) - 0.1).toFixed(1))+ "";
-
-    }else if (e.target == scaleLargeBtn) {
-        scaleLargeBtn.blur()
-        scaleStatusSpan.textContent = 
-              screenArea.style.zoom = (__ScreenScale = (parseFloat(scaleStatusSpan.textContent) + 0.1).toFixed(1))+ "";
-       
-    }else if (e.target.name == "module-symbol" || e.target.getAttribute("name") == "module-symbol") {
-        newModule = getNewModule(e.target.id);
-        screenArea.appendChild(newModule[0]);
-        layerList.appendChild(newModule[1]);
-    }else if (e.target.name == "module" || e.target.getAttribute("name") == "module") {
-        __ModuleSelected = e.target;
-        __ModuleMoving = true;
-        __ModuleStartPosition.x =  parseFloat(window.getComputedStyle(__ModuleSelected).left) || 0;
-        __ModuleStartPosition.y = parseFloat(window.getComputedStyle(__ModuleSelected).top) || 0;
-    }else{
-        __ModuleSelected = "";
-    }
-}
-document.onmouseup = function (event) {
-    var e = event || window.event || arguments.callee.caller.arguments[0];
-
-    if(__ModuleMoving && !isInScreen(__ModuleSelected)){
-        var choice = confirm("要删除该元素吗?");
-        if (choice) {
-            var connectId = "L" + __ModuleSelected.id.substring(1);
-            var connectLayer = document.getElementById(connectId);
-            connectLayer.parentNode.removeChild(connectLayer);
-            __ModuleSelected.parentNode.removeChild(__ModuleSelected);
-            __ModuleSelected = "";
-        }else{
-            __ModuleSelected.style.left = "0px";
-            __ModuleSelected.style.top = "0px";
+    var _MouseOver = "";                   //鼠标当前所在的元素
+    var _MouseDownPosition = {x:0,y:0};    //鼠标按下的位置
+    var _ScreenStartPosition = {x:50,y:50};//屏幕被选中时的初始位置
+    var _ScreenSize = {w:414,h:736}        //当前屏幕的大小
+    var _KeyDown = "";                     //按下的键值
+    var _ScreenMoving = false;             //是否在拖动屏幕
+    var _ScreenScale = 1;                  //缩放比例
+    var _ModuleSelected = screenArea;      //被选中的元素
+    var _ModuleMoving = false;             //是否在拖动元素
+    var _ModuleStartPosition = {x:0,y:0}   //选中元素的时的位置
+    var _ShowAllModule = false;            //是否裁剪
+    var _LastId = 0;                       //当前最大id
+    var _ModuleEnableStyles = {
+        "Screen":{
+            "Height" : "height"
+        },
+        "Lable":{
+            "Width" : "width",
+            "Height" : "height",
+            "Left" : "left",
+            "Top" : "top",
+            "Background" : "background"
+        },
+        "Button":{
+            "Width" : "width",
+            "Height" : "height",
+            "Left" : "left",
+            "Top" : "top",
+            "Background" : "background",
+            "Border Width" : "border-width"
+        },
+        "Image" : {
+            "Width" : "width",
+            "Height" : "height",
+            "Left" : "left",
+            "Top" : "top",
+            "Background" : "background",
+            "Border Width" : "border-width",
+            "Src" : "src"
+        },
+        "View":{
+            "Width" : "width",
+            "Height" : "height",
+            "Left" : "left",
+            "Top" : "top",
+            "Background" : "background",
+            "Border Width" : "border-width"
         }
-    }
-    __ScreenMoving = false;
-    __ModuleMoving = false;
-}
-document.onkeydown = function (event) {
-    var e = event || window.event || arguments.callee.caller.arguments[0];
-    __KeyDown = e.keyCode;
-
-    if ( isChildOfScreen(__MouseOver) && e.keyCode == 32) {
-        screenArea.style.cursor = "move";
-    } else if(e.keyCode == 86){
-        if (__ShowAllModule) {
-            screenArea.style.overflow = "hidden";
-            __ShowAllModule = false
-        }else{
-            screenArea.style.overflow = ""
-            __ShowAllModule = true;
-        }
-    }
-}
-
-document.onkeyup = function (event) {
-    var e = event || window.event || arguments.callee.caller.arguments[0];
-    __KeyDown = "";
-    if (e.keyCode == 32) {
-        screenArea.style.cursor = "auto"
-    }
-}
-
-function isChildOfScreen (obj){
-
-    if(obj == screenArea || obj.parentNode == screenArea){
-        return true;
-    }
-    return false;
-}
-
-function isInScreen (obj) {
-    var objStatus = {
-        x : parseFloat(window.getComputedStyle(obj).left) || 0,
-        y : parseFloat(window.getComputedStyle(obj).top) || 0,
-        w : parseFloat(window.getComputedStyle(obj).width) || 50,
-        h : parseFloat(window.getComputedStyle(obj).height) || 50,
     };
+    var _Modulelists = {};
+
+
     
-    if(objStatus.x + objStatus.w <= 0 || objStatus.y + objStatus.h <= 0 || objStatus.x > __ScreenSize.w || objStatus.y > __ScreenSize.h){
-        return false;
-    }else{
-        return true;
+    initEditor();
+
+    document.onmouseover = function (event) {
+        var e = event || window.event || arguments.callee.caller.arguments[0];
+        _MouseOver = e.target;
     }
-    
-}
+    document.onmousemove =function (event) {
+        var e = event || window.event || arguments.callee.caller.arguments[0];
 
-function getNewModule (moduleId) {
-    var num = parseInt(Math.random()*10000);
-    var module = document.createElement("div");
-    module.className = "module " + moduleId;
-    module.id = "M-" + num; 
-    module.style.left = "0px";
-    module.style.top = "0px";
-    module.setAttribute("name","module");
+        if (_KeyDown == 32 && _ScreenMoving) {
 
-    var layer = document.createElement("div");
-    layer.className = "layer-item";
-    layer.id = "L-" + num;
-    layer.innerText = num;
+            screenArea.style.left = ((e.pageX - _MouseDownPosition.x)/_ScreenScale  + _ScreenStartPosition.x) + "px";
+            screenArea.style.top = ((e.pageY - _MouseDownPosition.y)/_ScreenScale  + _ScreenStartPosition.y) + "px";
+            // updateEditor();
+        }else if(_ModuleMoving){
+            _ModuleSelected.style.left = ((e.pageX - _MouseDownPosition.x)/_ScreenScale  + _ModuleStartPosition.x) + "px";
+            _ModuleSelected.style.top = ((e.pageY - _MouseDownPosition.y)/_ScreenScale  + _ModuleStartPosition.y) + "px";
+            
+        }
+        updateEditor();
+    }
+    document.onmousedown = function (event) {
+        var e = event || window.event || arguments.callee.caller.arguments[0];
+        _MouseDownPosition.x = e.pageX;
+        _MouseDownPosition.y = e.pageY;
 
-    return [module, layer];
-}
+        if (isChildOfScreen(e.target) && _KeyDown == 32) {
+            _ScreenMoving = true;
+            _ScreenStartPosition.x =  parseFloat(window.getComputedStyle(screenArea).left) || 50;
+            _ScreenStartPosition.y = parseFloat(window.getComputedStyle(screenArea).top) || 50;
+            _ModuleSelected = screenArea;
+            showSelected();
+
+        }else if (e.target == scaleSmallBtn) {
+            scaleSmallBtn.blur()
+            scaleStatusSpan.textContent = 
+                  screenArea.style.zoom = (_ScreenScale = (parseFloat(scaleStatusSpan.textContent) - 0.1).toFixed(1))+ "";
+
+        }else if (e.target == scaleLargeBtn) {
+            scaleLargeBtn.blur()
+            scaleStatusSpan.textContent = 
+                  screenArea.style.zoom = (_ScreenScale = (parseFloat(scaleStatusSpan.textContent) + 0.1).toFixed(1))+ "";
+           
+        }else if(e.target == canvasArea || e.target.parentNode == canvasArea){
+            _ModuleSelected = screenArea;
+            showSelected();
+            // showEditor("Screen");
+        }else if (e.target.getAttribute("al-name") == "module-symbol") {
+            var type = e.target.getAttribute("al-type");
+            var currentId  = getCurrentId();
+            var newObject = createNewObject (currentId, type);
+            var newLayer = createNewLayer (currentId, type);
+            screenArea.appendChild(newObject);
+            layerList.appendChild(newLayer);
+            _ModuleSelected = newObject;
+            showSelected();
+
+        }else if (e.target.getAttribute("al-name") == "module") {
+            _ModuleSelected = e.target;
+            showSelected();
+            _ModuleMoving = true;
+            _ModuleStartPosition.x =  parseFloat(window.getComputedStyle(_ModuleSelected).left) || 0;
+            _ModuleStartPosition.y = parseFloat(window.getComputedStyle(_ModuleSelected).top) || 0;
+            
+        }else if(e.target.getAttribute("al-name") == "layer"){
+            var idStr = "M-" + e.target.getAttribute("al-id");
+            _ModuleSelected = document.getElementById(idStr);
+            showSelected();
+        }
+        
+        updateLayer();
+        showEditor();
+    }
+    document.onmouseup = function (event) {
+        var e = event || window.event || arguments.callee.caller.arguments[0];
+
+        if(_ModuleMoving && !isInScreen(_ModuleSelected)){
+            var choice = confirm("要删除该元素吗?");
+            if (choice) {
+                var connectId = "L" + _ModuleSelected.id.substring(1);
+                var connectLayer = document.getElementById(connectId);
+                connectLayer.parentNode.removeChild(connectLayer);
+                _ModuleSelected.parentNode.removeChild(_ModuleSelected);
+                _ModuleSelected = "";
+            }else{
+                _ModuleSelected.style.left = _ModuleStartPosition.x + "px";
+                _ModuleSelected.style.top = _ModuleStartPosition.y + "px";
+            }
+        }
+        _ScreenMoving = false;
+        _ModuleMoving = false;
+    }
+    document.onkeydown = function (event) {
+        var e = event || window.event || arguments.callee.caller.arguments[0];
+        _KeyDown = e.keyCode;
+
+        if ( isChildOfScreen(_MouseOver) && e.keyCode == 32) {
+            screenArea.style.cursor = "move";
+        } else if(e.keyCode == 86){
+            if (_ShowAllModule) {
+                screenArea.style.overflow = "hidden";
+                _ShowAllModule = false
+            }else{
+                screenArea.style.overflow = ""
+                _ShowAllModule = true;
+            }
+        }
+    }
+
+    document.onkeyup = function (event) {
+        var e = event || window.event || arguments.callee.caller.arguments[0];
+        _KeyDown = "";
+        if (e.keyCode == 32) {
+            screenArea.style.cursor = "auto"
+        }
+    }
+
+    function isChildOfScreen (obj){
+
+        if(obj == screenArea || obj.parentNode == screenArea){
+            return true;
+        }
+        return false;
+    }
+
+    function isInScreen (obj) {
+        var objStatus = {
+            x : parseFloat(window.getComputedStyle(obj).left) || 0,
+            y : parseFloat(window.getComputedStyle(obj).top) || 0,
+            w : parseFloat(window.getComputedStyle(obj).width) || 50,
+            h : parseFloat(window.getComputedStyle(obj).height) || 50,
+        };
+        
+        if(objStatus.x + objStatus.w <= 0 || objStatus.y + objStatus.h <= 0 || objStatus.x > _ScreenSize.w || objStatus.y > _ScreenSize.h){
+            return false;
+        }else{
+            return true;
+        }
+        
+    }
+    function createNewObject (currentId, type) {
+        console.log("createNewObject")
+        var newObject = document.createElement("div");
+        newObject.className = "module module-" + type.toLowerCase();
+        newObject.id = "M-" + currentId;
+        newObject.style.left = "0px";
+        newObject.style.top = "0px";
+        newObject.setAttribute("al-id",currentId);
+        newObject.setAttribute("al-type", type);
+        newObject.setAttribute("al-name","module")
+        return newObject;
+    }
+
+    function createNewLayer (currentId, type) {
+        var newLayer = document.createElement("div");
+        newLayer.className ="layer-item";
+        newLayer.id  = "L-" + currentId;
+        newLayer.setAttribute("al-id", currentId);
+        newLayer.setAttribute("al-name", "layer");
+        newLayer.innerText = type + "-" + currentId;
+        return newLayer;
+    }
+
+    function getCurrentId () {
+        return ++_LastId;
+    }
+
+    function initEditor () {
+        var styleList ={}
+        for (type in _ModuleEnableStyles ){
+            styleList = _ModuleEnableStyles[type];
+            var element = document.createElement("div");
+            for ( key in styleList) {
+                htmlStr = '<div class="attribute-warp">'+ localize(key) + ':</div>';
+                element.innerHTML += htmlStr;
+                var inputElement = document.createElement('input');
+                inputElement.setAttribute('onchange','changeAttributes(\'' + styleList[key]+'\')');
+                inputElement.setAttribute('al-style', styleList[key]);
+
+                element.lastChild.appendChild(inputElement);
+            };
+            _Modulelists[type] = element;
+        }
+        showEditor("Screen")
+    }
+
+    function showEditor () {
+        var type = _ModuleSelected.getAttribute("al-type")
+        console.log(type);
+        attributesEditor.innerHTML = "";
+        if (!type) {
+            return;
+        };
+        attributesEditor.appendChild(_Modulelists[type]);
+        updateEditor();
+    }
+
+    function updateLayer () {
+        try{
+            var classNameStr =  layerList.getElementsByClassName('layer-selected')[0].className;
+            console.log(classNameStr.replace("layer-selected", ""))
+            layerList.getElementsByClassName('layer-selected')[0].className = classNameStr.replace("layer-selected", "")
+        }catch(e){}
+        
+        var idStr ="L-" + _ModuleSelected.getAttribute("al-id");
+        try{
+            document.getElementById(idStr).className += " layer-selected";
+        }catch(e){}
+        
+    }
+
+    function updateEditor () {
+        var inputElements = attributesEditor.getElementsByTagName('input');
+        for (var i = 0; i < inputElements.length; i++) {
+            inputElements[i].value = window.getComputedStyle(_ModuleSelected)[inputElements[i].getAttribute("al-style")];
+        };
+    }
+
+
+    function showSelected () {
+        var originalboxShadow = window.getComputedStyle(_ModuleSelected).boxShadow;
+        _ModuleSelected.style.boxShadow = "red 1px 1px 5px 3px";
+        setTimeout(function () {
+            _ModuleSelected.style.boxShadow = originalboxShadow;
+            updateEditor();
+        },100);
+    }
+    window.changeAttributes = function(styleStr) {
+    var e = event || window.event;
+        _ModuleSelected.style[styleStr] = e.target.value;
+        if (_ModuleSelected == screenArea) {
+            switch(styleStr){
+                case "width" : _ScreenSize.w = parseFloat(e.target.value);break;
+                case "height" : _ScreenSize.h = parseFloat(e.target.value);break;
+                default : break;
+            }
+        };
+    }
+
+    function localize (str) {
+        return str;
+    }
+})();
 </script>
 
 </html>
