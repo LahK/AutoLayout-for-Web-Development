@@ -2,12 +2,10 @@
 var AutoLayout = {};
 
 // Objects in AutoLayout
+AutoLayout.shared = {};
 AutoLayout.initview = {};
 AutoLayout.updateview = {};
 AutoLayout.Screen = {};
-
-AutoLayout.Button = {};
-console.log(AutoLayout.Button);
 
 Function.prototype.clone = function() {
     var that = this;

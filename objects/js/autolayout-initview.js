@@ -1,8 +1,4 @@
-// 需要在 autolayout.js 中初始化：AutoLayout.initView = {};
-
-// 被选中的元素
-AutoLayout.selectedObjects = [];
-
+// 用于初始化 UI 组件
 AutoLayout.initview = function(type, id) {
 	console.log("AutoLayout.initview");
 	console.log("type: "+type);
@@ -11,11 +7,9 @@ AutoLayout.initview = function(type, id) {
 
 	var _id = "M-" + id;
 
-
-	var _viewMinWidth = 30;
-	var _viewMinHeight = 30;
-	var _viewMaxWidth = 500;
-	var _viewMaxHeight = 500;
+	console.log(AutoLayout.shared);
+	var _viewMinWidth = AutoLayout.shared.constants.viewMinWidth[type];
+	var _viewMinHeight = AutoLayout.shared.constants.viewMinHeight[type];
 
 	var _isResizing = false;
 	console.log("onInit: _isResizing: "+_isResizing);
@@ -82,9 +76,6 @@ AutoLayout.initview = function(type, id) {
 	}
 
 	if (type == "Label") {
-		_viewMinWidth = 5;
-		_viewMixHeight = 5;
-
 		// init Label element
 	    newObjectDiv.className = "Autolayout-View Autolayout-View-Label";
 	    newObjectDiv.id = _id; 
@@ -125,11 +116,11 @@ AutoLayout.initview = function(type, id) {
 		// 当点击对象不是 View 时执行函数
 		if (event.target.className.indexOf("Autolayout-View") == -1 ) {	
 			console.log("outsideViewOnclick");
-			while(AutoLayout.selectedObjects.length > 0){
-				hideViewBR(AutoLayout.selectedObjects.pop());
+			while(AutoLayout.shared.variables.selectedObjects.length > 0){
+				hideViewBR(AutoLayout.shared.variables.selectedObjects.pop());
 			}
-			AutoLayout.selectedObjects = [];
-			console.log(AutoLayout.selectedObjects);
+			AutoLayout.shared.variables.selectedObjects = [];
+			console.log(AutoLayout.shared.variables.selectedObjects);
 			_originalPageX = 0;
 			_originalPageY = 0;
 		}
@@ -141,11 +132,11 @@ AutoLayout.initview = function(type, id) {
 			console.log("viewOnclick");
 
 			// unclick other selected elements
-			while(AutoLayout.selectedObjects.length > 0){
-				hideViewBR(AutoLayout.selectedObjects.pop());
+			while(AutoLayout.shared.variables.selectedObjects.length > 0){
+				hideViewBR(AutoLayout.shared.variables.selectedObjects.pop());
 			}
-			AutoLayout.selectedObjects.push(_viewBR);
-			console.log(AutoLayout.selectedObjects);
+			AutoLayout.shared.variables.selectedObjects.push(_viewBR);
+			console.log(AutoLayout.shared.variables.selectedObjects);
 
 			_originalWidth = _viewStyle.width.substring(0, _viewStyle.width.length-2);
 			_originalHeight = _viewStyle.height.substring(0, _viewStyle.height.length-2);
