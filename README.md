@@ -17,6 +17,11 @@ A tool for web developers to fast set website UI using Xcode-like-AutoLayout.
 - [【译】JavaScript 命名空间](http://chengkang.me/2016/06/28/javascript-namespace-by-michaux/)
 - [My Favorite JavaScript Design Pattern](https://www.sitepoint.com/my-favorite-javascript-design-pattern/)
 
+## Watching List
+
+*About Gulp*
+- [Learning Gulp(Youtube)](https://www.youtube.com/playlist?list=PLLnpHn493BHE2RsdyUNpbiVn-cfuV7Fos)
+
 
 ## Data Structure
 1. 
