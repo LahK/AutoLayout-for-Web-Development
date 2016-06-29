@@ -20,7 +20,8 @@ A tool for web developers to fast set website UI using Xcode-like-AutoLayout.
 ## Watching List
 
 *About Gulp*
-- [Learning Gulp(Youtube)](https://www.youtube.com/playlist?list=PLLnpHn493BHE2RsdyUNpbiVn-cfuV7Fos)
+- [Learning Gulp](https://www.youtube.com/playlist?list=PLLnpHn493BHE2RsdyUNpbiVn-cfuV7Fos)
+- [Website Performance Tutorial](https://www.youtube.com/watch?v=aD94FQ-WsIg&list=PLLnpHn493BHGpGXukqYsxwQw3ziW3uti6)
 
 
 ## Data Structure
