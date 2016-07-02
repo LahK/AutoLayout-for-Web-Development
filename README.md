@@ -16,6 +16,7 @@ A tool for web developers to fast set website UI using Xcode-like-AutoLayout.
 - [JavaScript Namespacing](http://peter.michaux.ca/articles/javascript-namespacing)
 - [【译】JavaScript 命名空间](http://chengkang.me/2016/06/28/javascript-namespace-by-michaux/)
 - [My Favorite JavaScript Design Pattern](https://www.sitepoint.com/my-favorite-javascript-design-pattern/)
+- [【译】我最喜欢的 JavaScript 设计模式](http://chengkang.me/2016/07/02/my-favorite-javascript-pattern/)
 
 ## Watching List
 
