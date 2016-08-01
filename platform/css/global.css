@@ -1,0 +1,41 @@
+.AL-object{
+	position: absolute;
+	display: block;
+	background: #798;
+}
+
+.AL-lable{
+	width: 40px;
+	height: 20px;
+	text-align: center;
+	font-size: 15px;
+	line-height: 20px;
+}
+
+.AL-button{
+	width: 50px;
+	height: 30px;
+	text-align: center;
+	font-size: 15px;
+	line-height: 20px;
+	background: #1203cc;
+}
+
+.AL-image{
+	width: 50px;
+	height: 50px;
+	background-color: #fff;
+	background-image: url(../image/autolayout.png);
+	border-radius: 2px;
+	background-size: 100% auto;
+	background-position: center center;
+	background-repeat: no-repeat;
+}
+
+.AL-view{
+	width: 50px;
+	height: 50px;
+	background: red;
+	border: 1px solid #798;
+	border-radius: 2px;
+}

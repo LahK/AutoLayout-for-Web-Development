@@ -100,7 +100,7 @@ AutoLayout.updateview = function(element) {
 
 
 		var testTextDiv = document.getElementById("Test");
-		testTextDiv.style.font = LabelStyle.font;
+		// testTextDiv.style.font = LabelStyle.font;
 
 		var text = Label.getAttribute("al-text");
 		console.log("text: "+text);

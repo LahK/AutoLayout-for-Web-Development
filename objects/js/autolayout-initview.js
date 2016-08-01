@@ -63,7 +63,7 @@ AutoLayout.initview = function(type, id) {
 		var newImage = document.createElement("img")
 	    newImage.className = "Autolayout-View View-Content-Image";
 	    newImage.id = _id + "-IMG"
-	    newImage.src = "https://z.wilddog.com/images/logo.svg";
+	    newImage.src = "../autolayout.png";
 
 	    newImage.onload = function () {
 	    	AutoLayout.updateview(newImage.parentElement);
@@ -268,14 +268,16 @@ AutoLayout.initview = function(type, id) {
 	}
 
 	initView();
+	// return returnElement();
 
-	document.getElementById("container-test").appendChild(_view);
-	console.log("_viewStyle.height: "+_viewStyle.height);
+	// document.getElementById("container-test").appendChild(_view);
+	// console.log("_viewStyle.height: "+_viewStyle.height);
 
-	// 此处有 trick
-	var BRMarginTop = type == "Label" ? "0px" : _viewStyle.height;
-	var BRMarginLeft = _viewStyle.width;
-	_viewBR.style.margin = BRMarginTop + " 0px 0px " + BRMarginLeft;
+	// // 此处有 trick
+	// var BRMarginTop = type == "Label" ? "0px" : _viewStyle.height;
+	// var BRMarginLeft = _viewStyle.width;
+	// _viewBR.style.margin = BRMarginTop + " 0px 0px " + BRMarginLeft;
+	_view.setAttribute("al-name","module")
 
-	// 调用方法 return _view;
+	return _view;
 };
