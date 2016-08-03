@@ -17,6 +17,7 @@ define(function() {
 		screenScale: 1, // Screen的缩放比例
 
 		objectLastPosition: { x: 0, y: 0 }, // Object被选中时的位置
+		objectLastSize : {w: 0, h: 0},		// Object被选中时的大小
 		objectMoving: false, // Object是否在移动
 		objectCount: 0, // 当前的元素个数
 

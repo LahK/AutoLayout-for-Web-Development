@@ -49,19 +49,19 @@ define(function() {
 			}
 
 			function getButton(id) {
-				var tempObject = document.createElement("button");
-
+				var tempObject = document.createElement("div");
 				tempObject.className = "AL-object AL-button";
 				tempObject.setAttribute("al-text", "Button");
-				tempObject.setAttribute("type", "button")
-					// tempObject.setAttribute("al-label-type", "multiple");
 				tempObject.innerText = "Button";
-				// tempObject.appendChild(newObjectBR);
 
-				// _view = tempObject;
-				// _viewStyle = window.getComputedStyle(_view);
+				// var contentObject = document.createElement("button");
+				// // contentObject.disabled = true;
 
-				// _viewBR = newObjectBR;
+				// contentObject.innerText = "Button";
+				// contentObject.type = "button"
+
+				// tempObject.appendChild(contentObject);
+
 
 				return tempObject;
 			}
@@ -70,6 +70,8 @@ define(function() {
 				var tempObject = document.createElement("div");
 
 				tempObject.className = "AL-object AL-image";
+
+				// tempObject.appendChild(getResizeButtonById(id));
 
 				// tempObject.appendChild(newObjectBR);
 

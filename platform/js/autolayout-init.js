@@ -56,15 +56,21 @@ define(function() {
 
                 var e = event || window.event || arguments.callee.caller.arguments[0];
 
-                // 保存鼠标按下位置
-                Global.mouseDownPosition.x = e.pageX;
-                Global.mouseDownPosition.y = e.pageY;
+                // 保存鼠标按下位置和选中元素的
+                Global.mouseDownPosition = { x: e.pageX, y: e.pageY };
+                if (Global.currentSelected) {
+                    Global.objectLastSize = {
+                        w: parseFloat(window.getComputedStyle(Global.currentSelected).width),
+                        h: parseFloat(window.getComputedStyle(Global.currentSelected).height)
+                    }
+                }
+
 
                 if (Public.isChildOfParent(e.target, Global.screenArea) && Global.keyDown == 32) {
                     Global.screenMoving = true;
                     Global.screenLastPosition.x = parseFloat(window.getComputedStyle(Global.screenArea).left) || 50;
                     Global.screenLastPosition.y = parseFloat(window.getComputedStyle(Global.screenArea).top) || 50;
-                    Global.currentSelected = Global.screenArea;
+                    // Global.currentSelected = Global.screenArea;
 
 
                     ////////////////////    TODO   ///////////////////////  
@@ -88,7 +94,7 @@ define(function() {
                 } else if (e.target == Global.canvasArea || e.target.parentNode == Global.canvasArea) {
                     // 默认选中screenArea
 
-                    Global.currentSelected = Global.screenArea;
+                    // Global.currentSelected = Global.screenArea;
 
                     // showEditor();
                     // showSelected();
@@ -99,24 +105,33 @@ define(function() {
                     var newObject = Public.getObjectByTypeId(type, Global.lastId);
                     var newLayer = Public.getLayerByTypeId(type, Global.lastId);
 
+                    appendResizeButton(newObject, Global.lastId);
                     Global.lastId += 1;
 
                     Global.screenArea.appendChild(newObject);
                     Global.objectCount += 1;
                     Global.layerList.insertBefore(newLayer, Global.layerList.firstChild);
+
+                    if (Global.currentSelected) {
+                        Global.currentSelected.getElementsByTagName('rb')[0].style.display = "none";
+                    };
+
+                    newObject.getElementsByTagName('rb')[0].style.display = "block";
+
                     Global.currentSelected = newObject;
 
                     // showEditor();
                     // showSelected();
 
                 } else if (e.target.getAttribute("al-name") == "object") {
+                    Global.currentSelected.getElementsByTagName('rb')[0].style.display = "none";
+                    e.target.getElementsByTagName('rb')[0].style.display = "block";
                     Global.currentSelected = e.target;
-
                     Global.objectMoving = true;
                     Global.objectLastPosition.x = parseFloat(window.getComputedStyle(Global.currentSelected).left) || 0;
                     Global.objectLastPosition.y = parseFloat(window.getComputedStyle(Global.currentSelected).top) || 0;
 
-                    
+
 
                     // showEditor();
                     // showSelected();
@@ -133,7 +148,8 @@ define(function() {
                     Global.attributesEditor.innerHTML = "";
                     Global.attributesEditor.appendChild(Public.getEditor(Config.enableStyles, Global.currentSelected));
                 };
-                
+
+
                 // updateLayer();
             }
 
@@ -182,10 +198,34 @@ define(function() {
                     Global.screenArea.style.cursor = "auto"
                 }
             }
-            
+
+            function appendResizeButton(obj, id) {
+                var resizeButton = document.createElement("rb");
+                resizeButton.className = "AL-resize-button";
+                resizeButton.setAttribute("draggable", "true");
+                resizeButton.id = "resize-" + id;
+                resizeButton.ondragstart = function(event) {
+                    var e = event || window.event || arguments.callee.caller.arguments[0];
+                    
+                }
+                resizeButton.ondrag = function(event) {
+                    var e = event || window.event || arguments.callee.caller.arguments[0];
+
+                    Global.currentSelected.style.width = e.pageX - Global.mouseDownPosition.x + Global.objectLastSize.w + "px";
+                    Global.currentSelected.style.height = e.pageY - Global.mouseDownPosition.y + Global.objectLastSize.h + "px";
+                    // console.log(e.pageX)
+                }
+
+                resizeButton.ondragend = function(event) {
+                    var e = event || window.event || arguments.callee.caller.arguments[0];
+
+                }
+                obj.appendChild(resizeButton);
+            }
+
         },
 
-        
+
     };
 
 
