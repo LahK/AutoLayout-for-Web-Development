@@ -102,3 +102,113 @@ function createNewObject (type) {
 	return newObject;
 }
 ```
+
+## 添加外边距约束 逻辑
+
+每个元素有四条边属性，
+- sideTop: {
+	start: {
+		x: Float, 
+		y: Float
+	}, 
+	end: {
+		x: Float, 
+		y: Float
+	}
+}
+- sideBottom: {
+	start: {
+		x: Float, 
+		y: Float
+	}, 
+	end: {
+		x: Float, 
+		y: Float
+	}
+}
+- sideLeft: {
+	start: {
+		x: Float, 
+		y: Float
+	}, 
+	end: {
+		x: Float, 
+		y: Float
+	}
+}
+- sideRight: {
+	start: {
+		x: Float, 
+		y: Float
+	}, 
+	end: {
+		x: Float, 
+		y: Float
+	}
+}
+
+有一个全局变量 elements（例），存储所有元素。添加约束时：
+
+例如 添加下边距约束:
+
+```
+// 判断点是否在一条横向线的范围内
+function isPointInLineX(point, line) {
+	if point.x >= line.start.x && point =< line.end.x {
+		return true
+	} else {
+		return false
+	}
+}
+
+//判断点是否在一条竖向线的范围内
+function isPointInLineY(point, line) {
+	if point.y >= line.start.y && point =< line.end.y {
+		return true
+	} else {
+		return false
+	}
+}
+
+// 设置下边距约束
+function setBottomMarginAuto() {
+	// 当前选中元素
+	var selectedElement
+	// 初始化符合要求的附近元素列表
+	var qualifiedElements = []
+	
+	for element in elements {
+		if element != targetElement {
+			// 判断元素是否位于选中元素的下方
+			if element.sideTop.start.y <= selectedElement.sideBottom.start.y {
+				// 判断两个元素是否有『重叠』
+				if isPointInLineX(element.sideTop.start, selectedElement.sideBottom) {
+					qualifiedElements.append(element)
+				}
+			}
+		}
+	}
+	
+	// 初始化目标元素
+	var targetElement = nil
+	if qualifiedElements.count > 1 {
+		// 当有多个时，选择最近的元素
+		// 初始化目标元素，方便之后比较
+		targetElement = element[0]
+		for element in qualifiedElements {
+			if element.start.y < targetElement.start.y {
+				targetElement = element
+			}
+		}
+	} else if qualifiedElements.count == 1 {
+		// 当只有一个时，直接设置为这一个
+		targetElement = qualifiedElement
+	} else {
+		// 当没有符合要求的其他元素时，约束对象设置为容器
+		targetElement = SuperView
+	}
+	
+	// 存储约束值
+	// 此处应该是有一个全局的约束变量，新增一组约束进去
+}
+```
