@@ -23,6 +23,7 @@ define(function() {
 				default:
 					return null;
 			}
+			// newObject.setAttribute("draggable", "true");
 			newObject.setAttribute("al-name", "object");
 			newObject.setAttribute("al-type", type);
 			newObject.id = "object-" + id;
@@ -120,54 +121,6 @@ define(function() {
 			if (layer) return layer;
 
 			return null;
-		},
-
-		getEditor: function(confObj, selectedObj) {
-			var type = selectedObj.getAttribute("al-type");
-			var config  = confObj[type];
-			if (!selectedObj || !config || config.length) return null;
-
-			var styleConfig = config["style"];
-			var dataConfig = config["data"];
-			var editor = document.createElement("div");
-
-			for (var key in styleConfig) {
-				var warp = document.createElement("div");
-				warp.className = "attribute-warp";
-				warp.innerHTML = "<span>" + key + "</span>";
-
-				var input = document.createElement('input');
-				input.setAttribute("al-bind",styleConfig[key]);
-				// console.log(window.getComputedStyle(selectedObj),styleConfig[key])
-				input.value =  window.getComputedStyle(selectedObj)[styleConfig[key]];
-				input.onkeyup = function () {
-					var e = event || window.event;
-					var bind = e.target.getAttribute("al-bind");
-					selectedObj.style[bind] = e.target.value;
-				}
-				warp.appendChild(input);
-
-				editor.appendChild(warp);
-			};
-
-
-			for (var key in dataConfig) {
-				var warp = document.createElement("div");
-				warp.className = "attribute-warp";
-				warp.innerHTML = "<span>" + key + "</span>";
-
-				var input = document.createElement('input');
-				input.value =  selectedObj.getAttribute(dataConfig[key]);
-				input.addEventListener("onchange",function () {
-					var e = event || window.event;
-					selectedObj.setAttribute(dataConfig[key], e.target.value);
-				});
-				warp.appendChild(input);
-
-				editor.appendChild(warp);
-			};
-			
-			return editor;
 		},
 
 		isChildOfParent: function (obj, parent) {

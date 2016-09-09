@@ -11,6 +11,8 @@ define(["require"], function(require) {
             "Label": {
                 "style": {
                     "Z-Index": "z-index",
+                    "Font": "font-family",
+                    "FontSize": "font-size",
                     "Width": "width",
                     "Height": "height",
                     "Left": "left",
@@ -29,6 +31,8 @@ define(["require"], function(require) {
             "Button": {
                 "style": {
                     "Z-Index": "z-index",
+                    "FontSize": "font-size",
+                    "Font": "font-family",
                     "Width": "width",
                     "Height": "height",
                     "Left": "left",
@@ -54,6 +58,8 @@ define(["require"], function(require) {
                     "Border": "border",
                     "Bd-radius": "border-radius",
                     "Image-url": "background-image",
+                    "Image-Pos": "background-position",
+                    "Image-Size": "background-size"
                 },
                 "data": {}
             },

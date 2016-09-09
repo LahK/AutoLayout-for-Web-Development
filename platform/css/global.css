@@ -47,14 +47,22 @@
 }
 
 .AL-resize-button {
-	display: block;
     position: absolute;
-    bottom: -5px;
-    right: -5px;
+    bottom: -3px;
+    right: -3px;
     display: none;
-    width: 5px;
-    height: 5px;
-    font-size: 1px;
-    background: #EEE;
-    border: 1px solid #333;
+    width: 10px;
+    height: 10px;
+    border: solid #333;
+    border-width: 0 2px 2px 0;
+}
+.AL-resize-button:hover{
+    cursor: nwse-resize;
+}
+.AL-cover-mask{
+    position: absolute;
+    /*display: none;*/
+    top: 0;
+    left: 0;
+    border: 1px solid red;
 }
