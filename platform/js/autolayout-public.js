@@ -107,7 +107,9 @@ define(function() {
 			newLayer.id = "layer-" + id;
 			newLayer.setAttribute("al-id", id);
 			newLayer.setAttribute("al-name", "layer");
+			newLayer.setAttribute("draggable", "true");
 			newLayer.innerText = type + "-" + id;
+
 			return newLayer;
 		},
 		removeObject: function (obj) {

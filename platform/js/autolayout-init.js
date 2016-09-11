@@ -114,6 +114,7 @@ define(function() {
 
 					Global.screenArea.appendChild(newObject);
 					handleObject(newObject, id);
+					handleLayer(newLayer);
 
 					Global.layerList.insertBefore(newLayer, Global.layerList.firstChild);
 				}
@@ -186,6 +187,36 @@ define(function() {
 				};
 
 				Global.objectList.push({ id: object })
+			}
+
+			function handleLayer(layer) {
+				// rearrange layers z-index by dragging
+				layer.ondragstart = function(event) {
+					layer.style.opacity = "0.5";
+					event.dataTransfer.setData("ondragLayerId",event.target.id)
+				};
+
+				layer.ondragend = function(event) {
+					layer.style.opacity = "1";
+				}
+
+				layer.ondragover = function(event) {
+					event.preventDefault();
+				}
+
+				layer.ondrop = function (event) {
+					event.preventDefault();
+					var ondragLayerId = event.dataTransfer.getData("ondragLayerId");
+					var ondragLayer = document.getElementById(ondragLayerId);
+
+					Global.layerList.insertBefore(ondragLayer, event.target);
+
+					for (var i = 0; i < Global.layerList.childElementCount; i++) {
+						var id = Global.layerList.children[i].getAttribute("al-id");
+						var obj = document.getElementById("object-"+id);
+						obj.style.zIndex = Global.objectList.length - 1 - i
+					}
+				}
 			}
 
 		}
