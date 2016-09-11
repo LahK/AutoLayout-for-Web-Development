@@ -304,3 +304,18 @@ function setBottomMarginAuto() {
 	};
 	```
 	虽然这次没有用这个方法来解决问题，就当是一次积累了。以后碰到类似情况得考虑这个误触发情况。
+- 注意一：在使用 onmousemove 时要注意，需要添加 `if(object != Global.currentSelected){return;}` 来防止触发其他元素的 onmousemove 方法。
+```
+object.onmousemove = function(event) {
+	let e = event || window.event || arguments.callee.caller.arguments[0];
+	if (Global.objectMoving) {
+		if(object != Global.currentSelected){return;} // 避免移动错误元素
+
+		object.style.left = ((e.pageX - Global.mouseDownPosition.x) / Global.screenScale + Global.objectLastStatus.x) + "px";
+		object.style.top = ((e.pageY - Global.mouseDownPosition.y) / Global.screenScale + Global.objectLastStatus.y) + "px";
+
+		Update.updateEditor(Config.enableStyles, object);
+	}
+};
+```
+- 注意二：在使用 ondrag 时要注意，松开鼠标时，pageX 和 pageY 会归零，导致计算错误。应使用 `if(e.pageX == 0 && e.pageY == 0){return;}` 来消除特殊情况。
