@@ -121,6 +121,8 @@ define(function() {
 			});
 
 			function handleObject(object, id) {
+				object.style.zIndex = Global.layerList.childElementCount
+
 				let resizeButton = document.createElement("rb");
 				resizeButton.className = "AL-resize-button";
 				resizeButton.setAttribute("draggable", "true");
@@ -193,11 +195,19 @@ define(function() {
 				// rearrange layers z-index by dragging
 				layer.ondragstart = function(event) {
 					layer.style.opacity = "0.5";
+					layer.style.width = "97%";
+					layer.style.borderLeft = "2px solid #777";
+					layer.style.borderRight = "2px solid #777";
+					layer.style.borderBottom = "2px solid #777";
 					event.dataTransfer.setData("ondragLayerId",event.target.id)
 				};
 
 				layer.ondragend = function(event) {
 					layer.style.opacity = "1";
+					layer.style.width = "100%";
+					layer.style.borderLeft = "";
+					layer.style.borderRight = "";
+					layer.style.borderBottom = "";
 				}
 
 				layer.ondragover = function(event) {
