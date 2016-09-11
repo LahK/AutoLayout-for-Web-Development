@@ -25,6 +25,7 @@ A tool for web developers to fast set website UI using Xcode-like-AutoLayout.
 - [Website Performance Tutorial](https://www.youtube.com/watch?v=aD94FQ-WsIg&list=PLLnpHn493BHGpGXukqYsxwQw3ziW3uti6)
 
 
+
 ## Data Structure
 1. 
 ```
@@ -262,3 +263,44 @@ function setBottomMarginAuto() {
 	}
 ]
 ```
+
+## 移动元素逻辑思路
+
+- 解决方案：将移动元素（由 onmousemove 事件）改成由 ondrag 事件控制，并且动态切换元素的 draggable 属性。
+- 原本是添加一个 isMouseDown 状态变量来记录是否已经选中元素并且处于移动状态。理由是：
+	记录当前被选中的元素的变量 currentSelected 应该有如下几种状态 currentSelectedState：
+	- selected（此时有一个元素被选中）
+	- moving（此时被选中元素正在移动或者将要移动）
+	- unselected（此时未选中任何元素）
+	对应的场景如下：
+	- 最初的 **mouseUp** 状态，currentSelected = null, currentSelectedState = unselected
+	- 第一次点击某个元素时 **mouseDown**，该元素 object 被选中， currentSelected = object
+		- 在鼠标松开前、移动时 **mouseMove**，currentSelectedState = moving *
+		- 松开时即 **mouseUp**，currentSelectedState = selected
+	之所以需要 isMouseDown，是因为在上述 * 号标记的情况下，即移动元素时，如果鼠标滑到其他元素上，会触发其他元素的 mouseDown 和 mouseMove 方法。isMouseDown 用于阻止这个误触发。
+	```
+	object.onmousedown = function() {
+		if(Global.multipleSelect){
+			return;
+		}
+
+		if(Global.isMouseDown){return;}  // 防止二次选中元素
+
+		Global.currentSelected = object;
+
+		Global.isMouseDown = true; // 防止二次选中元素（在 MouseDown 情况下，移动到一个元素上会触发该元素的 MouseDown 方法。）
+		Global.objectMoving = true;
+		object.getElementsByTagName("rb")[0].style.display = "block";
+
+		Global.objectLastStatus = {
+			w: parseFloat(window.getComputedStyle(object).width),
+			h: parseFloat(window.getComputedStyle(object).height),
+			x: parseFloat(window.getComputedStyle(object).left) || 0,
+			y: parseFloat(window.getComputedStyle(object).top) || 0
+		}
+
+		Update.updateEditor(Config.enableStyles, object);
+
+	};
+	```
+	虽然这次没有用这个方法来解决问题，就当是一次积累了。以后碰到类似情况得考虑这个误触发情况。
