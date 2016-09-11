@@ -25,6 +25,9 @@ A tool for web developers to fast set website UI using Xcode-like-AutoLayout.
 - [Website Performance Tutorial](https://www.youtube.com/watch?v=aD94FQ-WsIg&list=PLLnpHn493BHGpGXukqYsxwQw3ziW3uti6)
 
 
+## Useful Links
+- [drag: DataTransfer](https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer)
+
 
 ## Data Structure
 1. 
