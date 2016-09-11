@@ -1,0 +1,234 @@
+body {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    z-index: 0;
+}
+
+.header {
+    flex: 0 0 30px;
+    border: solid 1px #aaa;
+    border-width: 0 0 1px 0;
+    background: #e6e6e6;
+    z-index: 99999;
+    box-shadow: 0 0 20px #777;
+}
+
+.logo {
+    display: inline-block;
+    height: 30px;
+    width: 30px;
+    background: url(image/autolayout.png);
+    background-size: 30px;
+    background-repeat: no-repeat;
+    margin: -8px 35px;
+}
+
+.action-bar {
+    height: 24px;
+    line-height: 24px;
+    margin: 3px 0;
+    padding: 0;
+    display: inline-block;
+}
+
+.action-bar li {
+    display: inline-block;
+    box-sizing: border-box;
+    border: 1px solid #d6d6d6;
+    border-radius: 4px;
+    padding: 0 5px;
+    cursor: pointer;
+    background: repeating-linear-gradient(#fff, #f9f9f9 5%, #e6e6e6 30%, #d6d6d6 100%)
+}
+
+.action-bar li:hover {
+    box-shadow: 1px 1px 1px #798;
+}
+
+.container {
+    display: flex;
+    flex: 1 1 auto;
+    background: #c9c9c9;
+    min-width: 600px;
+    z-index: 0;
+}
+
+.navigation-bar {
+    overflow: auto;
+    resize: horizontal;
+    /*order: 1;*/
+    width: 150px;
+    z-index: 99999;
+    background: #e6e6e6;
+    box-shadow: 0 0 20px #777;
+}
+
+.navigation-head {
+    height: 25px;
+    margin: 10px 0 0 0;
+    width: 100%;
+    background: #c9c9c9;
+    /*text-align: center;*/
+    font-size: 15px;
+    line-height: 25px;
+}
+
+.layer-list {
+    position: relative;
+}
+
+.layer-item {
+    /*position: absolute;*/
+    float: left;
+    margin: 1px 0;
+    height: 49px;
+    width: 100%;
+    background: #fff;
+}
+
+.layer-selected {
+    background: #03a9f4;
+}
+
+.canvas {
+    order: 2;
+    flex: 1 1 auto;
+    position: relative;
+    z-index: 0;
+    overflow: hidden;
+}
+
+.scale-bar {
+    position: absolute;
+    left: 50px;
+    bottom: 50px;
+    -webkit-user-select: none;
+    height: 30px;
+    width: 140px;
+    z-index: 99999;
+}
+
+.scale-small,
+.scale-status,
+.scale-large {
+    font-family: "微软雅黑";
+    font-size: 15px;
+    display: inline-block;
+    -webkit-user-select: none;
+    width: 30px;
+    height: 25px;
+    box-sizing: border-box;
+}
+
+.scale-status {
+    text-align: center;
+    vertical-align: middle;
+}
+
+.tools-bar {
+    order: 3;
+    flex: 0 0 270px;
+    z-index: 99999;
+    background: #e6e6e6;
+    box-shadow: 0 0 20px #777;
+}
+
+.tools-module {
+    height: 200px;
+    width: 100%;
+    /*background: #798;*/
+    border: 1px solid #9c9c9c;
+    box-sizing: border-box;
+    padding: 5px;
+}
+
+.module {
+    position: absolute;
+    border-radius: 5px;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+}
+
+.module-symbol {
+    border: 1px solid #c5c5c5;
+    border-radius: 5px;
+    margin: 5px;
+    float: left;
+    background: #f9f9f9;
+    width: 50px;
+    height: 50px;
+    cursor: pointer;
+}
+
+.module-label {
+    background: #798;
+}
+
+.module-image {
+    background: #473;
+    background-size: 100%;
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-image: url(./image/autolayout.png);
+}
+
+.module-button {
+    background: blue;
+}
+
+.module-view {
+    background: red;
+}
+
+.attributes-editor {
+    border: 1px solid #9c9c9c;
+    box-sizing: border-box;
+    padding: 5px;
+}
+
+.attribute-warp {
+    text-align: right;
+    margin: 10px auto;
+    width: 230px;
+}
+
+.attribute-warp input {
+    width: 130px;
+}
+
+.footer {
+    flex: 0 0 5vh;
+    border: solid 1px #aaa;
+    border-width: 1px 0 0 0;
+    background: #e6e6e6;
+    z-index: 99999;
+    box-shadow: 0 0 20px #777;
+}
+
+.screen {
+    position: absolute;
+    top: 50px;
+    left: 50px;
+    box-shadow: 0 0 10px #777;
+    z-index: 1;
+    zoom: 1;
+}
+
+.w414-h736 {
+    height: 736px;
+    width: 414px;
+    background: #fff;
+}
+
+.test {
+    width: 30px;
+    height: 30px;
+    position: absolute;
+    top: 200px;
+    left: 150px;
+    background: red;
+    border-radius: 3px;
+}

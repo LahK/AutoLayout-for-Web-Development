@@ -24,16 +24,18 @@ define(function() {
 			document.addEventListener("mousedown", function(event) {
 				if (Global.currentSelected) {
 					Global.currentSelected.getElementsByTagName('rb')[0].style.display = "none";
+
+					Global.currentSelected.setAttribute("draggable", "false");
 				}
 				let e = event || window.event || arguments.callee.caller.arguments[0];
 
 				Global.mouseDownPosition = { x: e.pageX, y: e.pageY };
-
 			}, true);
 
 			document.addEventListener("mouseup", function() {
 				Global.screenMoving = false;
 				Global.objectMoving = false;
+				Global.isMouseDown = false; // 重置 isMouseDown
 			}, true);
 
 			document.onkeydown = function(event) {
@@ -131,7 +133,6 @@ define(function() {
 					let e = event || window.event || arguments.callee.caller.arguments[0];
 
 					Global.objectMoving = false;
-
 				}
 				resizeButton.ondrag = function(event) {
 					let e = event || window.event || arguments.callee.caller.arguments[0];
@@ -150,13 +151,26 @@ define(function() {
 				object.appendChild(coverMask);
 				object.appendChild(resizeButton);
 
+				object.ondrag = function(event) {
+					let e = event || window.event || arguments.callee.caller.arguments[0];
+					if (Global.objectMoving) {
+						if(e.pageX == 0 && e.pageY == 0){return;} // 消除特殊情况（鼠标松开时，有一个偏差坐标 (0，0)）
 
+						object.style.left = ((e.pageX - Global.mouseDownPosition.x) / Global.screenScale + Global.objectLastStatus.x) + "px";
+						object.style.top = ((e.pageY - Global.mouseDownPosition.y) / Global.screenScale + Global.objectLastStatus.y) + "px";
+
+						Update.updateEditor(Config.enableStyles, object);
+					}
+				};
 				object.onmousedown = function() {
-
 					if(Global.multipleSelect){
 						return;
 					}
+
 					Global.currentSelected = object;
+
+					object.setAttribute("draggable", "true"); // 元素被选中时，设置为可拖动
+
 					Global.objectMoving = true;
 					object.getElementsByTagName("rb")[0].style.display = "block";
 
@@ -169,16 +183,6 @@ define(function() {
 
 					Update.updateEditor(Config.enableStyles, object);
 
-				};
-
-				object.onmousemove = function(event) {
-					let e = event || window.event || arguments.callee.caller.arguments[0];
-					if (Global.objectMoving) {
-						object.style.left = ((e.pageX - Global.mouseDownPosition.x) / Global.screenScale + Global.objectLastStatus.x) + "px";
-						object.style.top = ((e.pageY - Global.mouseDownPosition.y) / Global.screenScale + Global.objectLastStatus.y) + "px";
-
-						Update.updateEditor(Config.enableStyles, object);
-					}
 				};
 
 				Global.objectList.push({ id: object })
