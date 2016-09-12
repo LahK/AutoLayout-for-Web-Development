@@ -243,7 +243,7 @@ define(function() {
 					for (var i = 0; i < Global.layerList.childElementCount; i++) {
 						var id = Global.layerList.children[i].getAttribute("al-id");
 						var obj = document.getElementById("object-"+id);
-						obj.style.zIndex = Global.objectList.length - 1 - i
+						obj.style.zIndex = Global.screenArea.childElementCount - 1 - i
 					}
 				}
 			}
