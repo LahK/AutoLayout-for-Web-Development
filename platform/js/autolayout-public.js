@@ -156,6 +156,35 @@ define(function() {
 				return true;
 			}
 		},
+
+		isTopOfAnotherObject: function (objStatus,anotherObjStatus) {
+			if (anotherObjStatus.y < (objStatus.y + objStatus.h)) {return false;}
+			if (anotherObjStatus.x > (objStatus.x + objStatus.w)) {return false;}
+			if ((anotherObjStatus.x + anotherObjStatus.w) < objStatus.x) {return false;}
+
+			return true;
+		},
+		isBottomOfAnotherObject: function (objStatus,anotherObjStatus) {
+			if (objStatus.y < (anotherObjStatus.y + anotherObjStatus.h)) {return false;}
+			if (objStatus.x > (anotherObjStatus.x + anotherObjStatus.w)) {return false;}
+			if ((objStatus.x + objStatus.w) < anotherObjStatus.x) {return false;}
+
+			return true;
+		},
+		isLeftOfAnotherObject: function (objStatus,anotherObjStatus) {
+			if (anotherObjStatus.x < (objStatus.x + objStatus.w)) {return false;}
+			if (anotherObjStatus.y > (objStatus.y + objStatus.h)) {return false;}
+			if ((anotherObjStatus.y + anotherObjStatus.h) < objStatus.y) {return false;}
+
+			return true;
+		},
+		isRightOfAnotherObject: function (objStatus,anotherObjStatus) {
+			if (objStatus.x < (anotherObjStatus.x + anotherObjStatus.w)) {return false;}
+			if (objStatus.y > (anotherObjStatus.y + anotherObjStatus.h)) {return false;}
+			if ((objStatus.y + objStatus.h) < anotherObjStatus.y) {return false;}
+
+			return true;
+		},
 	};
 
 	return PublicObject;
