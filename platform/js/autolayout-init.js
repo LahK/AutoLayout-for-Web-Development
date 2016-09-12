@@ -66,6 +66,7 @@ define(function() {
 			document.onkeyup = function(event) {
 				let e = event || window.event || arguments.callee.caller.arguments[0];
 				Global.keyDown = null;
+
 				if (e.keyCode == 32) {
 					Global.screenArea.style.cursor = "auto"
 				};
@@ -159,9 +160,20 @@ define(function() {
 					if (Global.objectMoving) {
 						if(e.pageX == 0 && e.pageY == 0){return;} // 消除特殊情况（鼠标松开时，有一个偏差坐标 (0，0)）
 
-						object.style.left = ((e.pageX - Global.mouseDownPosition.x) / Global.screenScale + Global.objectLastStatus.x) + "px";
-						object.style.top = ((e.pageY - Global.mouseDownPosition.y) / Global.screenScale + Global.objectLastStatus.y) + "px";
+						var newX = (e.pageX - Global.mouseDownPosition.x) / Global.screenScale + Global.objectLastStatus.x
+						var newY = (e.pageY - Global.mouseDownPosition.y) / Global.screenScale + Global.objectLastStatus.y
 
+						// Prevent objects from being dragged out of screen area
+						let minX = 0
+						let minY = 0
+						let maxX = Global.screenLastStatus.w - Global.objectLastStatus.w
+						let maxY = Global.screenLastStatus.h - Global.objectLastStatus.h
+
+						newX = newX < minX ? 0 : newX > maxX ? maxX : newX;
+						newY = newY < minY ? 0 : newY > maxY ? maxY : newY;
+
+						object.style.left = newX+"px";
+						object.style.top = newY+"px";
 						Update.updateEditor(Config.enableStyles, object);
 					}
 				};
