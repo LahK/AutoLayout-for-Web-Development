@@ -192,6 +192,13 @@ define(function() {
 			}
 
 			function handleLayer(layer) {
+				// select object when click on related layer
+				layer.onclick = function(event) {
+					var id = event.target.getAttribute("al-id");
+					var obj = document.getElementById("object-"+id);
+					obj.onmousedown();
+				}
+
 				// rearrange layers z-index by dragging
 				layer.ondragstart = function(event) {
 					layer.style.opacity = "0.5";
