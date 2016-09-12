@@ -67,6 +67,13 @@ define(function() {
 				let e = event || window.event || arguments.callee.caller.arguments[0];
 				Global.keyDown = null;
 
+				// delete selected object by press "Delete" key
+				if (e.keyCode == 8) {
+					let layer = document.getElementById("layer-"+Global.currentSelected.getAttribute("al-id"));
+					Global.layerList.removeChild(layer);
+					Global.screenArea.removeChild(Global.currentSelected);
+				}
+
 				if (e.keyCode == 32) {
 					Global.screenArea.style.cursor = "auto"
 				};
