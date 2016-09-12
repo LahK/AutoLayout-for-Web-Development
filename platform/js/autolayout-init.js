@@ -69,9 +69,7 @@ define(function() {
 
 				// delete selected object by press "Delete" key
 				if (e.keyCode == 8) {
-					let layer = document.getElementById("layer-"+Global.currentSelected.getAttribute("al-id"));
-					Global.layerList.removeChild(layer);
-					Global.screenArea.removeChild(Global.currentSelected);
+					Public.removeCurrentSelectedObject(Global.currentSelected);
 				}
 
 				if (e.keyCode == 32) {

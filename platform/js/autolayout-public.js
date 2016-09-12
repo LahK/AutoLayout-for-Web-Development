@@ -115,6 +115,11 @@ define(function() {
 		removeObject: function (obj) {
 			obj.parentNode.removeChild(obj);
 		},
+		removeCurrentSelectedObject: function (obj) {
+			let layer = document.getElementById("layer-"+obj.getAttribute("al-id"));
+			layer.parentNode.removeChild(layer);
+			obj.parentNode.removeChild(obj);
+		},
 
 		getLayerByObject: function (obj) {
 			var id = obj.getAttribute("al-id");
@@ -150,9 +155,8 @@ define(function() {
 			} else {
 				return true;
 			}
-		}
+		},
 	};
-
 
 	return PublicObject;
 });
