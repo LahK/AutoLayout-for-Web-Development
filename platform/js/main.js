@@ -8,7 +8,6 @@
 
     require.config(config);
 
-
     require(['autolayout'], function(AL){
 
     	// 引入 autolayout.js, 启动程序

@@ -18,12 +18,15 @@ define(function() {
 		objectLastStatus: { x: 0, y: 0, w: 0, h: 0 }, // Object被选中时的状态
 		objectMoving: false, // Object是否在移动
 		objectCount: 0, // 当前的元素个数
-		objectResizing: false,
+		objectResizing: false, //元素是否在被拖拽放缩
 
 		layerSelected: null, // 被选中的Layer
 		layerMoving: false, // Layer是否在移动
 
-		objectList :[],
+		objectList :new Set(),
+
+		
+		multipleSelected:new Set(),
 		multipleSelect: false,
 
 		canvasArea: document.getElementById('canvasArea'),

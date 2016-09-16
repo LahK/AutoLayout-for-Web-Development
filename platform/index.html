@@ -13,13 +13,21 @@
     <header class="header">
         <div class="logo"></div>
         <ul class="action-bar">
-            <li>文件</li>
+            <li id="moduleList">添加</li>
             <li>编辑</li>
             <li>选择</li>
             <li>工具</li>
             <li>帮助</li>
         </ul>
     </header>
+    <div class="module-list-mask" id="moduleListCont">
+        <div class="module-list">
+            <div class="module-symbol module-label" al-name="object-symbol" al-type="Label">Label</div>
+            <div class="module-symbol module-image" al-name="object-symbol" al-type="Image">Image</div>
+            <div class="module-symbol module-button" al-name="object-symbol" al-type="Button">Button</div>
+            <div class="module-symbol module-view" al-name="object-symbol" al-type="View">View</div>
+        </div>
+    </div>
     <div class="container">
         <div class="navigation-bar">
             <div class="navigation-head">图层</div>
@@ -35,14 +43,8 @@
             </div>
         </div>
         <div class="tools-bar">
-            <div class="tools-module">
-                <div class="module-symbol module-label" al-name="object-symbol" al-type="Label">Label</div>
-                <div class="module-symbol module-image" al-name="object-symbol" al-type="Image">Image</div>
-                <div class="module-symbol module-button" al-name="object-symbol" al-type="Button">Button</div>
-                <div class="module-symbol module-view" al-name="object-symbol" al-type="View">View</div>
-            </div>
-            <div class="attributes-editor" id="attributesEditor">
-            </div>
+            <div class="attributes-editor" id="attributesEditor"></div>
+            <div class="constraints-editor" id="constraintsEditor"></div>
         </div>
     </div>
     <footer class="footer"></footer>

@@ -2,7 +2,7 @@
 define(function() {
 
 	var PublicObject = {
-
+		
 		getObjectByTypeId: function(type, id) {
 
 			var newObject = null;

@@ -22,9 +22,9 @@ define(function() {
 			};
 
 			document.addEventListener("mousedown", function(event) {
-				if (Global.currentSelected) {
+				if (Global.currentSelected && !Global.multipleSelect) {
+					Global.currentSelected.getElementsByTagName('cm')[0].style.display = "none";
 					Global.currentSelected.getElementsByTagName('rb')[0].style.display = "none";
-
 					Global.currentSelected.setAttribute("draggable", "false");
 				}
 				let e = event || window.event || arguments.callee.caller.arguments[0];
@@ -41,18 +41,21 @@ define(function() {
 			document.onkeydown = function(event) {
 				let e = event || window.event || arguments.callee.caller.arguments[0];
 				Global.keyDown = e.keyCode;
-				console.log(e.keyCode);
 				if (Public.isChildOfParent(Global.mouseOver, Global.screenArea) && e.keyCode == 32) {
 					Global.screenArea.style.cursor = "move";
 				};
 
 				if (e.keyCode == 17) {
-					
-					Global.multipleSelect = true;
-
+					// Ctrl
+					if (Global.currentSelected||Global.multipleSelected.size) {
+						// 当单选都没选的时候不触发多选
+						// 当多选列表中有元素时（最少2个）时，也可以触发
+						Global.multipleSelect = true;
+					};
 				};
 
 				if (e.keyCode == 86) {
+					// V
 					if (Global.trimScreen) {
 						Global.screenArea.style.overflow = "hidden";
 						Global.trimScreen = false
@@ -69,14 +72,19 @@ define(function() {
 
 				// delete selected object by press "Delete" key
 				if (e.keyCode == 8) {
+					// BackSpace
+
+					// To Fix: 在输入框内删除数据时也会触发删除事件
 					Public.removeCurrentSelectedObject(Global.currentSelected);
 				}
 
 				if (e.keyCode == 32) {
+					// Spacebar
 					Global.screenArea.style.cursor = "auto"
 				};
 
 				if (e.keyCode == 17) {
+					// Ctrl
 					Global.multipleSelect = false;
 				};
 			}
@@ -88,6 +96,24 @@ define(function() {
 				if (Global.keyDown == 32) {
 					Global.screenMoving = true;
 				}
+				// }else if (!Global.multipleSelect) {
+				// 	if (Global.multipleSelected.length) {
+				// 		Global.multipleSelected.forEach(function (elem) {
+				// 			elem.getElementsByTagName("cm")[0].style.display = "none";
+				// 		});
+				// 	};
+					
+				// 	// 当多选列表里面有元素的时候
+				// 	if(Global.multipleSelected.length == 1){
+				// 		// 当多选列表只有一个元素，则取出给currentSelected
+				// 		Global.currentSelected = Global.multipleSelected[0]
+				// 		Global.currentSelected.getElementsByTagName("cm")[0].style.display="block";
+				// 	}
+				// 	// 清空多选列表
+					
+				// 	Global.multipleSelected = new Set();
+				// };
+				// console.log(Global.multipleSelected)
 			}
 			Global.screenArea.onmousemove = function(event) {
 
@@ -111,6 +137,19 @@ define(function() {
 					Global.screenArea.style.zoom = (Global.screenScale = (parseFloat(Global.scaleStatusSpan.textContent) + 0.1).toFixed(1)) + "";
 			}
 
+			// 点击添加按钮时，弹出module列表
+			document.getElementById("moduleList").onclick = function (event) {
+				document.getElementById("moduleListCont").style.display = "block";
+			}
+			// 关闭module列表
+			document.getElementById("moduleListCont").onclick = function (event) {
+
+				let e = event || window.event || arguments.callee.caller.arguments[0];
+				document.getElementById("moduleListCont").style.display = "none";
+				if (e.target.id === "moduleListCont") {
+
+				};
+			}
 			Global.symbolList.forEach(function(symbol) {
 				symbol.onclick = function() {
 					let type = symbol.getAttribute("al-type"),
@@ -137,7 +176,10 @@ define(function() {
 				let coverMask = document.createElement("cm");
 				coverMask.className = "AL-cover-mask";
 				coverMask.id = "cover-" + id;
-				coverMask.style = object.style;
+
+				// WHY?
+				// coverMask.style = object.style;
+
 				resizeButton.ondragstart = function(event) {
 					let e = event || window.event || arguments.callee.caller.arguments[0];
 
@@ -150,6 +192,10 @@ define(function() {
 					object.style.height = e.pageY - Global.mouseDownPosition.y + Global.objectLastStatus.h + "px";
 					object.style.lineHeight = Global.currentSelected.style.height;
 
+
+					// updateEditor作用是新产生一个编辑器，
+					// 并和传入的元素绑定，并不是和 currentSelected 绑定，
+					// 因此，当手动清空currentSelected的时候，需要删除生成的editor
 					Update.updateEditor(Config.enableStyles, object);
 				}
 
@@ -168,6 +214,8 @@ define(function() {
 						var newX = (e.pageX - Global.mouseDownPosition.x) / Global.screenScale + Global.objectLastStatus.x
 						var newY = (e.pageY - Global.mouseDownPosition.y) / Global.screenScale + Global.objectLastStatus.y
 
+
+						// To Fix:如果禁止元素出去，则不需要trim功能（V键）
 						// Prevent objects from being dragged out of screen area
 						let minX = 0
 						let minY = 0
@@ -183,29 +231,78 @@ define(function() {
 					}
 				};
 				object.onmousedown = function() {
-					if(Global.multipleSelect){
-						return;
+
+					// 在多选模式下，第一个被选中的元素会赋值给currentSelected，
+					// 如果继续选第二个元素，则将第一个选择的元素(currentSelected)和之后的元素一并
+					// 存储到multipleSelected中，
+					// 如果不继续选，则第一个元素只存在currentSelected中，多选模式结束
+					
+
+					if(Global.multipleSelect && Global.currentSelected != object){
+						// 能触发多选，说明完成了单选
+						// 但是此状态下，还点击单选选中的元素，则无效（因为全程只有一个元素，没有多选）
+						if (Global.currentSelected) {
+							// 单选保存有元素，说明现在触发的是多选的第二个元素，
+							// 则取出单选元素和当前元素，保存到多选元组中
+							Global.multipleSelected.add(Global.currentSelected);
+							Global.multipleSelected.add(object);
+
+							// 清空单选，清除绑定的编辑器
+							Global.currentSelected.getElementsByTagName("rb")[0].style.display = "none";
+							Global.currentSelected = null
+							document.getElementById('attributesEditor').innerHTML = "";
+
+						}else{
+							// 多选模式开启，并且单选没有元素，说明正在多选第三个及之后的元素
+							// 直接添加进元组即可
+							Global.multipleSelected.add(object);
+						}
+
+					}else{
+						// 有元素在单选模式下被点击
+						// 或者多选模式下点击的第二个元素和第一个元素相同
+						// 元组不为空说明刚刚退出多选，但多个元素还被选中，因此需要清空元组
+						if(Global.multipleSelected.size){
+							
+							// forEach的回调会异步执行，因此需要在回调函数中一个一个删除元素，
+							// 否则由于异步执行会导致元素删除了还没更新完成界面。
+							Global.multipleSelected.forEach(function (elem) {
+
+								elem.getElementsByTagName("cm")[0].style.display = "none";
+								// 更新一个删除一个
+								Global.multipleSelected.delete(elem);
+							});
+
+							// 不可以在这里直接执行 Global.multipleSelected.clear()
+							// 会导致异步错误
+						}
+
+						Global.currentSelected = object;
+
+						object.setAttribute("draggable", "true"); // 元素被选中时，设置为可拖动
+
+						Global.objectMoving = true;
+						object.getElementsByTagName("rb")[0].style.display = "block";
+
+						Global.objectLastStatus = {
+							w: parseFloat(window.getComputedStyle(object).width),
+							h: parseFloat(window.getComputedStyle(object).height),
+							x: parseFloat(window.getComputedStyle(object).left) || 0,
+							y: parseFloat(window.getComputedStyle(object).top) || 0
+						}
+
+						Update.updateEditor(Config.enableStyles, object);
+						
 					}
-
-					Global.currentSelected = object;
-
-					object.setAttribute("draggable", "true"); // 元素被选中时，设置为可拖动
-
-					Global.objectMoving = true;
-					object.getElementsByTagName("rb")[0].style.display = "block";
-
-					Global.objectLastStatus = {
-						w: parseFloat(window.getComputedStyle(object).width),
-						h: parseFloat(window.getComputedStyle(object).height),
-						x: parseFloat(window.getComputedStyle(object).left) || 0,
-						y: parseFloat(window.getComputedStyle(object).top) || 0
-					}
-
-					Update.updateEditor(Config.enableStyles, object);
-
+					console.log(Global.multipleSelected)
+					console.log(Global.currentSelected)
+					// 无论任何情况，当前被点击的元素都要高亮
+					object.getElementsByTagName("cm")[0].style.display = "block";
+					
 				};
 
-				Global.objectList.push({ id: object })
+				Global.objectList.add({ id: object })
+				
 			}
 
 			function handleLayer(layer) {

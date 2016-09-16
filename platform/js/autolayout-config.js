@@ -77,6 +77,10 @@ define(["require"], function(require) {
                 },
                 "data": {}
             }
+        },
+        enableConstraints:{
+            "WithCanvas":["Center"],
+            "WithObject":[]
         }
     }
 
