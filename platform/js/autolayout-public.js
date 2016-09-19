@@ -119,6 +119,8 @@ define(function() {
 			let layer = document.getElementById("layer-"+obj.getAttribute("al-id"));
 			layer.parentNode.removeChild(layer);
 			obj.parentNode.removeChild(obj);
+			// 删除当前元素的同时，需要删去关联的编辑器
+			document.getElementById('attributesEditor').innerHTML = "";
 		},
 
 		getLayerByObject: function (obj) {

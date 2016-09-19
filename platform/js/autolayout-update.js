@@ -43,9 +43,12 @@ define(["require"], function(require) {
 				input.onkeyup = function () {
 					let e = event || window.event;
 					let bind = e.target.getAttribute("al-bind");
-					selectedObj.setAttribute(bind, e.target.value);
 
-					// TODO: just for test here,
+					// To Fix:should to check the value is valid or not
+					selectedObj.setAttribute(bind, e.target.value);
+					// this.updateCheck();
+
+					// To Fix: just for test here,
 					// need to build a function to update object
 					selectedObj.firstChild.nodeValue = e.target.value;
 				}
@@ -59,6 +62,10 @@ define(["require"], function(require) {
 				attributesEditor.innerHTML = "";
 				attributesEditor.appendChild(editor);
 			}
+		},
+
+		updateCheck:function(argument) {
+			// body...
 		}
     };
 

@@ -71,10 +71,8 @@ define(function() {
 				Global.keyDown = null;
 
 				// delete selected object by press "Delete" key
-				if (e.keyCode == 8) {
-					// BackSpace
-
-					// To Fix: 在输入框内删除数据时也会触发删除事件
+				if (e.keyCode == 46) {
+					// fixed to "Delete" key instead "BcakSpace"
 					Public.removeCurrentSelectedObject(Global.currentSelected);
 				}
 
@@ -213,19 +211,20 @@ define(function() {
 					if (Global.objectMoving) {
 						if(e.pageX == 0 && e.pageY == 0){return;} // 消除特殊情况（鼠标松开时，有一个偏差坐标 (0，0)）
 
-						var newX = (e.pageX - Global.mouseDownPosition.x) / Global.screenScale + Global.objectLastStatus.x
-						var newY = (e.pageY - Global.mouseDownPosition.y) / Global.screenScale + Global.objectLastStatus.y
+						let newX = (e.pageX - Global.mouseDownPosition.x) / Global.screenScale + Global.objectLastStatus.x,
+							newY = (e.pageY - Global.mouseDownPosition.y) / Global.screenScale + Global.objectLastStatus.y;
 
 
 						// To Fix:如果禁止元素出去，则不需要trim功能（V键）
 						// Prevent objects from being dragged out of screen area
-						let minX = 0
-						let minY = 0
-						let maxX = Global.screenLastStatus.w - Global.objectLastStatus.w
-						let maxY = Global.screenLastStatus.h - Global.objectLastStatus.h
+						let minX = - Global.objectLastStatus.w,
+							minY = - Global.objectLastStatus.h;
 
-						newX = newX < minX ? 0 : newX > maxX ? maxX : newX;
-						newY = newY < minY ? 0 : newY > maxY ? maxY : newY;
+						let maxX = Global.screenLastStatus.w,
+							maxY = Global.screenLastStatus.h;
+
+						newX = newX < minX ? minX : (newX > maxX ? maxX : newX);
+						newY = newY < minY ? minY : (newY > maxY ? maxY : newY);
 
 						object.style.left = newX+"px";
 						object.style.top = newY+"px";
