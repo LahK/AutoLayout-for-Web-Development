@@ -35,6 +35,7 @@ define(function() {
 		scaleLargeBtn: document.getElementById("scaleLarge"),
 		scaleStatusSpan: document.getElementById("scaleStatus"),
 
+		// Global.symbolList是一个nodelist类型的对象，无法直接forEach
 		symbolList: document.querySelectorAll(".module-symbol"),
 		layerList: document.getElementById('layerList'),
 

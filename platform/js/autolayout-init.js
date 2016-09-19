@@ -148,9 +148,11 @@ define(function() {
 				document.getElementById("moduleListCont").style.display = "none";
 				if (e.target.id === "moduleListCont") {
 
-				};
+				}
 			}
-			Global.symbolList.forEach(function(symbol) {
+			// Global.symbolList是一个nodelist类型的对象，无法直接forEach
+			// 
+			;[].forEach.call(Global.symbolList, function(symbol) {
 				symbol.onclick = function() {
 					let type = symbol.getAttribute("al-type"),
 						id = Global.getLastId(),
