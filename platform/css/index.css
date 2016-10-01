@@ -7,7 +7,7 @@ body {
 }
 
 .header {
-    flex: 0 0 30px;
+    flex: 0 0 5vh;
     border: solid 1px #aaa;
     border-width: 0 0 1px 0;
     background: #e6e6e6;
@@ -19,7 +19,7 @@ body {
     display: inline-block;
     height: 30px;
     width: 30px;
-    background: url(image/autolayout.png);
+    background: url(../image/autolayout.png);
     background-size: 30px;
     background-repeat: no-repeat;
     margin: -8px 35px;
@@ -127,25 +127,19 @@ body {
     vertical-align: middle;
 }
 
-.tools-bar {
-    order: 3;
-    flex: 0 0 270px;
-    z-index: 99999;
-    background: #e6e6e6;
-    box-shadow: 0 0 20px #777;
-}
-.module-list-mask{
+.module-list-mask {
     display: none;
     position: absolute;
     top: 0;
     z-index: 9999;
     padding: 30px;
-    box-sizing:border-box;
+    box-sizing: border-box;
     width: 100vw;
     height: 100vh;
     overflow: hidden;
     background-color: rgba(200, 200, 200, 0.2);
 }
+
 .module-list {
     background-color: #fff;
     min-height: 30vh;
@@ -163,7 +157,6 @@ body {
 }
 
 .module-symbol {
-
     border: 1px solid #c5c5c5;
     border-radius: 5px;
     margin: 5px;
@@ -183,7 +176,7 @@ body {
     background-size: 100%;
     background-position: center center;
     background-repeat: no-repeat;
-    background-image: url(./image/autolayout.png);
+    background-image: url(../image/autolayout.png);
 }
 
 .module-button {
@@ -194,8 +187,20 @@ body {
     background: red;
 }
 
-.attributes-editor {
-    height: 50vh;
+.tools-bar {
+    order: 3;
+    flex: 0 0 270px;
+    display: flex;
+    max-height: 89vh;
+    flex-direction: column;
+    z-index: 99999;
+    background: #e6e6e6;
+    box-shadow: 0 0 20px #777;
+}
+
+.attributes-editor,
+.constraints-editor {
+    flex: 1 1 auto;
     overflow-y: auto;
     border: 1px solid #9c9c9c;
     box-sizing: border-box;
@@ -210,6 +215,21 @@ body {
 
 .attribute-warp input {
     width: 130px;
+}
+
+.constraint-warp {
+    /*   text-align: right;
+    margin: 10px auto;*/
+    width: 230px;
+}
+
+.constraint-warp input[type=checkbox] {
+    width: 10px;
+    text-align: left;
+}
+
+.constraint-warp input {
+    width: 60px;
 }
 
 .footer {

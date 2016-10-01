@@ -1,7 +1,10 @@
 'use strict';
 define(["require"], function(require) {
     var UpdateObject = {
-    	updateEditor: function(confObj, selectedObj) {
+    	updateEditor:function () {
+    		
+    	},
+    	updateStyleEditor: function(confObj, selectedObj) {
 
 			if (selectedObj === null) {return null};
 			let type = selectedObj.getAttribute("al-type");
@@ -61,6 +64,67 @@ define(["require"], function(require) {
 			if (editor) {
 				attributesEditor.innerHTML = "";
 				attributesEditor.appendChild(editor);
+			}
+		},
+		updateSingleConstraintEditor:function (confObj, selectedObj) {
+			let config  = confObj["Single"];
+			if (!selectedObj || !config) return null;
+
+			let editor = document.createElement("div");
+
+			for(let type in config){
+				let childNode = config[type];
+				let fieldset = document.createElement('fieldset')
+				fieldset.innerHTML = "<legend>"+ type +"</legend>";
+				for(let key in childNode){
+					let warp = document.createElement("div");
+					warp.className = "constraint-warp";
+					warp.innerHTML = "<input type='checkbox' value='"+ key +"' /><span>" + key + "</span>";
+
+					let input = document.createElement('input');
+					warp.appendChild(input);
+					fieldset.appendChild(warp);
+				}
+
+				editor.appendChild(fieldset);
+			}
+
+			let constraintsEditor = document.getElementById('constraintsEditor');
+			if (editor) {
+				constraintsEditor.innerHTML = "";
+				constraintsEditor.appendChild(editor);
+			}
+			
+		},
+
+		updateMultiConstraintEditor:function (confObj, multipleFirst, multipleSelected) {
+
+			let config  = confObj["Multiple"];
+
+			if (!multipleFirst || !multipleSelected  || !multipleSelected.size || !config) return null;
+
+			let editor = document.createElement("div");
+			for(let type in config){
+				let childNode = config[type];
+				let fieldset = document.createElement('fieldset')
+				fieldset.innerHTML = "<legend>"+ type +"</legend>";
+				for(let key in childNode){
+					let warp = document.createElement("div");
+					warp.className = "constraint-warp";
+					warp.innerHTML = "<input type='checkbox' value='"+ key +"' /><span>" + key + "</span>";
+
+					let input = document.createElement('input');
+					warp.appendChild(input);
+					fieldset.appendChild(warp);
+				}
+
+				editor.appendChild(fieldset);
+			}
+
+			let constraintsEditor = document.getElementById('constraintsEditor');
+			if (editor) {
+				constraintsEditor.innerHTML = "";
+				constraintsEditor.appendChild(editor);
 			}
 		},
 

@@ -28,7 +28,8 @@ define(function() {
 		
 		multipleSelected:new Set(),
 		multipleSelect: false,
-
+		multipleFirst: null,
+		
 		canvasArea: document.getElementById('canvasArea'),
 		screenArea: document.getElementById('screenArea'),
 		scaleSmallBtn: document.getElementById("scaleSmall"),

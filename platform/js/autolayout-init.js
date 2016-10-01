@@ -94,24 +94,7 @@ define(function() {
 				if (Global.keyDown == 32) {
 					Global.screenMoving = true;
 				}
-				// }else if (!Global.multipleSelect) {
-				// 	if (Global.multipleSelected.length) {
-				// 		Global.multipleSelected.forEach(function (elem) {
-				// 			elem.getElementsByTagName("cm")[0].style.display = "none";
-				// 		});
-				// 	};
-					
-				// 	// 当多选列表里面有元素的时候
-				// 	if(Global.multipleSelected.length == 1){
-				// 		// 当多选列表只有一个元素，则取出给currentSelected
-				// 		Global.currentSelected = Global.multipleSelected[0]
-				// 		Global.currentSelected.getElementsByTagName("cm")[0].style.display="block";
-				// 	}
-				// 	// 清空多选列表
-					
-				// 	Global.multipleSelected = new Set();
-				// };
-				// console.log(Global.multipleSelected)
+
 			}
 			Global.screenArea.onmousemove = function(event) {
 
@@ -193,10 +176,12 @@ define(function() {
 					object.style.lineHeight = Global.currentSelected.style.height;
 
 
-					// updateEditor作用是新产生一个编辑器，
+					// updateStyleEditor作用是新产生一个编辑器，
 					// 并和传入的元素绑定，并不是和 currentSelected 绑定，
 					// 因此，当手动清空currentSelected的时候，需要删除生成的editor
-					Update.updateEditor(Config.enableStyles, object);
+					Update.updateStyleEditor(Config.enableStyles, object);
+
+					Update.updateSingleConstraintEditor(Config.enableConstraints, object);
 				}
 
 				// resizeButton.ondragend = function(event) {
@@ -215,7 +200,6 @@ define(function() {
 							newY = (e.pageY - Global.mouseDownPosition.y) / Global.screenScale + Global.objectLastStatus.y;
 
 
-						// To Fix:如果禁止元素出去，则不需要trim功能（V键）
 						// Prevent objects from being dragged out of screen area
 						let minX = - Global.objectLastStatus.w,
 							minY = - Global.objectLastStatus.h;
@@ -228,7 +212,8 @@ define(function() {
 
 						object.style.left = newX+"px";
 						object.style.top = newY+"px";
-						Update.updateEditor(Config.enableStyles, object);
+						Update.updateStyleEditor(Config.enableStyles, object);
+						Update.updateSingleConstraintEditor(Config.enableConstraints, object);
 					}
 				};
 				object.onmousedown = function() {
@@ -248,10 +233,14 @@ define(function() {
 							Global.multipleSelected.add(Global.currentSelected);
 							Global.multipleSelected.add(object);
 
+							// multipleFirst记录下多选中第一个选中的元素
+							Global.multipleFirst = Global.currentSelected;
 							// 清空单选，清除绑定的编辑器
 							Global.currentSelected.getElementsByTagName("rb")[0].style.display = "none";
-							Global.currentSelected = null
+							Global.currentSelected = null;
+
 							document.getElementById('attributesEditor').innerHTML = "";
+							document.getElementById('constraintsEditor').innerHTML = "";
 
 						}else{
 							// 多选模式开启，并且单选没有元素，说明正在多选第三个及之后的元素
@@ -259,6 +248,7 @@ define(function() {
 							Global.multipleSelected.add(object);
 						}
 
+						Update.updateMultiConstraintEditor(Config.enableConstraints, Global.multipleFirst, Global.multipleSelected);
 					}else{
 						// 有元素在单选模式下被点击
 						// 或者多选模式下点击的第二个元素和第一个元素相同
@@ -273,9 +263,12 @@ define(function() {
 								// 更新一个删除一个
 								Global.multipleSelected.delete(elem);
 							});
-
 							// 不可以在这里直接执行 Global.multipleSelected.clear()
+							// 因为 forEach是异步操作，上面的display = "none" 还没有执行完，就直接clear了
 							// 会导致异步错误
+
+							// 清空
+							Global.multipleFirst = null;
 						}
 
 						Global.currentSelected = object;
@@ -292,11 +285,14 @@ define(function() {
 							y: parseFloat(window.getComputedStyle(object).top) || 0
 						}
 
-						Update.updateEditor(Config.enableStyles, object);
+						Update.updateStyleEditor(Config.enableStyles, object);
+
+						Update.updateSingleConstraintEditor(Config.enableConstraints, object);
 						
 					}
-					console.log(Global.multipleSelected)
-					console.log(Global.currentSelected)
+					console.log(Global.multipleSelect);
+					console.log(Global.multipleSelected);
+					console.log(Global.currentSelected);
 					// 无论任何情况，当前被点击的元素都要高亮
 					object.getElementsByTagName("cm")[0].style.display = "block";
 					
