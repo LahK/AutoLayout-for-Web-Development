@@ -66,9 +66,94 @@ define(["require"], function(require) {
 				attributesEditor.appendChild(editor);
 			}
 		},
-		updateSingleConstraintEditor:function (confObj, selectedObj) {
+		updateSingleConstraintEditor:function (confObj, selectedObj, objectList=null) {
 			let config  = confObj["Single"];
 			if (!selectedObj || !config) return null;
+
+			var leftObj = null;
+			var rightObj = null;
+			var topObj = null;
+			var bottomObj = null;
+			var leftObjStatus = null;
+			var rightObjStatus = null;
+			var topObjStatus = null;
+			var bottomObjStatus = null;
+			if(objectList!=null){
+				for(var i=0; i<objectList.length; i++){
+					if(selectedObj==objectList[i]){continue;}
+					var selectedObjStatus = statusOf(selectedObj);
+					var currentObjStatus = statusOf(objectList[i]);
+
+					if(isLeftOfAnotherObject(currentObjStatus, selectedObjStatus)){
+						if(leftObj!=null){
+							if((leftObjStatus.x+leftObjStatus.w) < (currentObjStatus.x+currentObjStatus.w)){
+								leftObj = objectList[i];
+								leftObjStatus = currentObjStatus;
+							}
+						} else {
+							leftObj = objectList[i];
+							leftObjStatus = currentObjStatus;
+						}
+
+						continue;
+					}
+					if(isRightOfAnotherObject(currentObjStatus, selectedObjStatus)){
+						if(leftObj!=null){
+							if((rightObjStatus.x) > (currentObjStatus.x)){
+								rightObj = objectList[i];
+								rightObjStatus = currentObjStatus;
+							}
+						} else {
+							rightObj = objectList[i];
+							rightObjStatus = currentObjStatus;
+						}
+
+						continue;
+					}
+					if(isTopOfAnotherObject(currentObjStatus, selectedObjStatus)){
+						if(topObj!=null){
+							if((topObjStatus.y+topObjStatus.h) < (currentObjStatus.y+currentObjStatus.h)){
+								topObj = objectList[i];
+								topObjStatus = currentObjStatus;
+							}
+						} else {
+							topObj = objectList[i];
+							topObjStatus = currentObjStatus;
+						}
+
+						continue;
+					}
+					if(isBottomOfAnotherObject(currentObjStatus, selectedObjStatus)){
+						if(bottomObj!=null){
+							if((bottomObjStatus.y+bottomObjStatus.h) > (currentObjStatus.y+currentObjStatus.h)){
+								bottomObj = objectList[i];
+								bottomObjStatus = currentObjStatus;
+							}
+						} else {
+							bottomObj = objectList[i];
+							bottomObjStatus = currentObjStatus;
+						}
+
+						continue;
+					}
+				}
+			}
+			if(leftObj!=null){
+				console.log("left:")
+				console.log(leftObj);
+			}
+			if(rightObj!=null){
+				console.log("right:")
+				console.log(rightObj);
+			}
+			if(topObj!=null){
+				console.log("top:")
+				console.log(topObj);
+			}
+			if(bottomObj!=null){
+				console.log("bottom:")
+				console.log(bottomObj);
+			}
 
 			let editor = document.createElement("div");
 
@@ -132,6 +217,51 @@ define(["require"], function(require) {
 			// body...
 		}
     };
+
+
+	// get the computed size & location info
+	function statusOf(obj) {
+		var objStatus = {
+			x: parseFloat(window.getComputedStyle(obj).left) || 0,
+			y: parseFloat(window.getComputedStyle(obj).top) || 0,
+			w: parseFloat(window.getComputedStyle(obj).width) || 50,
+			h: parseFloat(window.getComputedStyle(obj).height) || 50,
+		};
+
+		return objStatus;
+	};
+
+
+	// functions to determine position relation between two objects
+	
+	function isTopOfAnotherObject(objStatus,anotherObjStatus) {
+		if (anotherObjStatus.y < (objStatus.y + objStatus.h)) {return false;}
+		if (anotherObjStatus.x > (objStatus.x + objStatus.w)) {return false;}
+		if ((anotherObjStatus.x + anotherObjStatus.w) < objStatus.x) {return false;}
+
+		return true;
+	};
+	function isBottomOfAnotherObject(objStatus,anotherObjStatus) {
+		if (objStatus.y < (anotherObjStatus.y + anotherObjStatus.h)) {return false;}
+		if (objStatus.x > (anotherObjStatus.x + anotherObjStatus.w)) {return false;}
+		if ((objStatus.x + objStatus.w) < anotherObjStatus.x) {return false;}
+
+		return true;
+	};
+	function isLeftOfAnotherObject(objStatus,anotherObjStatus) {
+		if (anotherObjStatus.x < (objStatus.x + objStatus.w)) {return false;}
+		if (anotherObjStatus.y > (objStatus.y + objStatus.h)) {return false;}
+		if ((anotherObjStatus.y + anotherObjStatus.h) < objStatus.y) {return false;}
+
+		return true;
+	};
+	function isRightOfAnotherObject(objStatus,anotherObjStatus) {
+		if (objStatus.x < (anotherObjStatus.x + anotherObjStatus.w)) {return false;}
+		if (objStatus.y > (anotherObjStatus.y + anotherObjStatus.h)) {return false;}
+		if ((objStatus.y + objStatus.h) < anotherObjStatus.y) {return false;}
+
+		return true;
+	};
 
     return UpdateObject;
 })

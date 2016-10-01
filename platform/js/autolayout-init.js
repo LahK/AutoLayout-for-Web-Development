@@ -216,6 +216,10 @@ define(function() {
 						Update.updateSingleConstraintEditor(Config.enableConstraints, object);
 					}
 				};
+				object.ondragend = function(event){
+					// 重新获取附近元素
+					Update.updateSingleConstraintEditor(Config.enableConstraints, object, Global.screenArea.children);
+				}
 				object.onmousedown = function() {
 
 					// 在多选模式下，第一个被选中的元素会赋值给currentSelected，
@@ -287,7 +291,7 @@ define(function() {
 
 						Update.updateStyleEditor(Config.enableStyles, object);
 
-						Update.updateSingleConstraintEditor(Config.enableConstraints, object);
+						Update.updateSingleConstraintEditor(Config.enableConstraints, object, Global.screenArea.children);
 						
 					}
 					console.log(Global.multipleSelect);

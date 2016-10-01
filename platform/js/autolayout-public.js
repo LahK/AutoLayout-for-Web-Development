@@ -159,6 +159,21 @@ define(function() {
 			}
 		},
 
+		// get the computed size & location info
+		statusOf: function (obj) {
+			var objStatus = {
+				x: parseFloat(window.getComputedStyle(obj).left) || 0,
+				y: parseFloat(window.getComputedStyle(obj).top) || 0,
+				w: parseFloat(window.getComputedStyle(obj).width) || 50,
+				h: parseFloat(window.getComputedStyle(obj).height) || 50,
+			};
+
+			return objStatus;
+		},
+
+
+		// functions to determine position relation between two objects
+		
 		isTopOfAnotherObject: function (objStatus,anotherObjStatus) {
 			if (anotherObjStatus.y < (objStatus.y + objStatus.h)) {return false;}
 			if (anotherObjStatus.x > (objStatus.x + objStatus.w)) {return false;}
