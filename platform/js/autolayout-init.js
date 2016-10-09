@@ -21,17 +21,6 @@ define(function() {
 				Global.mouseOver = e.target;
 			};
 
-			document.addEventListener("mousedown", function(event) {
-				if (Global.currentSelected && !Global.multipleSelect) {
-					Global.currentSelected.getElementsByTagName('cm')[0].style.display = "none";
-					Global.currentSelected.getElementsByTagName('rb')[0].style.display = "none";
-					Global.currentSelected.setAttribute("draggable", "false");
-				}
-				let e = event || window.event || arguments.callee.caller.arguments[0];
-
-				Global.mouseDownPosition = { x: e.pageX, y: e.pageY };
-			}, true);
-
 			document.addEventListener("mouseup", function() {
 				Global.screenMoving = false;
 				Global.objectMoving = false;
@@ -88,11 +77,18 @@ define(function() {
 			}
 			Global.screenArea.onmousedown = function(event) {
 				let e = event || window.event || arguments.callee.caller.arguments[0];
+				Global.mouseDownPosition = { x: e.pageX, y: e.pageY };
 
 				Global.screenLastStatus.x = parseFloat(window.getComputedStyle(Global.screenArea).left) || 50;
 				Global.screenLastStatus.y = parseFloat(window.getComputedStyle(Global.screenArea).top) || 50;
 				if (Global.keyDown == 32) {
 					Global.screenMoving = true;
+				} else if(Global.currentSelected && e.target === Global.screenArea && !Global.multipleSelect){
+					Global.currentSelected.getElementsByTagName('rb')[0].style.display = "none";
+					Global.currentSelected.className = (Global.currentSelected.className).replace(' mark', '');
+					Global.currentSelected = null;
+					document.getElementById('attributesEditor').innerHTML = "";
+					document.getElementById('constraintsEditor').innerHTML = "";
 				}
 
 			}
@@ -164,8 +160,9 @@ define(function() {
 				// coverMask.style = object.style;
 
 				resizeButton.ondragstart = function(event) {
-					let e = event || window.event || arguments.callee.caller.arguments[0];
 
+					let e = event || window.event || arguments.callee.caller.arguments[0];
+					object.setAttribute("draggable", "false");
 					Global.objectMoving = false;
 				}
 				resizeButton.ondrag = function(event) {
@@ -180,25 +177,25 @@ define(function() {
 					// 并和传入的元素绑定，并不是和 currentSelected 绑定，
 					// 因此，当手动清空currentSelected的时候，需要删除生成的editor
 					Update.updateStyleEditor(Config.enableStyles, object);
-
-					Update.updateSingleConstraintEditor(Config.enableConstraints, object);
 				}
 
-				// resizeButton.ondragend = function(event) {
-				//     let e = event || window.event || arguments.callee.caller.arguments[0];
-
-				// }
+				resizeButton.ondragend = function(event) {
+				    let e = event || window.event || arguments.callee.caller.arguments[0];
+				    Update.updateSingleConstraintEditor(Config.enableConstraints, object, Global.screenArea.children);
+				}
 				object.appendChild(coverMask);
 				object.appendChild(resizeButton);
 
 				object.ondrag = function(event) {
 					let e = event || window.event || arguments.callee.caller.arguments[0];
+					
 					if (Global.objectMoving) {
 						if(e.pageX == 0 && e.pageY == 0){return;} // 消除特殊情况（鼠标松开时，有一个偏差坐标 (0，0)）
 
 						let newX = (e.pageX - Global.mouseDownPosition.x) / Global.screenScale + Global.objectLastStatus.x,
 							newY = (e.pageY - Global.mouseDownPosition.y) / Global.screenScale + Global.objectLastStatus.y;
 
+						
 
 						// Prevent objects from being dragged out of screen area
 						let minX = - Global.objectLastStatus.w,
@@ -213,7 +210,6 @@ define(function() {
 						object.style.left = newX+"px";
 						object.style.top = newY+"px";
 						Update.updateStyleEditor(Config.enableStyles, object);
-						Update.updateSingleConstraintEditor(Config.enableConstraints, object);
 					}
 				};
 				object.ondragend = function(event){
@@ -234,9 +230,12 @@ define(function() {
 						if (Global.currentSelected) {
 							// 单选保存有元素，说明现在触发的是多选的第二个元素，
 							// 则取出单选元素和当前元素，保存到多选元组中
+							Global.currentSelected.className = (Global.currentSelected.className).replace('mark', 'first-mark');
 							Global.multipleSelected.add(Global.currentSelected);
-							Global.multipleSelected.add(object);
 
+							object.className += ' mark';
+							Global.multipleSelected.add(object);
+							
 							// multipleFirst记录下多选中第一个选中的元素
 							Global.multipleFirst = Global.currentSelected;
 							// 清空单选，清除绑定的编辑器
@@ -249,21 +248,32 @@ define(function() {
 						}else{
 							// 多选模式开启，并且单选没有元素，说明正在多选第三个及之后的元素
 							// 直接添加进元组即可
-							Global.multipleSelected.add(object);
+							if (object.className.indexOf(' mark') > -1) {
+
+								object.className = (object.className).replace(' mark', '');
+								Global.multipleSelected.delete(object);
+							}else{
+
+								object.className += ' mark';
+								Global.multipleSelected.add(object);
+							}
 						}
 
+						
 						Update.updateMultiConstraintEditor(Config.enableConstraints, Global.multipleFirst, Global.multipleSelected);
 					}else{
 						// 有元素在单选模式下被点击
 						// 或者多选模式下点击的第二个元素和第一个元素相同
 						// 元组不为空说明刚刚退出多选，但多个元素还被选中，因此需要清空元组
+
 						if(Global.multipleSelected.size){
 							
 							// forEach的回调会异步执行，因此需要在回调函数中一个一个删除元素，
 							// 否则由于异步执行会导致元素删除了还没更新完成界面。
 							Global.multipleSelected.forEach(function (elem) {
 
-								elem.getElementsByTagName("cm")[0].style.display = "none";
+
+								elem.className = elem.className.replace(' mark', '').replace(' first-mark', '');
 								// 更新一个删除一个
 								Global.multipleSelected.delete(elem);
 							});
@@ -275,13 +285,8 @@ define(function() {
 							Global.multipleFirst = null;
 						}
 
-						Global.currentSelected = object;
-
-						object.setAttribute("draggable", "true"); // 元素被选中时，设置为可拖动
-
 						Global.objectMoving = true;
-						object.getElementsByTagName("rb")[0].style.display = "block";
-
+						object.setAttribute("draggable", "true");
 						Global.objectLastStatus = {
 							w: parseFloat(window.getComputedStyle(object).width),
 							h: parseFloat(window.getComputedStyle(object).height),
@@ -289,17 +294,26 @@ define(function() {
 							y: parseFloat(window.getComputedStyle(object).top) || 0
 						}
 
-						Update.updateStyleEditor(Config.enableStyles, object);
+						if (Global.currentSelected !== object) {
 
-						Update.updateSingleConstraintEditor(Config.enableConstraints, object, Global.screenArea.children);
-						
+
+							if (Global.currentSelected) {
+								Global.currentSelected.className = (Global.currentSelected.className).replace(' mark', '');
+								Global.currentSelected.getElementsByTagName("rb")[0].style.display = "none";
+							}
+
+							object.querySelector("rb").style.display = "block";
+							object.className += ' mark';
+							Global.currentSelected = object;
+
+							Update.updateStyleEditor(Config.enableStyles, object, true);
+
+							Update.updateSingleConstraintEditor(Config.enableConstraints, object, Global.screenArea.children, true);
+						};
 					}
-					console.log(Global.multipleSelect);
-					console.log(Global.multipleSelected);
-					console.log(Global.currentSelected);
-					// 无论任何情况，当前被点击的元素都要高亮
-					object.getElementsByTagName("cm")[0].style.display = "block";
-					
+					// console.log(Global.multipleSelect);
+					// console.log(Global.multipleSelected);
+					// console.log(Global.currentSelected);
 				};
 
 				Global.objectList.add({ id: object })

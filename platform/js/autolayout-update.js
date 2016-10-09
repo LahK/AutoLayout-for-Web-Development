@@ -4,85 +4,79 @@ define(["require"], function(require) {
     	updateEditor:function () {
     		
     	},
-    	updateStyleEditor: function(confObj, selectedObj) {
+    	updateStyleEditor: function(confObj, selectedObj, init=false) {
+    		let attributesEditor = document.getElementById('attributesEditor');
+    		let type = selectedObj.getAttribute("al-type");
+    		let config  = confObj[type];
 
-			if (selectedObj === null) {return null};
-			let type = selectedObj.getAttribute("al-type");
-			let config  = confObj[type];
-			if (!selectedObj || !config || config.length) return null;
+    		if (init == true) {
+    			let editor = document.createElement("div");
+    			for(let index in config){
+    				for(let key in config[index]){
 
-			let styleConfig = config["style"];
-			let dataConfig = config["data"];
-			let editor = document.createElement("div");
+    					let warp = document.createElement("div");
+						warp.className = "attribute-warp";
+						warp.innerHTML = "<span>" + key + "</span>";
 
-			for (let key in styleConfig) {
-				let warp = document.createElement("div");
-				warp.className = "attribute-warp";
-				warp.innerHTML = "<span>" + key + "</span>";
+						let input = document.createElement('input');
+						input.setAttribute("al-bind-type",index);
+						input.setAttribute("al-bind",config[index][key]);
+						input.onkeyup = function  () {
+							let e = event || window.event;
+							let bind = e.target.getAttribute("al-bind");
+							let bindType = e.target.getAttribute('al-bind-type');
 
-				let input = document.createElement('input');
-				input.setAttribute("al-bind",styleConfig[key]);
-				// console.log(window.getComputedStyle(selectedObj),styleConfig[key])
-				input.value =  window.getComputedStyle(selectedObj)[styleConfig[key]];
-				input.onkeyup = function () {
-					let e = event || window.event;
-					let bind = e.target.getAttribute("al-bind");
-					selectedObj.style[bind] = e.target.value;
+							if (bindType === 'Style') {
+								selectedObj.style[bind] = e.target.value;
+							}else if (bindType === 'Data') {
+								// To Fix:should to check the value is valid or not
+								selectedObj.setAttribute(bind, e.target.value);
+								// this.updateCheck();
+
+								// To Fix: just for test here,
+								// need to build a function to update object
+								selectedObj.firstChild.nodeValue = e.target.value;
+							};
+						}
+    					warp.appendChild(input);
+						editor.appendChild(warp);
+    				}
+    			}
+    			
+				if (editor) {
+					attributesEditor.innerHTML = "";
+					attributesEditor.appendChild(editor);
 				}
-				warp.appendChild(input);
+    		}
 
-				editor.appendChild(warp);
-			};
+			let inputList = attributesEditor.querySelectorAll('input');
 
-
-			for (let key in dataConfig) {
-				let warp = document.createElement("div");
-				warp.className = "attribute-warp";
-				warp.innerHTML = "<span>" + key + "</span>";
-
-				let input = document.createElement('input');
-				input.setAttribute("al-bind",dataConfig[key]);
-				input.value =  selectedObj.getAttribute(dataConfig[key]);
-				input.onkeyup = function () {
-					let e = event || window.event;
-					let bind = e.target.getAttribute("al-bind");
-
-					// To Fix:should to check the value is valid or not
-					selectedObj.setAttribute(bind, e.target.value);
-					// this.updateCheck();
-
-					// To Fix: just for test here,
-					// need to build a function to update object
-					selectedObj.firstChild.nodeValue = e.target.value;
-				}
-				warp.appendChild(input);
-
-				editor.appendChild(warp);
-			};
-			
-			let attributesEditor = document.getElementById('attributesEditor');
-			if (editor) {
-				attributesEditor.innerHTML = "";
-				attributesEditor.appendChild(editor);
-			}
+			for(let i of inputList){
+				let bindType = i.getAttribute('al-bind-type');
+				let bind = i.getAttribute('al-bind');
+				if (bindType === 'Style') {
+					i.value =  window.getComputedStyle(selectedObj)[bind];
+				}else if (bindType === 'Data') {
+					i.value =  selectedObj.getAttribute(bind);
+				};
+    		}
 		},
-		updateSingleConstraintEditor:function (confObj, selectedObj, objectList=null) {
-			let config  = confObj["Single"];
-			if (!selectedObj || !config) return null;
+		updateSingleConstraintEditor:function (confObj, selectedObj, objectList, init=false) {
 
-			var leftObj = null;
-			var rightObj = null;
-			var topObj = null;
-			var bottomObj = null;
-			var leftObjStatus = null;
-			var rightObjStatus = null;
-			var topObjStatus = null;
-			var bottomObjStatus = null;
+			let leftObj = null,
+				rightObj = null,
+				topObj = null,
+				bottomObj = null,
+				leftObjStatus = null,
+				rightObjStatus = null,
+				topObjStatus = null,
+				bottomObjStatus = null;
+
 			if(objectList!=null){
-				for(var i=0; i<objectList.length; i++){
+				for(let i=0; i<objectList.length; i++){
 					if(selectedObj==objectList[i]){continue;}
-					var selectedObjStatus = statusOf(selectedObj);
-					var currentObjStatus = statusOf(objectList[i]);
+					let selectedObjStatus = statusOf(selectedObj);
+					let currentObjStatus = statusOf(objectList[i]);
 
 					if(isLeftOfAnotherObject(currentObjStatus, selectedObjStatus)){
 						if(leftObj!=null){
@@ -155,33 +149,102 @@ define(["require"], function(require) {
 				console.log(bottomObj);
 			}
 
-			let editor = document.createElement("div");
+			let config  = confObj["Single"];
+			let constraintsEditor = document.getElementById('constraintsEditor');
+			if (init) {
+				let editor = document.createElement("div");
+				for(let type in config){
 
-			for(let type in config){
-				let childNode = config[type];
-				let fieldset = document.createElement('fieldset')
-				fieldset.innerHTML = "<legend>"+ type +"</legend>";
-				for(let key in childNode){
-					let warp = document.createElement("div");
-					warp.className = "constraint-warp";
-					warp.innerHTML = "<input type='checkbox' value='"+ key +"' /><span>" + key + "</span>";
+					let fieldset = document.createElement('fieldset')
 
-					let input = document.createElement('input');
-					warp.appendChild(input);
-					fieldset.appendChild(warp);
+					fieldset.innerHTML = "<legend>"+ type +"</legend>";
+
+					for(let key in config[type]){
+						let warp = document.createElement("div");
+						warp.className = "constraint-warp";
+
+						let checkbox = document.createElement('input');
+						checkbox.setAttribute('type', 'checkbox');
+						checkbox.setAttribute('al-bind', config[type][key]);
+						checkbox.setAttribute('al-bind-type', type)
+						checkbox.className = 'al-enable';
+						checkbox.onkeyup = function () {
+							let e = event || window.event;
+
+							let bind = e.target.getAttribute('al-bind'),
+								bindType = e.target.getAttribute('al-bind-type');
+							let input = e.target.parentNode.querySelector('input.al-value');
+
+							// 对json进行处理
+							// e.target.checked ? json.thisObject.bindType.bind = input.value 
+							// 	: delete json.thisObject.bindType.bind;
+						}
+						
+						let input = document.createElement('input');
+						input.setAttribute('al-bind', config[type][key]);
+						input.className = 'al-value';
+						input.onkeyup = function () {
+							let e = event || window.event;
+
+							let bind = e.target.getAttribute('al-bind'),
+								bindType = e.target.getAttribute('al-bind-type');
+
+							let checkbox = e.target.parentNode.querySelector('input.al-enable');
+
+							// 当约束值发生改变，且勾选checkbox时，保存到数组
+							// checkbox.checked ? (json.thisObject.bindType.bind = input.value) : '';
+						}
+						warp.appendChild(checkbox);
+						warp.innerHTML += "<span>" + key + "</span>";
+						warp.appendChild(input);
+						fieldset.appendChild(warp);
+					}
+
+					editor.appendChild(fieldset);
 				}
 
-				editor.appendChild(fieldset);
+				
+				if (editor) {
+					constraintsEditor.innerHTML = "";
+					constraintsEditor.appendChild(editor);
+				}
 			}
+			let warpList = constraintsEditor.querySelectorAll('div.constraint-warp');
 
-			let constraintsEditor = document.getElementById('constraintsEditor');
-			if (editor) {
-				constraintsEditor.innerHTML = "";
-				constraintsEditor.appendChild(editor);
-			}
-			
+			// 遍历更新数据
+			;[].forEach.call(warpList, function (warp) {
+				let checkbox = warp.querySelector('input.al-enable');
+				
+
+				let bind = checkbox.getAttribute('al-bind'),
+					bindType = checkbox.getAttribute('al-bind-type');
+
+				let input = warp.querySelector('input.al-value');
+
+				// 这里的0/true为示例值
+				input.value = 0;
+				checkbox.checked = true;
+
+
+				// 伪代码，因为json还没有实现
+				// if (json.thisObject.bindType.bind) {
+				// 	// 当json中存在该值时，直接更新。
+				// 	checkbox.checked = true;
+				// 	input.value = json.thisObject.bindType.bind;
+				// }else{
+				// 	// json中不存在，则计算
+				// 	if (bindType === 'Shape') {
+				// 		input.value = document.getComputedStyle(selectedObj)[bind];
+				// 	}else if (bindType === 'Margins') {
+				// 		input.vaule = computeredMargins[bind];
+				// 	}else if (bindType === 'Aligments') {
+				// 		input.vaule = computeredAligments[bind];
+				// 	};
+				// }
+			});
 		},
 
+		// 多选的约束还没有做
 		updateMultiConstraintEditor:function (confObj, multipleFirst, multipleSelected) {
 
 			let config  = confObj["Multiple"];

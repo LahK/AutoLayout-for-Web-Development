@@ -99,7 +99,14 @@ body {
     z-index: 0;
     overflow: hidden;
 }
-
+.mark cm{
+    display: block;
+}
+.first-mark cm{
+    display: block;
+    background-color:rgba(169, 25, 60, 0.4);
+    cursor: not-allowed;
+}
 .scale-bar {
     position: absolute;
     left: 50px;

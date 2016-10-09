@@ -3,13 +3,13 @@ define(["require"], function(require) {
 	var Config = {
 		enableStyles: {
 			"Screen": {
-				"style": {
+				"Style": {
 					"Height": "height",
 					"Bg-Color": "background-color"
 				}
 			},
 			"Label": {
-				"style": {
+				"Style": {
 					"Z-Index": "z-index",
 					"Font": "font-family",
 					"FontSize": "font-size",
@@ -22,14 +22,14 @@ define(["require"], function(require) {
 					"Bd-Radius": "border-radius",
 					"Bg-Color": "background-color"
 				},
-				"data": {
+				"Data": {
 					"Text": "al-text"
 				}
 
 
 			},
 			"Button": {
-				"style": {
+				"Style": {
 					"Z-Index": "z-index",
 					"FontSize": "font-size",
 					"Font": "font-family",
@@ -42,14 +42,14 @@ define(["require"], function(require) {
 					"Bd-Radius": "border-radius",
 					"Bg-Color": "background-color"
 				},
-				"data": {
+				"Data": {
 					"Text": "al-text"
 				}
 
 
 			},
 			"Image": {
-				"style": {
+				"Style": {
 					"Z-Index": "z-index",
 					"Width": "width",
 					"Height": "height",
@@ -61,10 +61,10 @@ define(["require"], function(require) {
 					"Image-Pos": "background-position",
 					"Image-Size": "background-size"
 				},
-				"data": {}
+				"Data": {}
 			},
 			"View": {
-				"style": {
+				"Style": {
 					"Z-Index": "z-index",
 					"Width": "width",
 					"Height": "height",
@@ -75,7 +75,7 @@ define(["require"], function(require) {
 					"Bd-Radius": "border-radius",
 					"Bg-Color": "background-color"
 				},
-				"data": {}
+				"Data": {}
 			}
 		},
 		enableConstraints:{
