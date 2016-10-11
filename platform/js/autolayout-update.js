@@ -1,13 +1,16 @@
 'use strict';
-define(["require"], function(require) {
+define(["require", 'autolayout-config', 'autolayout-global'], function(require, Config, Global) {
+
     var UpdateObject = {
     	updateEditor:function () {
     		
     	},
-    	updateStyleEditor: function(confObj, selectedObj, init=false) {
+    	updateStyleEditor: function(init=false) {
+    		let selectedObj = Global.currentSelected;
+
     		let attributesEditor = document.getElementById('attributesEditor');
     		let type = selectedObj.getAttribute("al-type");
-    		let config  = confObj[type];
+    		let config  = Config.enableStyles[type];
 
     		if (init == true) {
     			let editor = document.createElement("div");
@@ -61,7 +64,9 @@ define(["require"], function(require) {
 				};
     		}
 		},
-		updateSingleConstraintEditor:function (confObj, selectedObj, objectList, init=false) {
+		updateSingleConstraintEditor:function (init=false) {
+			let selectedObj = Global.currentSelected,
+    			objectList = Global.screenArea.children;
 
 			let leftObj = null,
 				rightObj = null,
@@ -150,7 +155,7 @@ define(["require"], function(require) {
 			}
 
 
-			let config  = confObj["Single"];
+			let config  = Config.enableConstraints["Single"];
 			let constraintsEditor = document.getElementById('constraintsEditor');
 			if (init) {
 				let editor = document.createElement("div");
@@ -258,9 +263,11 @@ define(["require"], function(require) {
 		},
 
 		// 多选的约束还没有做
-		updateMultiConstraintEditor:function (confObj, multipleFirst, multipleSelected) {
+		updateMultiConstraintEditor:function () {
 
-			let config  = confObj["Multiple"];
+			let config  = Config.enableConstraints["Multiple"],
+				multipleFirst = Global.multipleFirst,
+				multipleSelected = Global.multipleSelected;
 
 			if (!multipleFirst || !multipleSelected  || !multipleSelected.size || !config) return null;
 
