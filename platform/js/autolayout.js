@@ -19,7 +19,8 @@ define(["require", "autolayout-init", "autolayout-update", "autolayout-global", 
             // 公用方法
             "Public": alPublic,
         };
-
+        window.AL = AutoLayout;
         return AutoLayout;
     }
+    
 );

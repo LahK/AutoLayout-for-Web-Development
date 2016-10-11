@@ -42,8 +42,9 @@ define(function() {
 
 		getLastId: function () {
 			return this.lastId ++;
-		}
+		},
 
+		alJson:{}
 	};
 
 	return Global;

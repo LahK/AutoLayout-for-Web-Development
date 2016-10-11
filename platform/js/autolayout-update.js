@@ -149,6 +149,7 @@ define(["require"], function(require) {
 				console.log(bottomObj);
 			}
 
+
 			let config  = confObj["Single"];
 			let constraintsEditor = document.getElementById('constraintsEditor');
 			if (init) {
@@ -175,9 +176,9 @@ define(["require"], function(require) {
 								bindType = e.target.getAttribute('al-bind-type');
 							let input = e.target.parentNode.querySelector('input.al-value');
 
-							// 对json进行处理
-							// e.target.checked ? json.thisObject.bindType.bind = input.value 
-							// 	: delete json.thisObject.bindType.bind;
+							// 对json进行处理，选中时添加json数据，否则删除json数据
+							// e.target.checked ? (json.thisObject.bindType.bind = input.value) 
+							// 	: (delete json.thisObject.bindType.bind);
 						}
 						
 						let input = document.createElement('input');
@@ -191,9 +192,18 @@ define(["require"], function(require) {
 
 							let checkbox = e.target.parentNode.querySelector('input.al-enable');
 
-							// 当约束值发生改变，且勾选checkbox时，保存到数组
-							// checkbox.checked ? (json.thisObject.bindType.bind = input.value) : '';
+							// // 当约束值手动修改时，自动勾选，并更新json数据。
+							// checkbox.checked = true;
+							// json.thisObject.bindType.bind = input.value;
+							
 						}
+
+						// 当json中存在该值时，直接更新。
+						// if (json.thisObject.bindType.bind) {
+						// 
+						// 	checkbox.checked = true;
+						// 	input.value = json.thisObject[type][config[type][key]];
+						// }
 						warp.appendChild(checkbox);
 						warp.innerHTML += "<span>" + key + "</span>";
 						warp.appendChild(input);
@@ -208,40 +218,43 @@ define(["require"], function(require) {
 					constraintsEditor.innerHTML = "";
 					constraintsEditor.appendChild(editor);
 				}
+			} else{
+				let warpList = constraintsEditor.querySelectorAll('div.constraint-warp');
+
+				// 遍历更新数据
+				;[].forEach.call(warpList, function (warp) {
+					let checkbox = warp.querySelector('input.al-enable');
+
+					// 如果当前约束已经生效，则不更新数据，直接跳过
+					if (checkbox.checked == true) return;
+
+					let bind = checkbox.getAttribute('al-bind'),
+						bindType = checkbox.getAttribute('al-bind-type');
+
+					let input = warp.querySelector('input.al-value');
+
+					// 这里的0与true为示例值
+					input.value = 0;
+					checkbox.checked = true;
+
+
+					// 伪代码，因为json还没有实现
+					// if (json.thisObject.bindType.bind) {
+					// 	// 当json中存在该值时，直接更新。
+					// 	checkbox.checked = true;
+					// 	input.value = json.thisObject.bindType.bind;
+					// }else{
+					// 	// json中不存在，则计算
+					// 	if (bindType === 'Shape') {
+					// 		input.value = document.getComputedStyle(selectedObj)[bind];
+					// 	}else if (bindType === 'Margins') {
+					// 		input.vaule = computeredMargins[bind];
+					// 	}else if (bindType === 'Aligments') {
+					// 		input.vaule = computeredAligments[bind];
+					// 	};
+					// }
+				});
 			}
-			let warpList = constraintsEditor.querySelectorAll('div.constraint-warp');
-
-			// 遍历更新数据
-			;[].forEach.call(warpList, function (warp) {
-				let checkbox = warp.querySelector('input.al-enable');
-				
-
-				let bind = checkbox.getAttribute('al-bind'),
-					bindType = checkbox.getAttribute('al-bind-type');
-
-				let input = warp.querySelector('input.al-value');
-
-				// 这里的0/true为示例值
-				input.value = 0;
-				checkbox.checked = true;
-
-
-				// 伪代码，因为json还没有实现
-				// if (json.thisObject.bindType.bind) {
-				// 	// 当json中存在该值时，直接更新。
-				// 	checkbox.checked = true;
-				// 	input.value = json.thisObject.bindType.bind;
-				// }else{
-				// 	// json中不存在，则计算
-				// 	if (bindType === 'Shape') {
-				// 		input.value = document.getComputedStyle(selectedObj)[bind];
-				// 	}else if (bindType === 'Margins') {
-				// 		input.vaule = computeredMargins[bind];
-				// 	}else if (bindType === 'Aligments') {
-				// 		input.vaule = computeredAligments[bind];
-				// 	};
-				// }
-			});
 		},
 
 		// 多选的约束还没有做
@@ -325,6 +338,5 @@ define(["require"], function(require) {
 
 		return true;
 	};
-
     return UpdateObject;
 })

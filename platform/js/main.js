@@ -8,10 +8,10 @@
 
     require.config(config);
 
-    require(['autolayout'], function(AL){
+    require(['autolayout-init'], function(Init){
 
     	// 引入 autolayout.js, 启动程序
-    	AL.Init.initApp(AL);
+    	Init.initApp();
     });
 
 })(window);
