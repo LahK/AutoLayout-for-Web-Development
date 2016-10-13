@@ -51,3 +51,4 @@ addConstraint(nameLbl, "top", "equal", board, "top", 1, 10);
 
 generate()
 ```
+![](https://raw.githubusercontent.com/LahK/AutoLayout-for-Web-Development/master/GeneratedView.JPG)
