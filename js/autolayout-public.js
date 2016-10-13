@@ -44,137 +44,9 @@ define(["require", "autolayout-update", "autolayout-global"], function(require, 
 			object.appendChild(coverMask);
 			object.appendChild(resizeButton);
 
-			object.ondrag = function(event) {
-				let e = event || window.event || arguments.callee.caller.arguments[0];
-				
-				if (Global.objectMoving) {
-					if(e.pageX == 0 && e.pageY == 0){return;} // 消除特殊情况（鼠标松开时，有一个偏差坐标 (0，0)）
+			
 
-					let newX = (e.pageX - Global.mouseDownPosition.x) / Global.screenScale + Global.objectLastStatus.x,
-						newY = (e.pageY - Global.mouseDownPosition.y) / Global.screenScale + Global.objectLastStatus.y;
-
-					
-
-					// Prevent objects from being dragged out of screen area
-					let minX = - Global.objectLastStatus.w,
-						minY = - Global.objectLastStatus.h;
-
-					let maxX = Global.screenLastStatus.w,
-						maxY = Global.screenLastStatus.h;
-
-					newX = newX < minX ? minX : (newX > maxX ? maxX : newX);
-					newY = newY < minY ? minY : (newY > maxY ? maxY : newY);
-
-					object.style.left = newX+"px";
-					object.style.top = newY+"px";
-					Update.updateStyleEditor();
-				}
-			};
-			object.ondragend = function(event){
-				// 重新获取附近元素
-				Update.updateSingleConstraintEditor();
-			}
-			object.onmousedown = function() {
-
-				// 在多选模式下，第一个被选中的元素会赋值给currentSelected，
-				// 如果继续选第二个元素，则将第一个选择的元素(currentSelected)和之后的元素一并
-				// 存储到multipleSelected中，
-				// 如果不继续选，则第一个元素只存在currentSelected中，多选模式结束
-				
-
-				if(Global.multipleSelect && Global.currentSelected != object){
-					// 能触发多选，说明完成了单选
-					// 但是此状态下，还点击单选选中的元素，则无效（因为全程只有一个元素，没有多选）
-					if (Global.currentSelected) {
-						// 单选保存有元素，说明现在触发的是多选的第二个元素，
-						// 则取出单选元素和当前元素，保存到多选元组中
-						Global.currentSelected.className = (Global.currentSelected.className).replace('mark', 'first-mark');
-						Global.multipleSelected.add(Global.currentSelected);
-
-						object.className += ' mark';
-						Global.multipleSelected.add(object);
-						
-						// multipleFirst记录下多选中第一个选中的元素
-						Global.multipleFirst = Global.currentSelected;
-						// 清空单选，清除绑定的编辑器
-						Global.currentSelected.getElementsByTagName("rb")[0].style.display = "none";
-						Global.currentSelected = null;
-
-						document.getElementById('attributesEditor').innerHTML = "";
-						document.getElementById('constraintsEditor').innerHTML = "";
-
-					}else{
-						// 多选模式开启，并且单选没有元素，说明正在多选第三个及之后的元素
-						// 直接添加进元组即可
-						if (object.className.indexOf(' mark') > -1) {
-
-							object.className = (object.className).replace(' mark', '');
-							Global.multipleSelected.delete(object);
-						}else{
-
-							object.className += ' mark';
-							Global.multipleSelected.add(object);
-						}
-					}
-
-					
-					Update.updateMultiConstraintEditor();
-				}else{
-					// 有元素在单选模式下被点击
-					// 或者多选模式下点击的第二个元素和第一个元素相同
-					// 元组不为空说明刚刚退出多选，但多个元素还被选中，因此需要清空元组
-
-					if(Global.multipleSelected.size){
-						
-						// forEach的回调会异步执行，因此需要在回调函数中一个一个删除元素，
-						// 否则由于异步执行会导致元素删除了还没更新完成界面。
-						Global.multipleSelected.forEach(function (elem) {
-
-
-							elem.className = elem.className.replace(' mark', '').replace(' first-mark', '');
-							// 更新一个删除一个
-							Global.multipleSelected.delete(elem);
-						});
-						// 不可以在这里直接执行 Global.multipleSelected.clear()
-						// 因为 forEach是异步操作，上面的display = "none" 还没有执行完，就直接clear了
-						// 会导致异步错误
-
-						// 清空
-						Global.multipleFirst = null;
-					}
-
-					Global.objectMoving = true;
-					object.setAttribute("draggable", "true");
-					Global.objectLastStatus = {
-						w: parseFloat(window.getComputedStyle(object).width),
-						h: parseFloat(window.getComputedStyle(object).height),
-						x: parseFloat(window.getComputedStyle(object).left) || 0,
-						y: parseFloat(window.getComputedStyle(object).top) || 0
-					}
-
-					if (Global.currentSelected !== object) {
-
-
-						if (Global.currentSelected) {
-							Global.currentSelected.className = (Global.currentSelected.className).replace(' mark', '');
-							Global.currentSelected.getElementsByTagName("rb")[0].style.display = "none";
-						}
-
-						object.querySelector("rb").style.display = "block";
-						object.className += ' mark';
-						Global.currentSelected = object;
-
-						Update.updateStyleEditor(true);
-
-						Update.updateSingleConstraintEditor(true);
-					};
-				}
-				// console.log(Global.multipleSelect);
-				// console.log(Global.multipleSelected);
-				// console.log(Global.currentSelected);
-			};
-
-			Global.objectList.add({ id: object })
+			// Global.objectList.add({ id: object })
 		},
 		handleLayer: function(layer) {
 			// select object when click on related layer
@@ -221,100 +93,25 @@ define(["require", "autolayout-update", "autolayout-global"], function(require, 
 			}
 		},
 		getObjectByTypeId: function(type, id) {
-
 			var newObject = null;
-			// var newObjectBR = document.createElement("div");
-			switch (type) {
-				case "Label":
-					newObject = getLabel(id);
-					break;
-				case "Button":
-					newObject = getButton(id);
-					break;
-				case "Image":
-					newObject = getImage(id);
-					break;
-				case "View":
-					newObject = getView(id);
-					break;
-				default:
-					return null;
-			}
-			// newObject.setAttribute("draggable", "true");
-			newObject.setAttribute("al-name", "object");
-			newObject.setAttribute("al-type", type);
-			newObject.id = "object-" + id;
-			newObject.setAttribute("al-id", id);
+			let defaultPath = 'objects/basic/' + type;
 
-			return newObject;
+			require([defaultPath],function(object) {
+				// handle the new object
+				newObject = object;
+				newObject.setAttribute("al-name", "object");
+				newObject.setAttribute("al-type", type);
+				newObject.id = "object-" + id;
+				newObject.setAttribute("al-id", id);
+				
+				return newObject;
+			},function (err) {
+				let failedId = err.requireModules && err.requireModules[0];
+				if (failedId === defaultPath) {
+					requirejs.undef(failedId);
 
-			function getLabel(id) {
-
-				var tempObject = document.createElement("div");
-
-				tempObject.className = "AL-object AL-lable";
-				tempObject.setAttribute("al-text", "Label");
-				// tempObject.setAttribute("al-label-type", "multiple");
-				tempObject.innerText = "Label";
-				// tempObject.appendChild(newObjectBR);
-
-				// _view = tempObject;
-				// _viewStyle = window.getComputedStyle(_view);
-
-				// _viewBR = newObjectBR;
-
-				return tempObject;
-			}
-
-			function getButton(id) {
-				var tempObject = document.createElement("div");
-				tempObject.className = "AL-object AL-button";
-				tempObject.setAttribute("al-text", "Button");
-				tempObject.innerText = "Button";
-
-				// var contentObject = document.createElement("button");
-				// // contentObject.disabled = true;
-
-				// contentObject.innerText = "Button";
-				// contentObject.type = "button"
-
-				// tempObject.appendChild(contentObject);
-
-
-				return tempObject;
-			}
-
-			function getImage(id) {
-				var tempObject = document.createElement("div");
-
-				tempObject.className = "AL-object AL-image";
-
-				// tempObject.appendChild(getResizeButtonById(id));
-
-				// tempObject.appendChild(newObjectBR);
-
-				// _view = tempObject;
-				// _viewStyle = window.getComputedStyle(_view);
-
-				// _viewBR = newObjectBR;
-
-				return tempObject;
-			}
-
-			function getView(id) {
-				var tempObject = document.createElement("div");
-
-				tempObject.className = "AL-object AL-view";
-
-				// tempObject.appendChild(newObjectBR);
-
-				// _view = tempObject;
-				// _viewStyle = window.getComputedStyle(_view);
-
-				// _viewBR = newObjectBR;
-
-				return tempObject;
-			}
+				}
+			});
 		},
 
 		getLayerByTypeId: function (type, id) {

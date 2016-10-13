@@ -99,14 +99,17 @@ body {
     z-index: 0;
     overflow: hidden;
 }
-.mark cm{
+
+.marked cm {
     display: block;
 }
-.first-mark cm{
+
+.first-marked cm {
     display: block;
-    background-color:rgba(169, 25, 60, 0.4);
-    cursor: not-allowed;
+    background-color: rgba(169, 25, 60, 0.4);
+    : not-allowed;
 }
+
 .scale-bar {
     position: absolute;
     left: 50px;
