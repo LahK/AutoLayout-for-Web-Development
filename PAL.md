@@ -19,6 +19,10 @@ var avatarImage = ALImage();
 var nameLbl = ALLabel();
 var contentLbl = ALLabel();
 
+messageView.bgColor = "#cccccc"
+nameLbl.text = "MY NAME";
+contentLbl.text = "Hi, I want to add you as Facebook Friend."
+
 // 将视图加入画板
 addSubview(messageView);
 addSubview(avatarImage);
