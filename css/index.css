@@ -92,6 +92,13 @@ body {
     background: #03a9f4;
 }
 
+.layer-moving{
+    width: 97%;
+    opacity: 0.5;
+    border: solid #777;
+    border-width: 0 2px 2px 2px;
+}
+
 .canvas {
     order: 2;
     flex: 1 1 auto;
