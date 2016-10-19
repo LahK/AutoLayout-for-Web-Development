@@ -1,5 +1,8 @@
 # Programmatical AutoLayout (PAL)
 
+  另一个思路是，一下描述的编程式作为我们 js 读取 json 文件的逻辑。
+  而编写页面通过 json 描述文件来完成。按照标准格式，写好 objects 对象和 constraints 对象，然后由 js 部分来读取生成页面。
+
 ## 编程式，无图形界面
 
 - 画板对象： board
