@@ -27,6 +27,7 @@ A tool for web developers to fast set website UI using Xcode-like-AutoLayout.
 
 ## Useful Links
 - [drag: DataTransfer](https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer)
+- [Browser Window Size in JavaScript](http://www.javascripter.net/faq/browserw.htm)
 
 
 ## Data Structure
