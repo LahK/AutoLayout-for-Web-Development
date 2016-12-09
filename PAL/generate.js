@@ -1,3 +1,4 @@
+// HTML templates for objects
 var templates = {
 	"ALView": "<div></div>",
 	"ALLabel": "<div></div>",
@@ -7,6 +8,7 @@ var templates = {
 	"ALInput": "<div></div>",
 };
 
+// Sample Data
 var data = {
 	"objects": [
 		{
@@ -251,10 +253,11 @@ var data = {
 	]
 }
 
-var page = document.getElementById("page");
-var objectNameList = [];
 
-// get window width, and height
+var page = document.getElementById("page"); // Page Object, everything on the page are contained by this object
+var objectNameList = []; // Object Name List, stores all object names, for quick reference.
+
+// Get windows width (winW), and windows height (winH)
 var winW, winH;
 if (document.body && document.body.offsetWidth) {
  winW = document.body.offsetWidth;
@@ -271,6 +274,7 @@ if (window.innerWidth && window.innerHeight) {
  winH = window.innerHeight;
 }
 
+// Initialize Page attributes, for positioning objects.
 var pageAttributes = {
 	"top": 0,
 	"bottom": winH,
@@ -283,6 +287,7 @@ var pageAttributes = {
 }
 
 
+// Initialize Objects with AL attributes and custom styles
 for (var i = 0; i < data.objects.length; i++) {
 	var d = document.createElement('div');
 	d.id = data.objects[i].name;
@@ -304,7 +309,9 @@ for (var i = 0; i < data.objects.length; i++) {
 	objectNameList.push(data.objects[i].name)
 }
 
-var constraintsToObjects = [];
+
+var constraintsToObjects = []; // List of constraints related to other objects, for quick reference.
+// Initialize constraints related to Page
 for (var i = 0; i < data.constraints.length; i++) {
 	var c = data.constraints[i]
 	if (c.toItem === "") {
@@ -334,6 +341,7 @@ for (var i = 0; i < data.constraints.length; i++) {
 	}
 }
 
+// Method to get attributes of an object.
 function getAttributes(obj) {
 	var attrs = {
 		"top": obj.getAttribute("top"),
@@ -348,6 +356,8 @@ function getAttributes(obj) {
 	return attrs;
 }
 
+
+// Initialize constraints related to objects.
 var tt = 1;
 while (constraintsToObjects.length > 0) {
 // while (tt--) {
@@ -459,6 +469,7 @@ while (constraintsToObjects.length > 0) {
 console.log(constraintsToObjects);
 
 
+// Finalize object position
 for (var i = objectNameList.length - 1; i >= 0; i--) {
 	var obj = document.getElementById(objectNameList[i]);
 
