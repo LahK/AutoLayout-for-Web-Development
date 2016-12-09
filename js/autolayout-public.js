@@ -51,30 +51,24 @@ define(["require", "autolayout-update", "autolayout-global"], function(require, 
 			object.appendChild(coverMask);
 			object.appendChild(resizeButton);
 
-			Global.screenArea.appendChild(object);
-
-			this.addBindLayer(object);
+			return object;
 		},
 
 		addObjectByType: function(type, callback) {
 
 			let _this = this;
+
 			let basicPath = 'objects/basic/' + type;
-			try{
-				require([basicPath],function(createztion) {
-					let object = createztion();
-					_this.handleObject(object);
-					callback(object);
+			let userPath = 'objects/' + type;
+
+			require([basicPath],function(createztion) {
+				callback(_this.handleObject(createztion()));
+			},function (err) {
+				
+				require([userPath], function (createztion) {
+					callback(_this.handleObject(createztion()));
 				});
-			}catch(e){
-				console.log(e);
-				let userPath = 'objects/' + type;
-				require([basicPath],function(createztion) {
-					let object = createztion();
-					_this.handleObject(object);
-					callback(object);
-				});
-			}
+			});
 		},
 
 		addBindLayer: function(object) {
