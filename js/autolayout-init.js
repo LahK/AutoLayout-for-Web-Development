@@ -131,6 +131,10 @@ define(["require", "autolayout-update", "autolayout-global", "autolayout-public"
         },
         initObjectByType: function(type) {
             Public.addObjectByType(type, function(object) {
+
+                Global.screenArea.appendChild(object);
+                Public.addBindLayer(object);
+
                 object.ondrag = function(event) {
                     let e = event || window.event || arguments.callee.caller.arguments[0];
 
