@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>AL</title>
+
+	<!-- CSS -->
+	<link rel="stylesheet" href="./css/normalize.css">
+	<link rel="stylesheet" href="./css/main.css">
+	<link rel="stylesheet" href="./css/al-object.css">
+	<link rel="stylesheet" href="./css/al.css">
+</head>
+<body>
+	<div id="al-lahk">
+		<div id="screen">
+			
+		</div>
+		<div class="tool components-lib" @dragstart="toolOnDragStart($event)" @drag="toolOnDrag($event)" draggable>
+			<h4>Components</h4>
+			<a v-for="(value, key) in Config.components" @click="addNewObjectByType(value)" href="#">{{ key }}</a>
+		</div>
+
+		<div class="tool attributes-inspector" v-show="selectedObject !== null" @dragstart="toolOnDragStart($event)" @drag="toolOnDrag($event)" draggable>
+			<h4>Attributes Inspector</h4>
+			<template v-if="selectedObject !== null">
+				<div 
+				class="attributes-inspector-item" 
+				v-for="(value, key, index) in Config.attributes[selectedObject.getAttribute('al-type')].style"
+				>
+					<span>{{ key }}</span>
+					<input type="text" :name="value"
+					:value="selectedObjectComputedStyle[value]" 
+					@keyup="attributesInspectorItemOnKeyUp(value, $event)"
+					@focus="inputOnFocus"
+					@blur="inputOnBlur"
+					>
+				</div>
+			</template>
+		</div>
+
+		<div class="tool objects-outline" @dragstart="toolOnDragStart($event)" @drag="toolOnDrag($event)" draggable>
+			<h4>Objects Outline</h4>
+			<div v-if="showOutlineMsg">
+				No Objects Yet.
+			</div>
+			<div id="layer-list" class="layer-list">
+				
+			</div>
+		</div>
+	</div>
+	<script src="https://unpkg.com/vue/dist/vue.js"></script>
+	<script src="./js/config.js"></script>
+	<script src="./js/ComponentsService.js"></script>
+	<script src="./js/AttributesInspector.js"></script>
+
+	<!-- Vue js related -->
+	<script src="./js/vue-components.js"></script>
+	<script src="./js/app.js"></script>
+</body>
+</html>

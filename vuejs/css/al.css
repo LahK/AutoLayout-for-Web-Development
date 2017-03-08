@@ -1,0 +1,21 @@
+.mark cm{
+    display: block;
+}
+.first-mark cm{
+    display: block;
+    background-color:rgba(169, 25, 60, 0.4);
+    cursor: not-allowed;
+}
+
+.layer-list {
+	padding: 10px;
+}
+.layer-item {
+	color: #34495e;
+	padding: 5px 10px;
+	border: 1px solid #eee;
+}
+
+.layer-selected {
+	border: 1px solid #42b983;
+}

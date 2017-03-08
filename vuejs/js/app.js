@@ -1,0 +1,154 @@
+let vm = new Vue({
+  el: '#al-lahk',
+  data: {
+  	Config: ALConfig,
+
+  	// Attributes Inspector
+  	showAttrInspector: false,
+  	showOutlineMsg: true,
+
+  	isFocus: false, // 防止编辑 文字、属性 时，按下删除键触发删除元素事件
+	toolLastPos: { x: 0, y: 0 }, // 工具面板 被选中时的位置、大小
+
+  	// 原 Global 部分
+  	screenArea: null, // 画板区
+  	objects: {}, // 画板中所有 AL 组件
+  	selectedObject: null, // （单选时）选中的组件；（多选时）选中的第一个组件
+  	selectedObjects: [], // 多选时，选中的其他组件
+  	objectsLastId: 0, // 当前可供新组件使用的 Id
+	objectLastStatus: { x: 0, y: 0, w: 0, h: 0 }, // Object 被选中时的位置、大小
+	objectMoving: false, // Object 是否在移动
+	objectResizing: false, //元素是否在被拖拽放缩
+	layerMoving: false, // Layer是否在移动
+  	mouseOverObject: null, // 鼠标当前所在的元素
+	mouseDownPosition: { x: 0, y: 0 }, // 鼠标单击时的位置
+	keyDown: null, // 按下的键值
+  },
+  computed: {
+  	selectedObjectComputedStyle: function() {
+  		return window.getComputedStyle(this.selectedObject);
+  	},
+  	// 画板中所有 AL 组件 对应图层列表
+  	// layerList 为一个 dom 元素
+  	// 如需获取图层个数，使用：this.layerList.childElementCount / vm.layerList.childElementCount
+  	layerList: function() {
+  		return document.getElementById('layer-list');
+  	},
+  	// 获取图层个数的方便方法
+  	layersCount: function() {
+  		return this.layerList.childElementCount;
+  	}
+  },
+  mounted: function() {
+  		// 初始化 画板
+  		this.screenArea = document.getElementById("screen");
+		this.screenArea.onmousedown = function(event) {
+			let e = event || window.event || arguments.callee.caller.arguments[0];
+
+			// 点击画板空白处时，取消 “组件选择”
+			if(vm.selectedObject && e.target === vm.screenArea && vm.selectedObjects.length == 0){
+				vm.selectedObject.getElementsByTagName('rb')[0].style.display = "none";
+				vm.selectedObject.className = (vm.selectedObject.className).replace(' mark', '');
+				
+				// 取消对应图层 高亮
+				let layer = ComponentsService.getLayerByObject(vm.selectedObject);
+				layer.className = (layer.className).replace(' layer-selected', '');
+
+				vm.selectedObject = null;
+			}
+
+		};
+
+		document.onkeyup = function(event) {
+			let e = event || window.event || arguments.callee.caller.arguments[0];
+			vm.keyDown = null;
+
+			// Delete selected object by press 'Delete'/'Backspace' key
+			if (!vm.isFocus && (e.keyCode == 8 || e.keyCode == 46)) {
+				let objectToDelete = vm.selectedObject;
+				vm.selectedObject = null;
+				let layerToDelete = ComponentsService.getLayerByObject(objectToDelete);
+				objectToDelete.parentNode.removeChild(objectToDelete);
+				layerToDelete.parentNode.removeChild(layerToDelete);
+				vm.selectedObject = null;
+
+				// 更新 Objects Outline 提示信息显示状态
+				if (vm.layersCount === 0) {
+					vm.showOutlineMsg = true
+				}
+			}
+
+			// if (e.keyCode == 17) {
+			// 	// Ctrl
+			// 	Global.multipleSelect = false;
+			// };
+		};
+  },
+  methods: {
+  	// 用于获取新的 Object Id
+  	newObjectId: function() {
+  		return this.objectsLastId++;
+  	},
+  	// 通过组件类型生成新组件
+  	// 注意：此处 组件 指代 AL-组件，非 vue components
+  	addNewObjectByType: function (type) {
+		let newId = this.newObjectId();
+		let newObject = ComponentsService.newObjectByTypeId(type, newId);
+		let newLayer = ComponentsService.newLayerByTypeId(type, newId);
+		// 将组件添加到画板
+		this.screenArea.appendChild(newObject);
+		// 将图层添加到 图层操作面板
+		this.layerList.insertBefore(newLayer, this.layerList.firstChild);
+		// 初始化组件相关样式、事件
+		ComponentsService.handleObject(newObject, newId, this.layerList.childElementCount);
+		// 初始化图层相关事件
+		ComponentsService.handleLayer(newLayer);
+
+		// 更新 Objects Outline 提示信息显示状态
+		if (this.layersCount !== 0) {
+			this.showOutlineMsg = false
+		}
+  	},
+  	// 属性观察器（Attributes Inspector）中输入框 keyup 事件
+  	// 即 用户修改属性值时 keyup 事件
+  	attributesInspectorItemOnKeyUp: function(styleName, event) {
+  		// 此处为 Input -> style 单向绑定
+  		// 即 修改 Input 值时，对应 sytle 更新。反之不成立。
+  		// 当通过 JS 直接修改 style 时，须手动更新 Input value （Inspector）
+  		this.selectedObject.style[styleName] = event.target.value;
+  	},
+  	// 当退出文字输入状态时
+  	// 重置 isFocus 为 false，保证 “删除” 事件正常响应
+  	inputOnBlur: function() {
+  		this.isFocus = false;
+  	},
+  	// 当进入文字输入状态时
+  	// 设置 isFocus 为 true, “删除” 事件正常响应
+  	inputOnFocus: function() {
+  		this.isFocus = true;
+  	},
+  	// 工具面板 ondragStart 事件
+  	toolOnDragStart: function(event) {
+  		let object = event.target;
+		// 记录开始拖动时，鼠标位置
+		this.mouseDownPosition = { x: event.pageX, y: event.pageY };
+		// 记录开始拖动时，工具面板位置
+		vm.toolLastPos = {
+			x: parseFloat(window.getComputedStyle(object).left) || window.innerWidth - parseFloat(window.getComputedStyle(object).right) || 0,
+			y: parseFloat(window.getComputedStyle(object).top) || window.innerHeight - parseFloat(window.getComputedStyle(object).bottom) || 0
+		};
+  	},
+  	// 工具面板 ondrag 事件
+  	toolOnDrag: function(event) {
+		if(event.pageX == 0 && event.pageY == 0){return;} // 消除特殊情况（鼠标松开时，有一个偏差坐标 (0，0)）
+  		let object = event.target;
+
+		let newX = event.pageX - (this.mouseDownPosition.x - this.toolLastPos.x),
+			newY = event.pageY - (this.mouseDownPosition.y - this.toolLastPos.y);
+
+  		// 更新工具面板位置
+		object.style.left = newX+"px";
+		object.style.top = newY+"px";
+  	}
+  }
+})

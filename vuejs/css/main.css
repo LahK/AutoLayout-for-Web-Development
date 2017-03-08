@@ -1,0 +1,94 @@
+#al-lahk {
+	width: 100vw;
+	height: 100vh;
+}
+#screen {
+	width: 100vw;
+	height: 100vh;
+}
+
+.tool {
+	z-index: 99;
+	border: 1px solid #42b983;
+}
+
+.components-lib {
+	position: fixed;
+	bottom: 50px;
+	right: 50px;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	align-items: center;
+
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 30px;
+	height: auto;
+	width: auto;
+
+	background: #f8f8f8;
+}
+
+.components-lib>a {
+	color: #42b983;
+	padding: 10px 0;
+}
+
+.attributes-inspector {
+	position: fixed;
+	top: 50px;
+	right: 50px;
+
+	display: flex;
+	flex-direction: column;
+
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 30px;
+
+	height: auto;
+	width: 300px;
+
+	background: #f8f8f8;
+}
+.attributes-inspector>h4 {
+	align-self: center;
+}
+.attributes-inspector-item {
+	display: flex;
+}
+.attributes-inspector-item>span {
+	flex: 3;
+	text-align: right;
+	align-self: center;
+
+	color: #7f8c8d;
+}
+.attributes-inspector-item>input {
+	flex: 7;
+
+	color: #34495e;
+}
+
+.objects-outline {
+	position: fixed;
+	bottom: 50px;
+	left: 50px;
+
+	display: flex;
+	flex-direction: column;
+
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 20px;
+
+	height: auto;
+	width: 300px;
+
+	background: #f8f8f8;
+}
+.objects-outline>h4 {
+	align-self: center;
+}
