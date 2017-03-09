@@ -244,7 +244,7 @@ var ComponentsService = {
 				};
 			}
 		};
-
+		
 		vm.objects[id] = object;
 	},
 	newLayerByTypeId: function (type, id) {
