@@ -8,6 +8,7 @@ let vm = new Vue({
         showOutlineMsg: true,
 
         isFocus: false, // 防止编辑 文字、属性 时，按下删除键触发删除元素事件
+        focusInputName: '', // 当前 focus 的输入框的 name 属性，用于判断是否响应某些事件，如：移动选中对象
         isEditingObjectName: false, // 是否正在编辑 组件名称
         toolLastPos: { x: 0, y: 0 }, // 工具面板 被选中时的位置、大小
 
@@ -112,19 +113,27 @@ let vm = new Vue({
             switch (e.key) {
               // 左
               case 'ArrowLeft':
-                vm.selectedObjectMoveLeft();
+                if (vm.canMoveSelectedObject()) {
+                  vm.selectedObjectMoveLeft();
+                }
                 break;
               // 上
               case 'ArrowUp':
-                vm.selectedObjectMoveTop();
+                if (vm.canMoveSelectedObject()) {
+                  vm.selectedObjectMoveTop();
+                }
                 break;
               // 右
               case 'ArrowRight':
-                vm.selectedObjectMoveRight();
+                if (vm.canMoveSelectedObject()) {
+                  vm.selectedObjectMoveRight();
+                }
                 break;
               // 下
               case 'ArrowDown':
-                vm.selectedObjectMoveDown();
+                if (vm.canMoveSelectedObject()) {
+                  vm.selectedObjectMoveDown();
+                }
                 break;
               case 'Enter':
                 if (e.key == 'Enter') {
@@ -195,11 +204,13 @@ let vm = new Vue({
         // 重置 isFocus 为 false，保证 “删除” 事件正常响应
         inputOnBlur: function() {
             this.isFocus = false;
+            this.focusInputName = '';
         },
         // 当进入文字输入状态时
         // 设置 isFocus 为 true, “删除” 事件正常响应
-        inputOnFocus: function() {
+        inputOnFocus: function(name) {
             this.isFocus = true;
+            this.focusInputName = name;
         },
         // 工具面板 ondragStart 事件
         toolOnDragStart: function(event) {
@@ -306,11 +317,20 @@ let vm = new Vue({
           // 更新 Attributes Inspector
           document.getElementsByName(attrName)[0].value = newValue;
         },
+        // 方便方法，用于获取被选中组件的图层对象
         getSelectedObjectLayer: function() {
           return ComponentsService.getLayerByObject(this.selectedObject);
         },
+        // 判断是否能够删除选中组件
         canDeleteSelectedObject: function() {
+          // 当正在输入时不可删除
           return !this.isFocus && !this.isEditingObjectName;
+        },
+        // 判断是否能够移动选中组件
+        canMoveSelectedObject: function() {
+          // 1. 当不是在编辑组件名称，并且没有 focus 的时候
+          // 2. 当处于 focus 状态，并且 focus 的输入框为 Left 或者 Top
+          return this.selectedObject != null && ((!this.isFocus && !this.isEditingObjectName) || (this.isFocus && (this.focusInputName === 'Left' || this.focusInputName == 'Top') ))
         }
     }
 })
