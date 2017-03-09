@@ -156,9 +156,9 @@ let vm = new Vue({
 
             let newObject = ComponentsService.newObjectByTypeId(type, newId);
 
-            // 将 新组件名称 添加到 objectNames
+            // 为防止组件重名，在此统一设置初始命名 al-name
             let newName = type+'-'+newId;
-            this.addNewObjectNameToList(newObject, newName)
+            this.setObjectName(newObject, newName)
             // 将组件添加到画板
             this.screenArea.appendChild(newObject);
 
@@ -258,8 +258,8 @@ let vm = new Vue({
           layer.contentEditable = false;
           this.updateObjectName(this.selectedObject, layer.innerHTML)
         },
-        // 
-        addNewObjectNameToList: function(object, newName) {
+        // 设置
+        setObjectName: function(object, newName) {
           while(this.objectNames.has(newName)) {
             newName += '-new';
           }
@@ -277,7 +277,7 @@ let vm = new Vue({
         updateObjectName: function(object, newName) {
           let oldName = object.getAttribute('al-name');
           this.objectNames.delete(oldName);
-          this.addNewObjectNameToList(object, newName);
+          this.setObjectName(object, newName);
         },
 
         // 

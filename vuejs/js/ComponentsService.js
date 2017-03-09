@@ -21,7 +21,6 @@ var ComponentsService = {
 			default:
 				return null;
 		}
-		newObject.setAttribute('al-name', type+'-'+id);
 		newObject.setAttribute('al-type', type);
 		newObject.id = 'al-object-' + id;
 		newObject.setAttribute('al-id', id);
