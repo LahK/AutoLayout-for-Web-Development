@@ -325,7 +325,11 @@ function setBottomMarginAuto() {
 - 注意二：在使用 ondrag 时要注意，松开鼠标时，pageX 和 pageY 会归零，导致计算错误。应使用 `if(e.pageX == 0 && e.pageY == 0){return;}` 来消除特殊情况。
 - 
 ## Notes for members
-### Notes:
+### 2017.03.09
+1. 将组件文字居中实现方法由~~通过 `lineHeight` 设置~~ 改为**通过 `flex` 设置**。
+2. 结合 `Vue.js` 重构 Platform。
+
+### 未知时间:
 1. 修复了多选时不能取消选择的bug
 2. 修复了编辑器生成的bug
 3. 对单Object的约束作了输入框的动态更新和与json的数值绑定。但是由于json还没有做，因此只写了逻辑伪代码。
