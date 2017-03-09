@@ -6,6 +6,7 @@ A tool for web developers to fast set website UI using Xcode-like-AutoLayout.
 
 - [野狗](https://www.wilddog.com/)
 - [脑图](http://naotu.baidu.com/file/0df7e13496239b2a408d2c39e34529bb?token=074797cde5554e91)
+- [Key Values](https://developer.mozilla.org/zh-CN/docs/Web/API/KeyboardEvent/key/Key_Values)
 
 
 ## Reading List
