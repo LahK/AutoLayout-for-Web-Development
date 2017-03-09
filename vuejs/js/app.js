@@ -178,11 +178,18 @@ let vm = new Vue({
         },
         // 属性观察器（Attributes Inspector）中输入框 keyup 事件
         // 即 用户修改属性值时 keyup 事件
-        attributesInspectorItemOnKeyUp: function(styleName, event) {
+        attributesInspectorItemOnKeyUp: function(type, name, event) {
             // 此处为 Input -> style 单向绑定
             // 即 修改 Input 值时，对应 sytle 更新。反之不成立。
             // 当通过 JS 直接修改 style 时，须手动更新 Input value （Inspector）
-            this.selectedObject.style[styleName] = event.target.value;
+            if (type === 'style') {
+              this.selectedObject.style[name] = event.target.value;
+            }
+            if (type === 'data') {
+              if (name === 'al-text') {
+                ComponentsService.setObjectALText(this.selectedObject, event.target.value);
+              }
+            }
         },
         // 当退出文字输入状态时
         // 重置 isFocus 为 false，保证 “删除” 事件正常响应

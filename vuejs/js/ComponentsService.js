@@ -302,5 +302,9 @@ var ComponentsService = {
 	},
 	getLayerByObject: function(obj) {
 		return document.getElementById('al-layer-'+obj.getAttribute('al-id'));
+	},
+	setObjectALText: function(obj, text) {
+		obj.setAttribute('al-text', text);
+		obj.childNodes[0].nodeValue = text;
 	}
 };

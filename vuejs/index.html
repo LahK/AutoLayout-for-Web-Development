@@ -22,6 +22,7 @@
 		<div class="tool attributes-inspector" v-show="selectedObject !== null" @dragstart="toolOnDragStart($event)" @drag="toolOnDrag($event)" draggable>
 			<h4>Attributes Inspector</h4>
 			<template v-if="selectedObject !== null">
+				<h5>Style:</h5>
 				<div 
 				class="attributes-inspector-item" 
 				v-for="(value, key, index) in Config.attributes[selectedObject.getAttribute('al-type')].style"
@@ -29,7 +30,20 @@
 					<span>{{ key }}</span>
 					<input type="text" :name="value"
 					:value="selectedObjectComputedStyle[value]" 
-					@keyup="attributesInspectorItemOnKeyUp(value, $event)"
+					@keyup="attributesInspectorItemOnKeyUp('style', value, $event)"
+					@focus="inputOnFocus"
+					@blur="inputOnBlur"
+					>
+				</div>
+				<h5>Data:</h5>
+				<div 
+				class="attributes-inspector-item" 
+				v-for="(value, key, index) in Config.attributes[selectedObject.getAttribute('al-type')].data"
+				>
+					<span>{{ key }}</span>
+					<input type="text" :name="value"
+					:value="selectedObject.getAttribute(value)" 
+					@keyup="attributesInspectorItemOnKeyUp('data', value, $event)"
 					@focus="inputOnFocus"
 					@blur="inputOnBlur"
 					>
