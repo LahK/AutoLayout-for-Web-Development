@@ -6,60 +6,60 @@ var ComponentsService = {
 	newObjectByTypeId: function(type, id) {
 		var newObject = null;
 		switch (type) {
-			case "AL-Label":
+			case 'AL-Label':
 				newObject = getLabel(id);
 				break;
-			case "AL-Button":
+			case 'AL-Button':
 				newObject = getButton(id);
 				break;
-			case "AL-Image":
+			case 'AL-Image':
 				newObject = getImage(id);
 				break;
-			case "AL-View":
+			case 'AL-View':
 				newObject = getView(id);
 				break;
 			default:
 				return null;
 		}
-		newObject.setAttribute("al-name", "object");
-		newObject.setAttribute("al-type", type);
-		newObject.id = "object-" + id;
-		newObject.setAttribute("al-id", id);
+		newObject.setAttribute('al-name', type+'-'+id);
+		newObject.setAttribute('al-type', type);
+		newObject.id = 'al-object-' + id;
+		newObject.setAttribute('al-id', id);
 
 		return newObject;
 
 		function getLabel(id) {
 
-			var tempObject = document.createElement("div");
+			var tempObject = document.createElement('div');
 
-			tempObject.className = "AL-object AL-lable";
-			tempObject.setAttribute("al-text", "Label");
-			tempObject.innerText = "Label";
+			tempObject.className = 'AL-Object AL-Label';
+			tempObject.setAttribute('al-text', 'Label');
+			tempObject.innerText = 'Label';
 
 			return tempObject;
 		}
 
 		function getButton(id) {
-			var tempObject = document.createElement("div");
-			tempObject.className = "AL-object AL-button";
-			tempObject.setAttribute("al-text", "Button");
-			tempObject.innerText = "Button";
+			var tempObject = document.createElement('div');
+			tempObject.className = 'AL-Object AL-Button';
+			tempObject.setAttribute('al-text', 'Button');
+			tempObject.innerText = 'Button';
 
 			return tempObject;
 		}
 
 		function getImage(id) {
-			var tempObject = document.createElement("div");
+			var tempObject = document.createElement('div');
 
-			tempObject.className = "AL-object AL-image";
+			tempObject.className = 'AL-Object AL-Image';
 
 			return tempObject;
 		}
 
 		function getView(id) {
-			var tempObject = document.createElement("div");
+			var tempObject = document.createElement('div');
 
-			tempObject.className = "AL-object AL-view";
+			tempObject.className = 'AL-Object AL-View';
 
 			return tempObject;
 		}
@@ -67,34 +67,34 @@ var ComponentsService = {
 	handleObject: function(object, id, zIndex) {
 		object.style.zIndex = zIndex
 
-		let resizeButton = document.createElement("rb");
-		resizeButton.className = "AL-resize-button";
-		resizeButton.setAttribute("draggable", "true");
-		resizeButton.id = "resize-" + id;
+		let resizeButton = document.createElement('rb');
+		resizeButton.className = 'AL-Resize-Button';
+		resizeButton.setAttribute('draggable', 'true');
+		resizeButton.id = 'al-resize-' + id;
 
-		let coverMask = document.createElement("cm");
-		coverMask.className = "AL-cover-mask";
-		coverMask.id = "cover-" + id;
+		let coverMask = document.createElement('cm');
+		coverMask.className = 'AL-Cover-Mask';
+		coverMask.id = 'al-cover-' + id;
 
 		resizeButton.ondragstart = function(event) {
 
 			let e = event || window.event || arguments.callee.caller.arguments[0];
-			object.setAttribute("draggable", "false");
+			object.setAttribute('draggable', 'false');
 			vm.objectMoving = false;
 		};
 		resizeButton.ondrag = function(event) {
 			let e = event || window.event || arguments.callee.caller.arguments[0];
 			if(e.pageX == 0 && e.pageY == 0){return;}
-			console.log("Reset Object Size");
+			console.log('Reset Object Size');
 			console.log(e.pageX);
 			console.log(e.pageY);
 			console.log(vm.mouseDownPosition.x);
 			console.log(vm.mouseDownPosition.y);
 			console.log(vm.objectLastStatus.x);
 			console.log(vm.objectLastStatus.y);
-			// e.target.style.cursor = "nwse-resize";
-			object.style.width = e.pageX - vm.mouseDownPosition.x + vm.objectLastStatus.w + "px";
-			object.style.height = e.pageY - vm.mouseDownPosition.y + vm.objectLastStatus.h + "px";
+			// e.target.style.cursor = 'nwse-resize';
+			object.style.width = e.pageX - vm.mouseDownPosition.x + vm.objectLastStatus.w + 'px';
+			object.style.height = e.pageY - vm.mouseDownPosition.y + vm.objectLastStatus.h + 'px';
 			// object.style.lineHeight = vm.selectedObject.style.height; // 保证文字居中 （新方案：通过 flex 实现）
 
 			// 手动更新 Attribute Inspector 
@@ -116,7 +116,7 @@ var ComponentsService = {
 			if (vm.objectMoving) {
 				if(e.pageX == 0 && e.pageY == 0){return;} // 消除特殊情况（鼠标松开时，有一个偏差坐标 (0，0)）
 
-				console.log("Reset Object Position");
+				console.log('Reset Object Position');
 				console.log(e.pageX);
 				console.log(e.pageY);
 				console.log(vm.mouseDownPosition.x);
@@ -127,10 +127,10 @@ var ComponentsService = {
 				let newX = e.pageX - (vm.mouseDownPosition.x - vm.objectLastStatus.x),
 					newY = e.pageY - (vm.mouseDownPosition.y - vm.objectLastStatus.y);
 
-				object.style.left = newX+"px";
-				object.style.top = newY+"px";
-				console.log(newX+"px");
-				console.log(newY+"px");
+				object.style.left = newX+'px';
+				object.style.top = newY+'px';
+				console.log(newX+'px');
+				console.log(newY+'px');
 
 				// 手动更新 Attribute Inspector 
 				// left 和 top
@@ -164,11 +164,8 @@ var ComponentsService = {
 					// multipleFirst记录下多选中第一个选中的元素
 					vm.MultipleFirst = vm.selectedObject;
 					// 清空单选，清除绑定的编辑器
-					vm.selectedObject.getElementsByTagName("rb")[0].style.display = "none";
+					vm.selectedObject.getElementsByTagName('rb')[0].style.display = 'none';
 					vm.selectedObject = null;
-
-					document.getElementById('attributesEditor').innerHTML = "";
-					document.getElementById('constraintsEditor').innerHTML = "";
 
 				} else {
 					// 多选模式开启，并且单选没有元素，说明正在多选第三个及之后的元素
@@ -203,7 +200,7 @@ var ComponentsService = {
 						vm.selectedObjects.delete(elem);
 					});
 					// 不可以在这里直接执行 vm.selectedObjects.clear()
-					// 因为 forEach是异步操作，上面的display = "none" 还没有执行完，就直接clear了
+					// 因为 forEach是异步操作，上面的display = 'none' 还没有执行完，就直接clear了
 					// 会导致异步错误
 
 					// 清空
@@ -211,7 +208,7 @@ var ComponentsService = {
 				}
 
 				vm.objectMoving = true;
-				object.setAttribute("draggable", "true");
+				object.setAttribute('draggable', 'true');
 
 				// Reset mouseDownPosition
 				vm.mouseDownPosition = { x: e.pageX, y: e.pageY };
@@ -227,60 +224,63 @@ var ComponentsService = {
 					// 取消原选中组件的 选中状态
 					if (vm.selectedObject) {
 						vm.selectedObject.className = (vm.selectedObject.className).replace(' mark', '');
-						vm.selectedObject.getElementsByTagName("rb")[0].style.display = "none";
+						vm.selectedObject.getElementsByTagName('rb')[0].style.display = 'none';
 
 						// 取消对应图层 高亮
 						let layer = ComponentsService.getLayerByObject(vm.selectedObject);
-						layer.className = (layer.className).replace(' layer-selected', '');
+						layer.className = (layer.className).replace(' AL-Layer-Selected', '');
 					}
 
-					object.querySelector("rb").style.display = "block";
+					object.querySelector('rb').style.display = 'block';
 					object.className += ' mark';
 					vm.selectedObject = object;
 
 					// 选中时高亮对应图层
 					let layer = ComponentsService.getLayerByObject(object);
-					layer.className += ' layer-selected';
+					layer.className += ' AL-Layer-Selected';
 				};
 			}
 		};
-		
+
 		vm.objects[id] = object;
 	},
-	newLayerByTypeId: function (type, id) {
-		var newLayer = document.createElement("div");
-		newLayer.className = "layer-item";
-		// newLayer.style.top = _ModuleCount * 50 + "px";
-		newLayer.id = "layer-" + id;
-		newLayer.setAttribute("al-id", id);
-		newLayer.setAttribute("al-name", "layer");
-		newLayer.setAttribute("draggable", "true");
-		newLayer.innerText = type + "-" + id;
+	newLayerByObject: function (object) {
+		let id = object.getAttribute('al-id');
+		let type = object.getAttribute('al-type');
+		let name = object.getAttribute('al-name');
+
+		var newLayer = document.createElement('div');
+		newLayer.className = 'AL-Layer-Item';
+		newLayer.id = 'al-layer-' + id;
+		newLayer.setAttribute('al-id', id);
+		newLayer.setAttribute('al-type', type);
+		newLayer.setAttribute('draggable', 'true');
+		newLayer.innerText = name;
 
 		return newLayer;
 	},
 	handleLayer: function(layer) {
 		// select object when click on related layer
 		layer.onclick = function(event) {
-			var id = event.target.getAttribute("al-id");
-			var obj = document.getElementById("object-"+id);
+			var id = event.target.getAttribute('al-id');
+			var obj = document.getElementById('al-object-'+id);
 			obj.onmousedown();
 		}
 
 		// rearrange layers z-index by dragging
 		layer.ondragstart = function(event) {
-			layer.style.opacity = "0.5";
-			layer.style.borderLeft = "2px solid #777";
-			layer.style.borderRight = "2px solid #777";
-			layer.style.borderBottom = "2px solid #777";
-			event.dataTransfer.setData("ondragLayerId",event.target.id)
+			layer.style.opacity = '0.5';
+			layer.style.borderLeft = '2px solid #777';
+			layer.style.borderRight = '2px solid #777';
+			layer.style.borderBottom = '2px solid #777';
+			event.dataTransfer.setData('ondragLayerId',event.target.id)
 		};
 
 		layer.ondragend = function(event) {
-			layer.style.opacity = "1";
-			layer.style.borderLeft = "";
-			layer.style.borderRight = "";
-			layer.style.borderBottom = "";
+			layer.style.opacity = '1';
+			layer.style.borderLeft = '';
+			layer.style.borderRight = '';
+			layer.style.borderBottom = '';
 		}
 
 		layer.ondragover = function(event) {
@@ -289,19 +289,19 @@ var ComponentsService = {
 
 		layer.ondrop = function (event) {
 			event.preventDefault();
-			var ondragLayerId = event.dataTransfer.getData("ondragLayerId");
+			var ondragLayerId = event.dataTransfer.getData('ondragLayerId');
 			var ondragLayer = document.getElementById(ondragLayerId);
 
 			vm.layerList.insertBefore(ondragLayer, event.target);
 
 			for (var i = 0; i < vm.layerList.childElementCount; i++) {
-				var id = vm.layerList.children[i].getAttribute("al-id");
-				var obj = document.getElementById("object-"+id);
+				var id = vm.layerList.children[i].getAttribute('al-id');
+				var obj = document.getElementById('al-object-'+id);
 				obj.style.zIndex = vm.layerList.childElementCount - 1 - i
 			}
 		}
 	},
 	getLayerByObject: function(obj) {
-		return document.getElementById('layer-'+obj.getAttribute('al-id'));
+		return document.getElementById('al-layer-'+obj.getAttribute('al-id'));
 	}
 };

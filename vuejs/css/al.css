@@ -7,15 +7,15 @@
     cursor: not-allowed;
 }
 
-.layer-list {
+.AL-Layer-List {
 	padding: 10px;
 }
-.layer-item {
+.AL-Layer-Item {
 	color: #34495e;
 	padding: 5px 10px;
 	border: 1px solid #eee;
 }
 
-.layer-selected {
+.AL-Layer-Selected {
 	border: 1px solid #42b983;
 }

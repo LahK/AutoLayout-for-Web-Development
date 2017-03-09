@@ -8,11 +8,13 @@ let vm = new Vue({
         showOutlineMsg: true,
 
         isFocus: false, // 防止编辑 文字、属性 时，按下删除键触发删除元素事件
+        isEditingObjectName: false, // 是否正在编辑 组件名称
         toolLastPos: { x: 0, y: 0 }, // 工具面板 被选中时的位置、大小
 
         // 原 Global 部分
         screenArea: null, // 画板区
         objects: {}, // 画板中所有 AL 组件
+        objectNames: new Set(),
         selectedObject: null, // （单选时）选中的组件；（多选时）选中的第一个组件
         selectedObjects: [], // 多选时，选中的其他组件
         objectsLastId: 0, // 当前可供新组件使用的 Id
@@ -51,7 +53,10 @@ let vm = new Vue({
 
                 // 取消对应图层 高亮
                 let layer = ComponentsService.getLayerByObject(vm.selectedObject);
-                layer.className = (layer.className).replace(' layer-selected', '');
+                layer.className = (layer.className).replace(' AL-Layer-Selected', '');
+
+                // 终止 选中组件名称编辑 状态
+                vm.endEditingSelectedObjectName();
 
                 vm.selectedObject = null;
             }
@@ -62,8 +67,11 @@ let vm = new Vue({
         document.onkeyup = function(event) {
             let e = event || window.event || arguments.callee.caller.arguments[0];
 
+            console.log('On Key Up');
+            console.log(e.key);
+
             // Delete selected object by press 'Delete'/'Backspace' key
-            if (!vm.isFocus && (e.key == 'Backspace' || e.key == 'Delete')) {
+            if (vm.canDeleteSelectedObject() && (e.key == 'Backspace' || e.key == 'Delete')) {
                 let objectToDelete = vm.selectedObject;
                 vm.selectedObject = null;
                 let layerToDelete = ComponentsService.getLayerByObject(objectToDelete);
@@ -77,6 +85,18 @@ let vm = new Vue({
                 }
             }
 
+            if (e.key == 'Enter') {
+              if (vm.selectedObject != null) {
+                // 编辑选中组件名称 事件
+                if (vm.isEditingObjectName) {
+                  e.preventDefault();
+                  vm.endEditingSelectedObjectName();
+                } else {
+                  vm.startEditingSelectedObjectName();
+                }
+              }
+            }
+
             // if (e.key == 17) {
             //  // Ctrl
             //  Global.multipleSelect = false;
@@ -85,6 +105,10 @@ let vm = new Vue({
 
         document.onkeydown = function(event) {
             let e = event || window.event || arguments.callee.caller.arguments[0];
+
+            console.log('On Key Down');
+            console.log(e.key);
+
             switch (e.key) {
               // 左
               case 'ArrowLeft':
@@ -102,7 +126,22 @@ let vm = new Vue({
               case 'ArrowDown':
                 vm.selectedObjectMoveDown();
                 break;
+              case 'Enter':
+                if (e.key == 'Enter') {
+                  if (vm.selectedObject != null) {
+                    if (vm.isEditingObjectName) {
+                      e.preventDefault();
+                    }
+                  }
+                }
+                break;
             }
+        };
+
+        document.onkeypress = function(event) {
+            let e = event || window.event || arguments.callee.caller.arguments[0];
+            console.log('On Key Press');
+            console.log(e.key);
         }
     },
     methods: {
@@ -114,12 +153,19 @@ let vm = new Vue({
         // 注意：此处 组件 指代 AL-组件，非 vue components
         addNewObjectByType: function(type) {
             let newId = this.newObjectId();
+
             let newObject = ComponentsService.newObjectByTypeId(type, newId);
-            let newLayer = ComponentsService.newLayerByTypeId(type, newId);
+
+            // 将 新组件名称 添加到 objectNames
+            let newName = type+'-'+newId;
+            this.addNewObjectNameToList(newObject, newName)
             // 将组件添加到画板
             this.screenArea.appendChild(newObject);
+
+            let newLayer = ComponentsService.newLayerByObject(newObject);
             // 将图层添加到 图层操作面板
             this.layerList.insertBefore(newLayer, this.layerList.firstChild);
+
             // 初始化组件相关样式、事件
             ComponentsService.handleObject(newObject, newId, this.layerList.childElementCount);
             // 初始化图层相关事件
@@ -195,6 +241,45 @@ let vm = new Vue({
           this.updateSelectedObjectStyle('top', newValue);
         },
 
+        // 编辑组件名称相关方法
+        // 开始选中组件名称编辑状态
+        startEditingSelectedObjectName: function() {
+          this.isEditingObjectName = true;
+
+          let layer = this.getSelectedObjectLayer();
+          layer.contentEditable = true;
+          layer.focus();
+        },
+        // 终止选中组件名称编辑状态
+        endEditingSelectedObjectName: function() {
+          this.isEditingObjectName = false;
+
+          let layer = this.getSelectedObjectLayer();
+          layer.contentEditable = false;
+          this.updateObjectName(this.selectedObject, layer.innerHTML)
+        },
+        // 
+        addNewObjectNameToList: function(object, newName) {
+          while(this.objectNames.has(newName)) {
+            newName += '-new';
+          }
+          object.setAttribute('al-name', newName);
+
+          // 如果对应图层对象存在，更新图层显示文字
+          let layer = ComponentsService.getLayerByObject(object);
+          if (layer != null) {
+            layer.innerHTML = newName;
+          }
+
+          // 将新名称添加到名称集合
+          this.objectNames.add(newName);
+        },
+        updateObjectName: function(object, newName) {
+          let oldName = object.getAttribute('al-name');
+          this.objectNames.delete(oldName);
+          this.addNewObjectNameToList(object, newName);
+        },
+
         // 
         // 一些 工具/辅助 方法
         //
@@ -214,5 +299,11 @@ let vm = new Vue({
           // 更新 Attributes Inspector
           document.getElementsByName(attrName)[0].value = newValue;
         },
+        getSelectedObjectLayer: function() {
+          return ComponentsService.getLayerByObject(this.selectedObject);
+        },
+        canDeleteSelectedObject: function() {
+          return !this.isFocus && !this.isEditingObjectName;
+        }
     }
 })
