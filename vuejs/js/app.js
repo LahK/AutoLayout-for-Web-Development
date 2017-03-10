@@ -11,16 +11,21 @@ let vm = new Vue({
         focusInputName: '', // 当前 focus 的输入框的 name 属性，用于判断是否响应某些事件，如：移动选中对象
         isEditingObjectName: false, // 是否正在编辑 组件名称
         toolLastPos: { x: 0, y: 0 }, // 工具面板 被选中时的位置、大小
+        isMouseDown: false, // 判断当前是否处于 mousedown 状态
+
+        // 多选相关
+        isMultiSelectMode: false, // 是否处于多选模式
 
         // 原 Global 部分
         screenArea: null, // 画板区
         objects: {}, // 画板中所有 AL 组件
         objectNames: new Set(),
         selectedObject: null, // （单选时）选中的组件；（多选时）选中的第一个组件
-        selectedObjects: [], // 多选时，选中的其他组件
+        selectedObjects: [], // 多选时选中的组件列表。注意：多选时，selectedObject 重置为 null
         objectsLastId: 0, // 当前可供新组件使用的 Id
         objectLastStatus: { x: 0, y: 0, w: 0, h: 0 }, // Object 被选中时的位置、大小
-        objectMoving: false, // Object 是否在移动
+        selectedObjectsLastPos: [], // 记录拖动前被选中组件的位置
+        objectMoving: false, // Object 是否可以被移动
         objectResizing: false, //元素是否在被拖拽放缩
         layerMoving: false, // Layer是否在移动
         mouseOverObject: null, // 鼠标当前所在的元素
@@ -39,29 +44,48 @@ let vm = new Vue({
         // 获取图层个数的方便方法
         layersCount: function() {
             return this.layerList.childElementCount;
+        },
+        // 判断是否应该显示单选 Attribute Inspector
+        canShowSignleModeAttributeInspector: function() {
+          return this.selectedObjects.length === 0 && this.selectedObject !== null;
+        },
+        isMac: function() {
+          return navigator.userAgent.indexOf('Mac OS X') !== -1
         }
     },
     mounted: function() {
         // 初始化 画板
         this.screenArea = document.getElementById('screen');
+
+        // 全局 mousedown 事件
         this.screenArea.onmousedown = function(event) {
             let e = event || window.event || arguments.callee.caller.arguments[0];
 
             // 点击画板空白处时，取消 “组件选择”
-            if (vm.selectedObject && e.target === vm.screenArea && vm.selectedObjects.length == 0) {
-                vm.selectedObject.getElementsByTagName('rb')[0].style.display = 'none';
-                vm.selectedObject.className = (vm.selectedObject.className).replace(' mark', '');
-
-                // 取消对应图层 高亮
-                let layer = ComponentsService.getLayerByObject(vm.selectedObject);
-                layer.className = (layer.className).replace(' AL-Layer-Selected', '');
+            if (e.target === vm.screenArea) {
+              // 当前为单选
+              if (vm.selectedObject !== null) {
+                // 取消 选中组件 选中状态
+                ComponentsService.cancelObjectSelected(vm.selectedObject);
 
                 // 终止 选中组件名称编辑 状态
                 vm.endEditingSelectedObjectName();
 
+                // 重置
                 vm.selectedObject = null;
-            }
+              }
 
+              // 当前为多选
+              if (vm.selectedObjects.length > 0) {
+                for(let i=0;i<vm.selectedObjects.length;i++) {
+                  // 取消 组件 选中状态
+                  let obj = vm.selectedObjects[i];
+                  ComponentsService.cancelObjectSelected(obj);
+                }
+                // 重置
+                vm.selectedObjects = []
+              }
+            }
         };
 
         // 全局按键事件
@@ -78,7 +102,6 @@ let vm = new Vue({
                 let layerToDelete = ComponentsService.getLayerByObject(objectToDelete);
                 objectToDelete.parentNode.removeChild(objectToDelete);
                 layerToDelete.parentNode.removeChild(layerToDelete);
-                vm.selectedObject = null;
 
                 // 更新 Objects Outline 提示信息显示状态
                 if (vm.layersCount === 0) {
@@ -87,6 +110,7 @@ let vm = new Vue({
             }
 
             if (e.key == 'Enter') {
+              // 单选模式时，允许编辑选中组件名称
               if (vm.selectedObject != null) {
                 // 编辑选中组件名称 事件
                 if (vm.isEditingObjectName) {
@@ -98,10 +122,36 @@ let vm = new Vue({
               }
             }
 
-            // if (e.key == 17) {
-            //  // Ctrl
-            //  Global.multipleSelect = false;
-            // };
+            // 退出多选模式
+
+            if (e.key == 'Control' && !vm.isMac) {
+              e.preventDefault();
+              vm.isMultiSelectMode = false;
+
+              // 如果松开 Control 时，多选组件只剩一个，则将其作为单选组件
+              if (vm.selectedObjects.length === 1) {
+                let temp = vm.selectedObjects[0];
+                vm.selectedObjects = [];
+                vm.selectedObject = temp;
+                // 隐藏 单选选中组件 的大小改变图标
+                vm.selectedObject.querySelector('rb').style.display = 'block';
+                ComponentsService.calcelObjectAsFirst(vm.selectedObject);
+              }
+            }
+            if (e.key == 'Meta' && vm.isMac) {
+              e.preventDefault();
+              vm.isMultiSelectMode = false;
+
+              // 如果松开 Control 时，多选组件只剩一个，则将其作为单选组件
+              if (vm.selectedObjects.length === 1) {
+                let temp = vm.selectedObjects[0];
+                vm.selectedObjects = [];
+                vm.selectedObject = temp;
+                // 隐藏 单选选中组件 的大小改变图标
+                vm.selectedObject.querySelector('rb').style.display = 'block';
+                ComponentsService.calcelObjectAsFirst(vm.selectedObject);
+              }
+            }
         };
 
         document.onkeydown = function(event) {
@@ -136,12 +186,25 @@ let vm = new Vue({
                 }
                 break;
               case 'Enter':
-                if (e.key == 'Enter') {
-                  if (vm.selectedObject != null) {
-                    if (vm.isEditingObjectName) {
-                      e.preventDefault();
-                    }
+                // 当在编辑组件名称时，不允许换行。（只有单选模式可以编辑）
+                if (vm.selectedObject != null) {
+                  if (vm.isEditingObjectName) {
+                    e.preventDefault();
                   }
+                }
+                break;
+              case 'Control':
+                if (!vm.isMac) {
+                  e.preventDefault();
+                  // 进入多选模式
+                  vm.isMultiSelectMode = true;
+                }
+                break;
+              case 'Meta':
+                if (vm.isMac) {
+                  e.preventDefault();
+                  // 进入多选模式
+                  vm.isMultiSelectMode = true;
                 }
                 break;
             }
@@ -276,7 +339,7 @@ let vm = new Vue({
           layer.contentEditable = false;
           this.updateObjectName(this.selectedObject, layer.innerHTML)
         },
-        // 设置
+        // 设置组件 al-name 属性
         setObjectName: function(object, newName) {
           while(this.objectNames.has(newName)) {
             newName += '-new';
@@ -292,6 +355,7 @@ let vm = new Vue({
           // 将新名称添加到名称集合
           this.objectNames.add(newName);
         },
+        // 更新组件 al-name 属性
         updateObjectName: function(object, newName) {
           let oldName = object.getAttribute('al-name');
           this.objectNames.delete(oldName);
@@ -331,6 +395,6 @@ let vm = new Vue({
           // 1. 当不是在编辑组件名称，并且没有 focus 的时候
           // 2. 当处于 focus 状态，并且 focus 的输入框为 Left 或者 Top
           return this.selectedObject != null && ((!this.isFocus && !this.isEditingObjectName) || (this.isFocus && (this.focusInputName === 'Left' || this.focusInputName == 'Top') ))
-        }
+        },
     }
 })
