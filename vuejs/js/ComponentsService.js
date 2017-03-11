@@ -155,7 +155,9 @@ var ComponentsService = {
 		};
 		object.ondragend = function(event){
 			// 重新获取附近元素
-			// Update.updateSingleConstraintEditor(Config.enableConstraints, object, vm.ScreenArea.children);
+			if (object === vm.selectedObject) {
+				vm.updateSelectedObjectStatus()
+			}
 		};
 		object.onmousedown = function(event) {
 			console.log('Mouse Down!');
@@ -197,6 +199,8 @@ var ComponentsService = {
 					// 将该组件加入多选列表，并重置 selectedObject
 					vm.selectedObjects.push(vm.selectedObject);
 					vm.selectedObject = null;
+					vm.selectedObjectStatus = null;
+          			vm.isSelectedObjectStatusSet = false;
 				}
 
 				// 如果选中组件已经在 选中组件列表，则移除
@@ -258,6 +262,11 @@ var ComponentsService = {
 
 					vm.selectedObject = object;
 					ComponentsService.setObjectSelected('Single', object);
+
+					console.log('ttttt');
+
+					// 更新被选中组件状态，为添加约束面板备用
+					vm.updateSelectedObjectStatus()
 				};
 			}
 		};
@@ -361,5 +370,57 @@ var ComponentsService = {
 	dehighlightObjectLayer: function(obj) {
 		let layer = ComponentsService.getLayerByObject(obj);
 		layer.className = (layer.className).replace(' AL-Layer-Selected', '');
+	},
+
+	// get the computed size & location info
+	statusOf: function (obj) {
+		var objStatus = {
+			x: parseFloat(window.getComputedStyle(obj).left) || 0,
+			y: parseFloat(window.getComputedStyle(obj).top) || 0,
+			w: parseFloat(window.getComputedStyle(obj).width) || 50,
+			h: parseFloat(window.getComputedStyle(obj).height) || 50,
+		};
+
+		return objStatus;
+	},
+	// functions to determine position relation between two objects
+	isTopOfAnotherObject: function (obj,anotherObj) {
+		let objStatus = ComponentsService.statusOf(obj);
+		let anotherObjStatus = ComponentsService.statusOf(anotherObj);
+		if (anotherObjStatus.y < (objStatus.y + objStatus.h)) {return false;}
+		if (anotherObjStatus.x > (objStatus.x + objStatus.w)) {return false;}
+		if ((anotherObjStatus.x + anotherObjStatus.w) < objStatus.x) {return false;}
+		console.log((objStatus.y + objStatus.h) - anotherObjStatus.y);
+
+		return Math.abs((objStatus.y + objStatus.h) - anotherObjStatus.y);
+	},
+	isBottomOfAnotherObject: function (obj,anotherObj) {
+		// let objStatus = ComponentsService.statusOf(obj);
+		// let anotherObjStatus = ComponentsService.statusOf(anotherObj);
+		// if (objStatus.y < (anotherObjStatus.y + anotherObjStatus.h)) {return false;}
+		// if (objStatus.x > (anotherObjStatus.x + anotherObjStatus.w)) {return false;}
+		// if ((objStatus.x + objStatus.w) < anotherObjStatus.x) {return false;}
+
+		// return (anotherObjStatus.y + anotherObjStatus.h) - objStatus.y;
+		return ComponentsService.isTopOfAnotherObject(anotherObj, obj);
+	},
+	isLeftOfAnotherObject: function (obj,anotherObj) {
+		let objStatus = ComponentsService.statusOf(obj);
+		let anotherObjStatus = ComponentsService.statusOf(anotherObj);
+		if (anotherObjStatus.x < (objStatus.x + objStatus.w)) {return false;}
+		if (anotherObjStatus.y > (objStatus.y + objStatus.h)) {return false;}
+		if ((anotherObjStatus.y + anotherObjStatus.h) < objStatus.y) {return false;}
+
+		return Math.abs((objStatus.x + objStatus.w) - anotherObjStatus.x);
+	},
+	isRightOfAnotherObject: function (obj,anotherObj) {
+		// let objStatus = ComponentsService.statusOf(obj);
+		// let anotherObjStatus = ComponentsService.statusOf(anotherObj);
+		// if (objStatus.x < (anotherObjStatus.x + anotherObjStatus.w)) {return false;}
+		// if (objStatus.y > (anotherObjStatus.y + anotherObjStatus.h)) {return false;}
+		// if ((objStatus.y + objStatus.h) < anotherObjStatus.y) {return false;}
+
+		// return (anotherObjStatus.x + anotherObjStatus.w) - objStatus.x;
+		return ComponentsService.isLeftOfAnotherObject(anotherObj, obj);
 	},
 };

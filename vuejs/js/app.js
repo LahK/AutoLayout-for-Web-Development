@@ -18,11 +18,16 @@ let vm = new Vue({
 
         // 原 Global 部分
         screenArea: null, // 画板区
-        objects: {}, // 画板中所有 AL 组件
+        objects: [], // 画板中所有 AL 组件
+        constraints: [], // 所有存在的约束
+        isSelectedObjectStatusSet: false,
+        selectedObjectStatus: null,
+        addConstraintSelectionSingle: [],
+        addConstraintSelectionMulti: [],
         objectNames: new Set(),
         selectedObject: null, // （单选时）选中的组件；（多选时）选中的第一个组件
         selectedObjects: [], // 多选时选中的组件列表。注意：多选时，selectedObject 重置为 null
-        objectsLastId: 0, // 当前可供新组件使用的 Id
+        objectsLastId: 1, // 当前可供新组件使用的 Id。 id 0 保留给画板，在设置约束时会用到。
         objectLastStatus: { x: 0, y: 0, w: 0, h: 0 }, // Object 被选中时的位置、大小
         selectedObjectsLastPos: [], // 记录拖动前被选中组件的位置
         objectMoving: false, // Object 是否可以被移动
@@ -51,7 +56,7 @@ let vm = new Vue({
         },
         isMac: function() {
           return navigator.userAgent.indexOf('Mac OS X') !== -1
-        }
+        },
     },
     mounted: function() {
         // 初始化 画板
@@ -73,6 +78,9 @@ let vm = new Vue({
 
                 // 重置
                 vm.selectedObject = null;
+                // 重置 selectedObjectStatus
+                vm.selectedObjectStatus = null;
+                vm.isSelectedObjectStatusSet = false;
               }
 
               // 当前为多选
@@ -98,7 +106,14 @@ let vm = new Vue({
             // Delete selected object by press 'Delete'/'Backspace' key
             if (vm.canDeleteSelectedObject() && (e.key == 'Backspace' || e.key == 'Delete')) {
                 let objectToDelete = vm.selectedObject;
+                // 重置 selectedObject
                 vm.selectedObject = null;
+                // 重置 selectedObjectStatus
+                vm.selectedObjectStatus = null;
+                vm.isSelectedObjectStatusSet = false;
+                // 从 组件列表 移除
+                vm.objects.splice(vm.objects.indexOf(objectToDelete), 1);
+
                 let layerToDelete = ComponentsService.getLayerByObject(objectToDelete);
                 objectToDelete.parentNode.removeChild(objectToDelete);
                 layerToDelete.parentNode.removeChild(layerToDelete);
@@ -133,6 +148,8 @@ let vm = new Vue({
                 let temp = vm.selectedObjects[0];
                 vm.selectedObjects = [];
                 vm.selectedObject = temp;
+                // 更新被选中组件状态，为添加约束面板备用
+                vm.updateSelectedObjectStatus()
                 // 隐藏 单选选中组件 的大小改变图标
                 vm.selectedObject.querySelector('rb').style.display = 'block';
                 ComponentsService.calcelObjectAsFirst(vm.selectedObject);
@@ -147,6 +164,8 @@ let vm = new Vue({
                 let temp = vm.selectedObjects[0];
                 vm.selectedObjects = [];
                 vm.selectedObject = temp;
+                // 更新被选中组件状态，为添加约束面板备用
+                vm.updateSelectedObjectStatus()
                 // 隐藏 单选选中组件 的大小改变图标
                 vm.selectedObject.querySelector('rb').style.display = 'block';
                 ComponentsService.calcelObjectAsFirst(vm.selectedObject);
@@ -233,6 +252,8 @@ let vm = new Vue({
             this.setObjectName(newObject, newName)
             // 将组件添加到画板
             this.screenArea.appendChild(newObject);
+            // 将组件添加到 组件列表
+            this.objects.push(newObject);
 
             let newLayer = ComponentsService.newLayerByObject(newObject);
             // 将图层添加到 图层操作面板
@@ -362,6 +383,176 @@ let vm = new Vue({
           this.setObjectName(object, newName);
         },
 
+        //
+        // 约束相关方法
+        //
+        // 更新 selectedObjectStatus
+        updateSelectedObjectStatus: function() {
+          console.log('test');
+          let temp = {};
+          temp.width = parseFloat(window.getComputedStyle(this.selectedObject).width);
+          temp.height = parseFloat(window.getComputedStyle(this.selectedObject).height);
+
+          temp.leading = {
+            toObject: '0',
+            value: parseFloat(window.getComputedStyle(this.selectedObject).left)
+          };
+          temp.trailing = {
+            toObject: '0',
+            value: parseFloat(window.getComputedStyle(this.selectedObject).right)
+          };
+          temp.top = {
+            toObject: '0',
+            value: parseFloat(window.getComputedStyle(this.selectedObject).top)
+          };
+          temp.bottom = {
+            toObject: '0',
+            value: parseFloat(window.getComputedStyle(this.selectedObject).bottom)
+          };
+          let obj = this.selectedObject;
+          for(let i=0;i<this.objects.length;i++) {
+            let anotherObj = this.objects[i];
+            if (anotherObj !== obj) {
+              let leadingSpace = ComponentsService.isLeftOfAnotherObject(anotherObj, obj);
+              let trailingSpace = ComponentsService.isRightOfAnotherObject(anotherObj, obj);
+              let topSpace = ComponentsService.isTopOfAnotherObject(anotherObj, obj);
+              let bottomSpace = ComponentsService.isBottomOfAnotherObject(anotherObj, obj);
+              if (leadingSpace !== false && leadingSpace < temp.leading.value) {
+                temp.leading.value = leadingSpace;
+                temp.leading.toObject = anotherObj.getAttribute('al-id');
+                continue;
+              }
+              if (trailingSpace !== false && trailingSpace < temp.trailing.value) {
+                temp.trailing.value = trailingSpace;
+                temp.trailing.toObject = anotherObj.getAttribute('al-id');
+                continue;
+              }
+              if (topSpace !== false && topSpace < temp.top.value) {
+                temp.top.value = topSpace;
+                temp.top.toObject = anotherObj.getAttribute('al-id');
+                continue;
+              }
+              if (bottomSpace !== false && bottomSpace < temp.bottom.value) {
+                temp.bottom.value = bottomSpace;
+                temp.bottom.toObject = anotherObj.getAttribute('al-id');
+                continue;
+              }
+            }
+          }
+
+          // 同时更新所有状态
+          this.selectedObjectStatus = temp;
+          this.isSelectedObjectStatusSet = false; // 刷新一下
+          this.isSelectedObjectStatusSet = true;
+          console.log(this.selectedObjectStatus);
+          console.log(this.addConstraintSelectionSingle);
+        },
+        // 获取 Spacing Note 文字
+        getConstraintToObjectMessage: function(which) {
+          return this.selectedObjectStatus[which].toObject == 0 ? 'Screen' : document.getElementById('al-object-'+this.selectedObjectStatus[which].toObject).getAttribute('al-name');
+        },
+        addConstraint: function(toItem, attr) {
+          console.log(toItem);
+          console.log(attr);
+          // toItem 是 约束第二方 的 id
+          // attr 是 约束第一方 约束的属性名称
+          let obj = this.selectedObject || this.getFirstSelectedObject();
+          let status = this.selectedObjectStatus;
+
+          let c = {};
+          c.item = obj.getAttribute('al-id');
+          c.attribute = this.getStandardConstraintName(attr);
+          c.relatedBy = 'equal';
+          c.toItem = toItem;
+          if (attr.indexOf('space') !== -1 && attr.indexOf('align') === -1) {
+            switch(c.attribute) {
+              case 'leading':
+                c.toAttribute = "trailing";
+                break;
+              case 'trailing':
+                c.toAttribute = 'leading';
+                break;
+              case 'top':
+                c.toAttribute = 'bottom';
+                break;
+              case 'bottom':
+                c.toAttribute = 'top';
+                break;
+            }
+          } else {
+            c.toAttribute = c.attribute;
+          }
+          c.multiplier = 1;
+          if (attr.indexOf('space') !== -1 && attr.indexOf('align') === -1) {
+            c.constant = this.selectedObjectStatus[c.attribute].value;
+          } else if (attr === 'c-width' || attr === 'c-height') {
+            c.constant = this.selectedObjectStatus[c.attribute];
+          } else {
+            c.constant = 0;
+          }
+          this.constraints.push(c);
+        },
+        addConstraintSingleOnClick: function() {
+          for(let i=0;i<this.addConstraintSelectionSingle.length;i++) {
+            let attr = this.addConstraintSelectionSingle[i];
+            let toItem = '';
+            if (attr.indexOf('space') !== -1) {
+              toItem = this.selectedObjectStatus[this.getStandardConstraintName(attr)].toObject;
+            }
+            this.addConstraint(toItem, attr);
+          }
+          this.addConstraintSelectionSingle = [];
+        },
+        addConstraintMultiOnClick: function() {
+          let firstObj = this.getFirstSelectedObject();
+          for(let i=0;i<this.selectedObjects.length;i++) {
+            if (this.selectedObjects[i] === firstObj) { continue; }
+            let toItem = this.selectedObjects[i].getAttribute('al-id');
+            for(let j=0;j<this.addConstraintSelectionMulti.length;j++) {
+              let attr = this.addConstraintSelectionMulti[j];
+              this.addConstraint(toItem, attr);
+            }
+          }
+          this.addConstraintSelectionMulti = [];
+        },
+        getStandardConstraintName: function(name) {
+          switch(name) {
+            case 'c-width':
+              return 'width';
+            case 'c-height':
+              return 'height';
+            case 'c-leading-space':
+              return 'leading';
+            case 'c-trailing-space':
+              return 'trailing';
+            case 'c-top-space':
+              return 'top';
+            case 'c-bottom-space':
+              return 'bottom';
+            case 'c-herizontally-in-box':
+              return 'centerX';
+            case 'c-vertically-in-box':
+              return 'centerY';
+            case 'c-equal-width':
+              return 'width';
+            case 'c-equal-height':
+              return 'height';
+            case 'c-align-leading-edges':
+              return 'leading';
+            case 'c-align-top-edges':
+              return 'top';
+            case 'c-align-traling-edges':
+              return 'trailing';
+            case 'c-align-bottom-edges':
+              return 'bottom';
+            case 'c-horizontally-align':
+              return 'centerX';
+            case 'c-vertically-align':
+              return 'centerY';
+          }
+
+        },
+
         // 
         // 一些 工具/辅助 方法
         //
@@ -395,6 +586,10 @@ let vm = new Vue({
           // 1. 当不是在编辑组件名称，并且没有 focus 的时候
           // 2. 当处于 focus 状态，并且 focus 的输入框为 Left 或者 Top
           return this.selectedObject != null && ((!this.isFocus && !this.isEditingObjectName) || (this.isFocus && (this.focusInputName === 'Left' || this.focusInputName == 'Top') ))
+        },
+        // 获取第一个被选中的组件
+        getFirstSelectedObject: function() {
+          return document.getElementsByClassName('first-mark')[0];
         },
     }
 })

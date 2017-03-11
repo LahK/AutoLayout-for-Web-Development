@@ -7,6 +7,18 @@
 	height: 100vh;
 }
 
+.button {
+	border: 1px solid #42b983;
+    border-radius: 2em;
+    display: inline-block;
+    color: #42b983;
+    font-size: 0.8em;
+    width: 125px;
+    padding: 4px 0;
+    text-align: center;
+    cursor: pointer;
+}
+
 .tool {
 	z-index: 99;
 	border: 1px solid #42b983;
@@ -70,6 +82,78 @@
 	flex: 7;
 
 	color: #34495e;
+}
+
+.add-new-constraint {
+	position: fixed;
+	top: 500px;
+	right: 50px;
+
+	display: flex;
+	flex-direction: column;
+
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 30px;
+
+	height: auto;
+	width: auto;
+
+	background: #f8f8f8;
+}
+.add-new-constraint>h4 {
+	align-self: center;
+}
+.add-new-constraint>span {
+	padding: 10px 0;
+	color: #7f8c8d;
+}
+.add-new-constraint>a {
+    align-self: center;
+    margin-top: 20px;
+    text-decoration: none;
+}
+.add-new-constraint-item-single {
+	display: flex;
+	flex-direction: row;
+}
+.add-new-constraint-item-single>div {
+	flex: 8;
+	flex-direction: row;
+	align-self: center;
+}
+.add-new-constraint-item-single>input {
+	flex: 2;
+	width: 100%;
+}
+.add-new-constraint-item-single-footnote {
+	color: #7f8c8d;
+	padding-left: 20px;
+	padding-bottom: 5px;
+}
+.add-new-constraint-item-multi {
+	padding: 2px 0;
+}
+
+.constraints-inspector {
+	position: fixed;
+	bottom: 350px;
+	left: 50px;
+
+	display: flex;
+	flex-direction: column;
+
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 20px;
+
+	height: auto;
+	width: 300px;
+
+	background: #f8f8f8;
+}
+.constraints-inspector>h4 {
+	align-self: center;
 }
 
 .objects-outline {

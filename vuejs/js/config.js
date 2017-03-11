@@ -89,39 +89,30 @@ var ALConfig = {
 	// Constraint-inspector Configs
 	constraints: {
 		single: {
-			Shape: {
-				'Width':'width',
-				'Height':'height'
+			Size: {
+				'Width':'c-width',
+				'Height':'c-height'
 			},
-			Margins: {
-				'Margin Left':'margin-left',
-				'Margin Right':'margin-right',
-				'Margin Top':'margin-top',
-				'Margin Botton':'margin-bottom'
+			Spacing: {
+				'Leading Space':'c-leading-space',
+				'Top Space':'c-top-space',
+				'Trailing Space':'c-trailing-space',
+				'Bottom Space':'c-bottom-space'
 			},
-			Alignments: {
-				'Herizontal in Box':'herizontal-in-box',
-				'Vertically in Box':'vertically-in-box'
+			Align: {
+				'Herizontally in Screen':'c-herizontally-in-box',
+				'Vertically in Screen':'c-vertically-in-box'
 			}
 		},
-		multiple: {
-			Shape: {
-				'Width':'width',
-				'Height':'height',
-			},
-			'Relative Position':{
-				'Leading Edges':'leading-edges',
-				'Trailing Edges':'traling-edges',
-				'Top Edges':'top-edges',
-				'Botton Edges':'bottom-edges'
-			},
-			Aligments:{
-				'Horizontal':'horizontal',
-				'Vertically':'Vertically',
-				'Herizontal in Box':'herizontal-in-box',
-				'Vertically in Box':'vertically-in-box'
-			}
-
+		multi: {
+			'Equal Width':'c-equal-width',
+			'Equal Height':'c-equal-height',
+			'Align Leading Edges':'c-align-leading-edges',
+			'Align Top Edges':'c-align-top-edges',
+			'Align Trailing Edges':'c-align-traling-edges',
+			'Align Botton Edges':'c-align-bottom-edges',
+			'Horizontally Align':'c-horizontally-align',
+			'Vertically Align':'c-vertically-align',
 		}
 	}
 };

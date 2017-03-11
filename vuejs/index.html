@@ -35,6 +35,7 @@
 					@blur="inputOnBlur"
 					>
 				</div>
+				<template v-if="Object.keys(Config.attributes[selectedObject.getAttribute('al-type')].data) != 0">
 				<h5>Data:</h5>
 				<div 
 				class="attributes-inspector-item" 
@@ -47,6 +48,115 @@
 					@focus="inputOnFocus(key)"
 					@blur="inputOnBlur"
 					>
+				</div>
+				</template>
+			</template>
+		</div>
+
+		<div class="tool add-new-constraint" v-show="(selectedObject !== null || selectedObjects.length !== 0)" @dragstart="toolOnDragStart($event)" @drag="toolOnDrag($event)" draggable>
+			<h4>Add New Constraint</h4>
+			<template v-if="isSelectedObjectStatusSet">
+				<h5>Size: </h5>
+				<div class="add-new-constraint-item-single">
+					<div>
+						<input type="checkbox" :value="Config.constraints.single.Size.Width" v-model="addConstraintSelectionSingle">
+						<span>Width</span>
+					</div>
+					<input type="text" :name="Config.constraints.single.Size.Width" :value="selectedObjectStatus.width" @focus="inputOnFocus(key)" @blur="inputOnBlur" >
+				</div>
+				<div class="add-new-constraint-item-single">
+					<div>
+						<input type="checkbox" :value="Config.constraints.single.Size.Height" v-model="addConstraintSelectionSingle">
+						<span>Height</span>
+					</div>
+					<input type="text" :name="Config.constraints.single.Size.Height" :value="selectedObjectStatus.height" @focus="inputOnFocus(key)" @blur="inputOnBlur" >
+				</div>
+				<h5>Spacing: </h5>
+				<div class="add-new-constraint-item-single">
+					<div>
+						<input type="checkbox" :value="Config.constraints.single.Spacing['Leading Space']" v-model="addConstraintSelectionSingle">
+						<span>Leading Space</span>
+					</div>
+					<input type="text" :name="Config.constraints.single.Spacing['Leading Space']" :value="selectedObjectStatus.leading.value" @focus="inputOnFocus(key)" @blur="inputOnBlur" >
+				</div>
+				<div class="add-new-constraint-item-single-footnote">
+					to {{ getConstraintToObjectMessage('leading') }}
+				</div>
+				<div class="add-new-constraint-item-single">
+					<div>
+						<input type="checkbox" :value="Config.constraints.single.Spacing['Trailing Space']" v-model="addConstraintSelectionSingle">
+						<span>Trailing Space</span>
+					</div>
+					<input type="text" :name="Config.constraints.single.Spacing['Trailing Space']" :value="selectedObjectStatus.trailing.value" @focus="inputOnFocus(key)" @blur="inputOnBlur" >
+				</div>
+				<div class="add-new-constraint-item-single-footnote">
+					to {{ getConstraintToObjectMessage('trailing') }}
+				</div>
+				<div class="add-new-constraint-item-single">
+					<div>
+						<input type="checkbox" :value="Config.constraints.single.Spacing['Top Space']" v-model="addConstraintSelectionSingle">
+						<span>Top Space</span>
+					</div>
+					<input type="text" :name="Config.constraints.single.Spacing['Top Space']" :value="selectedObjectStatus.top.value" @focus="inputOnFocus(key)" @blur="inputOnBlur" >
+				</div>
+				<div class="add-new-constraint-item-single-footnote">
+					to {{ getConstraintToObjectMessage('top') }}
+				</div>
+				<div class="add-new-constraint-item-single">
+					<div>
+						<input type="checkbox" :value="Config.constraints.single.Spacing['Bottom Space']" v-model="addConstraintSelectionSingle">
+						<span>Bottom Space</span>
+					</div>
+					<input type="text" :name="Config.constraints.single.Spacing['Bottom Space']" :value="selectedObjectStatus.bottom.value" @focus="inputOnFocus(key)" @blur="inputOnBlur" >
+				</div>
+				<div class="add-new-constraint-item-single-footnote">
+					to {{ getConstraintToObjectMessage('bottom') }}
+				</div>
+				<h5>Align: </h5>
+				<div class="add-new-constraint-item-single">
+					<div>
+						<input type="checkbox" :value="Config.constraints.single.Align['Herizontally in Screen']" v-model="addConstraintSelectionSingle">
+						<span>Horizontally in Screen</span>
+					</div>
+				</div>
+				<div class="add-new-constraint-item-single">
+					<div>
+						<input type="checkbox" :value="Config.constraints.single.Align['Vertically in Screen']" v-model="addConstraintSelectionSingle">
+						<span>Vertically in Screen</span>
+					</div>
+				</div>
+				<a class="button" href="#" v-show="addConstraintSelectionSingle.length" @click="addConstraintSingleOnClick">Add Contraint(s)</a>
+			</template>
+			<template v-if="selectedObjects.length !== 0">
+				<span>{{ getFirstSelectedObject().getAttribute('al-name') }} to other selected objects</span>
+				<div
+				class="add-new-constraint-item-multi"
+				v-for="(value, key) in Config.constraints.multi"
+				>
+					<input type="checkbox" :value="value" v-model="addConstraintSelectionMulti">
+					<span>{{ key }}</span>
+				</div>
+				<a class="button" href="#" v-show="addConstraintSelectionMulti.length" @click="addConstraintMultiOnClick">Add Contraint(s)</a>
+			</template>
+		</div>
+
+		<div 
+		class="tool constraints-inspector" 
+		v-show="selectedObject !== null"
+		@dragstart="toolOnDragStart($event)" 
+		@drag="toolOnDrag($event)" 
+		draggable
+		>
+			<h4>Constraints Inspector</h4>
+			<template v-if="selectedObject !== null">
+				<div v-if="constraints.length === 0">
+					No Constraint Yet.
+				</div>
+				<div 
+				class="AL-Constraint"
+				v-for="item in constraints"
+				>
+					{{ item.name }} {{ item.attribute }} {{ item.relatedBy }} {{ item.toItem }} {{ item.toAttribute }} {{ item.multiplier }} {{ item.constant }}
 				</div>
 			</template>
 		</div>
