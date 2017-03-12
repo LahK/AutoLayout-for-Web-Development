@@ -85,12 +85,6 @@ var ComponentsService = {
 			let e = event || window.event || arguments.callee.caller.arguments[0];
 			if(e.pageX == 0 && e.pageY == 0){return;}
 			console.log('Reset Object Size');
-			console.log(e.pageX);
-			console.log(e.pageY);
-			console.log(vm.mouseDownPosition.x);
-			console.log(vm.mouseDownPosition.y);
-			console.log(vm.objectLastStatus.x);
-			console.log(vm.objectLastStatus.y);
 			// e.target.style.cursor = 'nwse-resize';
 			object.style.width = e.pageX - vm.mouseDownPosition.x + vm.objectLastStatus.w + 'px';
 			object.style.height = e.pageY - vm.mouseDownPosition.y + vm.objectLastStatus.h + 'px';

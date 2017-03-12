@@ -691,10 +691,6 @@ let vm = new Vue({
         },
         // 通过 id 获取组件 al-name
         getALNameById: function(id) {
-          console.log('----------');
-          console.log(id);
-          if (id=='') {return '';}
-          console.log(document.getElementById('al-object-'+id).getAttribute('al-name'));
           return document.getElementById('al-object-'+id).getAttribute('al-name');
         },
         exportToJsonFile: function() {

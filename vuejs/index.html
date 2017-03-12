@@ -62,14 +62,14 @@
 						<input type="checkbox" :value="Config.constraints.single.Size.Width" v-model="addConstraintSelectionSingle">
 						<span>Width</span>
 					</div>
-					<input type="text" :name="Config.constraints.single.Size.Width" :value="selectedObjectStatus.width" @focus="inputOnFocus(Config.constraints.single.Size.Width)" @blur="inputOnBlur" >
+					<input type="text" :name="Config.constraints.single.Size.Width" v-model="selectedObjectStatus.width" @focus="inputOnFocus(Config.constraints.single.Size.Width)" @blur="inputOnBlur" >
 				</div>
 				<div class="add-new-constraint-item-single">
 					<div>
 						<input type="checkbox" :value="Config.constraints.single.Size.Height" v-model="addConstraintSelectionSingle">
 						<span>Height</span>
 					</div>
-					<input type="text" :name="Config.constraints.single.Size.Height" :value="selectedObjectStatus.height" @focus="inputOnFocus(Config.constraints.single.Size.Height)" @blur="inputOnBlur" >
+					<input type="text" :name="Config.constraints.single.Size.Height" v-model="selectedObjectStatus.height" @focus="inputOnFocus(Config.constraints.single.Size.Height)" @blur="inputOnBlur" >
 				</div>
 				<h5>Spacing: </h5>
 				<div class="add-new-constraint-item-single">
@@ -77,7 +77,7 @@
 						<input type="checkbox" :value="Config.constraints.single.Spacing['Leading Space']" v-model="addConstraintSelectionSingle">
 						<span>Leading Space</span>
 					</div>
-					<input type="text" :name="Config.constraints.single.Spacing['Leading Space']" :value="selectedObjectStatus.leading.value" @focus="inputOnFocus(Config.constraints.single.Spacing['Leading Space'])" @blur="inputOnBlur" >
+					<input type="text" :name="Config.constraints.single.Spacing['Leading Space']" v-model="selectedObjectStatus.leading.value" @focus="inputOnFocus(Config.constraints.single.Spacing['Leading Space'])" @blur="inputOnBlur" >
 				</div>
 				<div class="add-new-constraint-item-single-footnote">
 					to {{ getConstraintToObjectMessage('leading') }}
@@ -87,7 +87,7 @@
 						<input type="checkbox" :value="Config.constraints.single.Spacing['Trailing Space']" v-model="addConstraintSelectionSingle">
 						<span>Trailing Space</span>
 					</div>
-					<input type="text" :name="Config.constraints.single.Spacing['Trailing Space']" :value="selectedObjectStatus.trailing.value" @focus="inputOnFocus(Config.constraints.single.Spacing['Trailing Space'])" @blur="inputOnBlur" >
+					<input type="text" :name="Config.constraints.single.Spacing['Trailing Space']" v-model="selectedObjectStatus.trailing.value" @focus="inputOnFocus(Config.constraints.single.Spacing['Trailing Space'])" @blur="inputOnBlur" >
 				</div>
 				<div class="add-new-constraint-item-single-footnote">
 					to {{ getConstraintToObjectMessage('trailing') }}
@@ -97,7 +97,7 @@
 						<input type="checkbox" :value="Config.constraints.single.Spacing['Top Space']" v-model="addConstraintSelectionSingle">
 						<span>Top Space</span>
 					</div>
-					<input type="text" :name="Config.constraints.single.Spacing['Top Space']" :value="selectedObjectStatus.top.value" @focus="inputOnFocus(Config.constraints.single.Spacing['Top Space'])" @blur="inputOnBlur" >
+					<input type="text" :name="Config.constraints.single.Spacing['Top Space']" v-model="selectedObjectStatus.top.value" @focus="inputOnFocus(Config.constraints.single.Spacing['Top Space'])" @blur="inputOnBlur" >
 				</div>
 				<div class="add-new-constraint-item-single-footnote">
 					to {{ getConstraintToObjectMessage('top') }}
@@ -107,7 +107,7 @@
 						<input type="checkbox" :value="Config.constraints.single.Spacing['Bottom Space']" v-model="addConstraintSelectionSingle">
 						<span>Bottom Space</span>
 					</div>
-					<input type="text" :name="Config.constraints.single.Spacing['Bottom Space']" :value="selectedObjectStatus.bottom.value" @focus="inputOnFocus(Config.constraints.single.Spacing['Bottom Space'])" @blur="inputOnBlur" >
+					<input type="text" :name="Config.constraints.single.Spacing['Bottom Space']" v-model="selectedObjectStatus.bottom.value" @focus="inputOnFocus(Config.constraints.single.Spacing['Bottom Space'])" @blur="inputOnBlur" >
 				</div>
 				<div class="add-new-constraint-item-single-footnote">
 					to {{ getConstraintToObjectMessage('bottom') }}
