@@ -248,6 +248,10 @@
 				
 			</div>
 		</div>
+		<div class="tool menu" @dragstart="toolOnDragStart($event)" @drag="toolOnDrag($event)" draggable>
+			<a href="#" @click="exportToJsonFile">Export</a>
+			<a href="#">Import</a>
+		</div>
 	</div>
 	<script src="https://unpkg.com/vue/dist/vue.js"></script>
 	<script src="./js/config.js"></script>
