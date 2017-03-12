@@ -624,10 +624,12 @@ let vm = new Vue({
           console.log('Select Constraint');
         },
         cancelSelectedConstraint: function() {
-          this.selectedConstraintEle.className = this.selectedConstraintEle.className.replace(' AL-Constraint-Item-Selected', '');
-          this.selectedConstraintEle = null;
-          this.isSelectedConstraintChanged = false;
-          console.log('Deselect Constraint');
+          if (this.selectedConstraint !== null) {
+            this.selectedConstraintEle.className = this.selectedConstraintEle.className.replace(' AL-Constraint-Item-Selected', '');
+            this.selectedConstraintEle = null;
+            this.isSelectedConstraintChanged = false;
+            console.log('Deselect Constraint');
+          }
         },
         editConstraintInputOnKeyUp: function(event) {
           if ('ArrowLeftArrowRightArrowUpArrowDownEnterCtrlMeta'.indexOf(event.key) === -1) {
@@ -694,6 +696,56 @@ let vm = new Vue({
           if (id=='') {return '';}
           console.log(document.getElementById('al-object-'+id).getAttribute('al-name'));
           return document.getElementById('al-object-'+id).getAttribute('al-name');
-        }
+        },
+        exportToJsonFile: function() {
+          let jsonData = {};
+          jsonData.objects = [];
+          for(let i=0;i<this.objects.length;i++) {
+            let item = this.objects[i];
+            let obj = {};
+            obj.type = item.getAttribute('al-type');
+            obj.id = item.getAttribute('al-id');
+            obj.name = item.getAttribute('al-name');
+            obj.style = {};
+            obj.data = {};
+
+            let itemStyle = window.getComputedStyle(item);
+            let styleObj = this.Config.attributes[obj.type].style;
+            let dataObj = this.Config.attributes[obj.type].data;
+            let styleKeys = Object.keys(styleObj);
+            for(let j=0;j<styleKeys.length;j++) {
+              obj.style[styleObj[styleKeys[j]]] = itemStyle[styleObj[styleKeys[j]]];
+            }
+            let dataKeys = Object.keys(dataObj);
+            for(let j=0;j<dataKeys.length;j++) {
+              obj.data[dataObj[dataKeys[j]]] = item.getAttribute(dataObj[dataKeys[j]]);
+            }
+            jsonData.objects.push(obj);
+          }
+
+          jsonData.constraints = [];
+          for(let i=0;i<this.constraints.length;i++) {
+            let item = this.constraints[i];
+            let c = {};
+            c.item = item.item;
+            c.attribute = item.attribute;
+            c.relatedBy = item.relatedBy;
+            c.toItem = item.toItem;
+            c.toAttribute = item.toAttribute;
+            c.multiplier = item.multiplier;
+            c.constant = item.constant;
+            jsonData.constraints.push(c);
+          }
+
+          let dataStr = JSON.stringify(jsonData);
+          let dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
+          
+          let exportFileDefaultName = 'data.json';
+          
+          let linkElement = document.createElement('a');
+          linkElement.setAttribute('href', dataUri);
+          linkElement.setAttribute('download', exportFileDefaultName);
+          linkElement.click();
+        },
     }
 })
