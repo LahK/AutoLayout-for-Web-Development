@@ -15,7 +15,7 @@ A tool for web developers to fast set website UI using Xcode-like-AutoLayout.
 
 1. 每一项新的任务，均创建一个对应的 `issue`。
 	命名规则：[分类]标题。例如：[feature]添加菜单栏；[refine]菜单栏 UI 改版
-2. 开始某一项任务时，从 `master` 创建新的分支。
+2. 开始某一项任务时，在项目管理面板将任务卡分配给自己，从 `master` 创建新的分支。
 	命名规则：
 		1. `bug` 和 `to fix` 均用：issue-n (n 为该 issue 对应编号)
 		2. `feature` 为：feature-n
