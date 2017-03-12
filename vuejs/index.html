@@ -162,7 +162,7 @@
 				>
 					<div class="AL-Constraint-Item-row1">
 						<span>{{ getConstraintText(item) }}:</span>
-						<span>{{ item.toItem === '' ? item.constant : item.toItem == '0' ? 'Screen' : getALNameById(item.toItem) }}</span>
+						<span>{{ item.toItem === '' ? item.constant : item.toItem == '0' ? 'Screen' : item.toItem != selectedObject.getAttribute('al-id') ? getALNameById(item.toItem) : getALNameById(item.item) }}</span>
 					</div>
 					<div 
 					class="AL-Constraint-Item-row2"
