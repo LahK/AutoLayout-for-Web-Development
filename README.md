@@ -1,6 +1,26 @@
 # AutoLayout-for-Web-Development
 A tool for web developers to fast set website UI using Xcode-like-AutoLayout.
 
+## 【重要】协作流程
+
+建议使用 `waffle.io` 来进行项目管理。
+
+关键词：
+- bug: 需要修复的 错误的逻辑、功能，漏洞
+- to fix: 修改未完成的功能
+- feature: 添加新的功能
+- refine: 重新完善某部分
+
+1. 每一项新的任务，均创建一个对应的 `issue`。
+	命名规则：[分类]标题。例如：[feature]添加菜单栏；[refine]菜单栏 UI 改版
+2. 开始某一项任务时，从 `master` 创建新的分支。
+	命名规则：
+		1. `bug` 和 `to fix` 均用：issue-n (n 为该 issue 对应编号)
+		2. `feature` 为：feature-n
+		3. `refine` 为：refine-n
+3. 任务完成并测试之后，提交 `pull request`。
+4. 互相检查无错误后，`merge` 到 `master` 分支。删除任务分支，并标记对应 `issue` 为完成。
+
 ## Anchors
 
 1. [相关链接](#related-links)
