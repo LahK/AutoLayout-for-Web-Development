@@ -3,6 +3,8 @@ A tool for web developers to fast set website UI using Xcode-like-AutoLayout.
 
 ## 【重要】协作流程
 
+@mrliaocn 
+
 建议使用 `waffle.io` 来进行项目管理。
 
 关键词：
