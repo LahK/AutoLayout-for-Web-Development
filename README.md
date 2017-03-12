@@ -59,6 +59,7 @@ A tool for web developers to fast set website UI using Xcode-like-AutoLayout.
 - [drag: DataTransfer](https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer)
 - [Browser Window Size in JavaScript](http://www.javascripter.net/faq/browserw.htm)
 - [Key Values](https://developer.mozilla.org/zh-CN/docs/Web/API/KeyboardEvent/key/Key_Values)
+- [Export JSON Data To Downloadable File Using Javascript](http://www.codevoila.com/post/30/export-json-data-to-downloadable-file-using-javascript)
 
 ## Project Design
 - [全部文件](https://github.com/LahK/AutoLayout-for-Web-Development/tree/master/design-docs)
