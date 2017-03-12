@@ -149,15 +149,93 @@
 		>
 			<h4>Constraints Inspector</h4>
 			<template v-if="selectedObject !== null">
-				<div v-if="constraints.length === 0">
+				<div v-if="constraintsOfSelectedObject.length === 0">
 					No Constraint Yet.
 				</div>
+				<h5 v-if="constraintsOfSelectedObject.length !== 0">
+					{{ getALNameById(selectedObject.getAttribute('al-id')) }}:
+				</h5>
 				<div 
-				class="AL-Constraint"
-				v-for="item in constraints"
+				class="AL-Constraint-Item"
+				v-for="item in constraintsOfSelectedObject"
+				@click="constraintOnClick(item, $event)"
 				>
-					{{ item.name }} {{ item.attribute }} {{ item.relatedBy }} {{ item.toItem }} {{ item.toAttribute }} {{ item.multiplier }} {{ item.constant }}
+					<div class="AL-Constraint-Item-row1">
+						<span>{{ getConstraintText(item) }}:</span>
+						<span>{{ item.toItem === '' ? item.constant : item.toItem == '0' ? 'Screen' : getALNameById(item.toItem) }}</span>
+					</div>
+					<div 
+					class="AL-Constraint-Item-row2"
+					v-if="(item.toItem !== '' && (item.constant !== 0 || item.multiplier !== 1))"
+					>
+						<span></span>
+						<span>{{ item.multiplier != 1 ? 'x'+item.multiplier : '' }}</span>
+						<span>{{ item.constant != 0 ? '+'+item.constant : '' }}</span>
+						<span></span>
 				</div>
+				</div>
+			</template>
+		</div>
+
+		<div 
+		v-show="selectedConstraintEle !== null"
+		class="tool edit-constraint" 
+		@dragstart="toolOnDragStart($event)" 
+		@drag="toolOnDrag($event)" 
+		draggable
+		>
+			<h4>Edit Constraint</h4>
+			<template v-if="selectedConstraintEle !== null">
+			<div class="edit-constraint-item">
+				<span>Object:</span>
+				<span>{{ getALNameById(selectedConstraint.item) }}</span>
+			</div>
+			<div class="edit-constraint-item">
+				<span>Attribute:</span>
+				<span>{{ selectedConstraint.attribute }}</span>
+			</div>
+			<div class="edit-constraint-item">
+				<span>Relation:</span>
+				<span>{{ selectedConstraint.relatedBy }}</span>
+			</div>
+			<div v-if="(selectedConstraint.toItem != '')" class="edit-constraint-item">
+				<span>To Object:</span>
+				<span>{{ selectedConstraint.toItem == '0' ? 'Screen' : getALNameById(selectedConstraint.toItem) }}</span>
+			</div>
+			<div class="edit-constraint-item">
+				<span>To Attribute:</span>
+				<span>{{ selectedConstraint.toAttribute }}</span>
+			</div>
+			<div class="edit-constraint-item">
+				<span>Multiplier:</span>
+				<span>
+					<input type="number" name="c-multiplier" :value="selectedConstraint.multiplier"
+					@focus="inputOnFocus('c-multiplier')"
+					@blur="inputOnBlur"
+					@keyup="editConstraintInputOnKeyUp"
+					>
+				</span>
+			</div>
+			<div class="edit-constraint-item">
+				<span>Constant:</span>
+				<span>
+					<input type="number" name="c-constant" :value="selectedConstraint.constant"
+					@focus="inputOnFocus('c-constant')"
+					@blur="inputOnBlur"
+					@keyup="editConstraintInputOnKeyUp"
+					>
+				</span>
+			</div>
+			<a class="button" href="#"
+			@click="saveConstraintChange"
+			>
+				Save Change
+			</a>
+			<a class="button is-delete" href="#"
+			@click="deleteSelectedConstraint"
+			>
+				Remove Constraint
+			</a>
 			</template>
 		</div>
 

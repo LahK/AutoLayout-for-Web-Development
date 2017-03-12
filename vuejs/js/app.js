@@ -35,6 +35,12 @@ let vm = new Vue({
         layerMoving: false, // Layer是否在移动
         mouseOverObject: null, // 鼠标当前所在的元素
         mouseDownPosition: { x: 0, y: 0 }, // 鼠标单击时的位置
+
+        // 约束显示面板
+        selectedConstraintEle: null, // 选中的约束 Dom 元素
+        selectedConstraint: null, // 选中的约束数据
+        isSelectedConstraintChanged: false, // 判断是否选中约束被修改，用于显示保存按钮
+
     },
     computed: {
         selectedObjectComputedStyle: function() {
@@ -56,6 +62,19 @@ let vm = new Vue({
         },
         isMac: function() {
           return navigator.userAgent.indexOf('Mac OS X') !== -1
+        },
+        // 获取选中组件相关的约束
+        constraintsOfSelectedObject: function() {
+          let list = [];
+          let id = this.selectedObject.getAttribute('al-id');
+          for(let i=0;i<this.constraints.length;i++) {
+            let c = this.constraints[i];
+            if(c.item == id || c.toItem == id) {
+              c.index = i;
+              list.push(c);
+            }
+          }
+          return list;
         },
     },
     mounted: function() {
@@ -81,6 +100,8 @@ let vm = new Vue({
                 // 重置 selectedObjectStatus
                 vm.selectedObjectStatus = null;
                 vm.isSelectedObjectStatusSet = false;
+                // 重置 selectedConstraintEle
+                vm.cancelSelectedConstraint();
               }
 
               // 当前为多选
@@ -388,7 +409,6 @@ let vm = new Vue({
         //
         // 更新 selectedObjectStatus
         updateSelectedObjectStatus: function() {
-          console.log('test');
           let temp = {};
           temp.width = parseFloat(window.getComputedStyle(this.selectedObject).width);
           temp.height = parseFloat(window.getComputedStyle(this.selectedObject).height);
@@ -444,8 +464,7 @@ let vm = new Vue({
           this.selectedObjectStatus = temp;
           this.isSelectedObjectStatusSet = false; // 刷新一下
           this.isSelectedObjectStatusSet = true;
-          console.log(this.selectedObjectStatus);
-          console.log(this.addConstraintSelectionSingle);
+          console.log('selectedObjectStatus updated');
         },
         // 获取 Spacing Note 文字
         getConstraintToObjectMessage: function(which) {
@@ -496,8 +515,13 @@ let vm = new Vue({
           for(let i=0;i<this.addConstraintSelectionSingle.length;i++) {
             let attr = this.addConstraintSelectionSingle[i];
             let toItem = '';
+            // 边距
             if (attr.indexOf('space') !== -1) {
               toItem = this.selectedObjectStatus[this.getStandardConstraintName(attr)].toObject;
+            }
+            // 与 Screen 对齐
+            if (attr.indexOf('in-box') !== -1) {
+              toItem = '0';
             }
             this.addConstraint(toItem, attr);
           }
@@ -552,6 +576,78 @@ let vm = new Vue({
           }
 
         },
+        getConstraintText: function(c) {
+          switch (c.attribute) {
+            case 'width':
+              if (c.toItem === '') { return 'Width Equals'; }
+              if (c.multiplier !== 1 || c.constant !== 0) { return 'Proportional Width to'; }
+              return 'Equal Width to';
+            case 'height':
+              if (c.toItem === '') { return 'Height Equals'; }
+              if (c.multiplier !== 1 || c.constant !== 0) { return 'Proportional Height to'; }
+              return 'Equal Height to';
+            case 'leading':
+              return 'Leading Space to';
+            case 'trailing':
+              return 'Trailing Space to';
+            case 'top':
+              return 'Top Space to';
+            case 'bottom':
+              return 'Bottom Space to';
+            case 'centerX':
+              return 'Align Center X to';
+            case 'centerY':
+              return 'Align Center Y to';
+          }
+        },
+        constraintOnClick: function(c, event) {
+          this.selectedConstraint = c;
+          // 找到对应约束 Element
+          let ele = event.target;
+          while(ele.tagName !== 'DIV' || ele.className.indexOf('-row') !== -1) {
+            ele = ele.parentNode;
+          }
+          if (this.selectedConstraintEle === null) {
+            this.setSelectedConstraint(ele);
+          } else {
+            if (ele === this.selectedConstraintEle) {
+              this.cancelSelectedConstraint(); 
+            } else {
+              this.cancelSelectedConstraint(); 
+              this.setSelectedConstraint(ele);
+            }
+          }
+        },
+        setSelectedConstraint: function(ele) {
+          ele.className += ' AL-Constraint-Item-Selected';
+          this.selectedConstraintEle = ele;
+          console.log('Select Constraint');
+        },
+        cancelSelectedConstraint: function() {
+          this.selectedConstraintEle.className = this.selectedConstraintEle.className.replace(' AL-Constraint-Item-Selected', '');
+          this.selectedConstraintEle = null;
+          this.isSelectedConstraintChanged = false;
+          console.log('Deselect Constraint');
+        },
+        editConstraintInputOnKeyUp: function(event) {
+          if ('ArrowLeftArrowRightArrowUpArrowDownEnterCtrlMeta'.indexOf(event.key) === -1) {
+            this.isSelectedConstraintChanged = true;
+          }
+        },
+        saveConstraintChange: function() {
+          let index = this.selectedConstraint.index;
+          let constant = document.getElementsByName('c-constant')[0].value;
+          let multiplier = document.getElementsByName('c-multiplier')[0].value;
+          this.constraints[index].constant = constant;
+          this.constraints[index].multiplier = multiplier;
+
+          this.isSelectedConstraintChanged = false;
+        },
+        deleteSelectedConstraint: function() {
+          this.cancelSelectedConstraint()
+          this.constraints.splice(this.selectedConstraint.index, 1);
+          this.selectedConstraint = null;
+        },
 
         // 
         // 一些 工具/辅助 方法
@@ -579,7 +675,7 @@ let vm = new Vue({
         // 判断是否能够删除选中组件
         canDeleteSelectedObject: function() {
           // 当正在输入时不可删除
-          return !this.isFocus && !this.isEditingObjectName;
+          return !this.isFocus && !this.isEditingObjectName && this.selectedConstraintEle == null;
         },
         // 判断是否能够移动选中组件
         canMoveSelectedObject: function() {
@@ -591,5 +687,13 @@ let vm = new Vue({
         getFirstSelectedObject: function() {
           return document.getElementsByClassName('first-mark')[0];
         },
+        // 通过 id 获取组件 al-name
+        getALNameById: function(id) {
+          console.log('----------');
+          console.log(id);
+          if (id=='') {return '';}
+          console.log(document.getElementById('al-object-'+id).getAttribute('al-name'));
+          return document.getElementById('al-object-'+id).getAttribute('al-name');
+        }
     }
 })

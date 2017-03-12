@@ -198,6 +198,8 @@ var ComponentsService = {
 
 					// 将该组件加入多选列表，并重置 selectedObject
 					vm.selectedObjects.push(vm.selectedObject);
+	                // 重置 selectedConstraintEle
+	                vm.cancelSelectedConstraint();
 					vm.selectedObject = null;
 					vm.selectedObjectStatus = null;
           			vm.isSelectedObjectStatusSet = false;
@@ -257,13 +259,15 @@ var ComponentsService = {
 				if (vm.selectedObject === null || (vm.selectedObject !== null && vm.selectedObject !== object)) {
 					// 取消原选中组件的 选中状态
 					if (vm.selectedObject !== null) {
+		                // 重置 selectedConstraintEle
+		                if (vm.selectedConstraintEle !== null) {
+		                	vm.cancelSelectedConstraint();
+		                }
 						ComponentsService.cancelObjectSelected(vm.selectedObject);
 					}
 
 					vm.selectedObject = object;
 					ComponentsService.setObjectSelected('Single', object);
-
-					console.log('ttttt');
 
 					// 更新被选中组件状态，为添加约束面板备用
 					vm.updateSelectedObjectStatus()
