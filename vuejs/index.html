@@ -250,7 +250,10 @@
 		</div>
 		<div class="tool menu" @dragstart="toolOnDragStart($event)" @drag="toolOnDrag($event)" draggable>
 			<a href="#" @click="exportToJsonFile">Export</a>
-			<a href="#">Import</a>
+			<a href="#" @click="uploadFile">Import</a>
+		</div>
+		<div class="hidden">
+			<input type="file" id="import-file" value="Import" />
 		</div>
 	</div>
 	<script src="https://unpkg.com/vue/dist/vue.js"></script>
