@@ -269,7 +269,7 @@ var ComponentsService = {
 			}
 		};
 
-		vm.objects[id] = object;
+		vm.objects[id] = object; // 此处为一个 bug，单独创建一个 issue 移除
 	},
 	newLayerByObject: function (object) {
 		let id = object.getAttribute('al-id');

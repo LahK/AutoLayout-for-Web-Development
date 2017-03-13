@@ -7,6 +7,10 @@
 	height: 100vh;
 }
 
+.hidden {
+	display: none;
+}
+
 .button {
 	border: 1px solid #42b983;
     border-radius: 2em;

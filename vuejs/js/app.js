@@ -129,20 +129,8 @@ let vm = new Vue({
                 let objectToDelete = vm.selectedObject;
                 // 重置 selectedObject
                 vm.selectedObject = null;
-                // 重置 selectedObjectStatus
-                vm.selectedObjectStatus = null;
-                vm.isSelectedObjectStatusSet = false;
-                // 从 组件列表 移除
-                vm.objects.splice(vm.objects.indexOf(objectToDelete), 1);
-
-                let layerToDelete = ComponentsService.getLayerByObject(objectToDelete);
-                objectToDelete.parentNode.removeChild(objectToDelete);
-                layerToDelete.parentNode.removeChild(layerToDelete);
-
-                // 更新 Objects Outline 提示信息显示状态
-                if (vm.layersCount === 0) {
-                    vm.showOutlineMsg = true
-                }
+                // 删除指定组件
+                vm.deleteObject(objectToDelete);
             }
 
             if (e.key == 'Enter') {
@@ -255,6 +243,27 @@ let vm = new Vue({
             console.log('On Key Press');
             console.log(e.key);
         }
+
+        //
+        // 导入文件相关
+        //
+        function importFileInputOnChange(event) {
+            var reader = new FileReader();
+            reader.onload = onReaderLoad;
+            reader.readAsText(event.target.files[0]);
+        }
+
+        function onReaderLoad(event){
+            var result = JSON.parse(event.target.result);
+            console.log(result);
+            vm.initPageWithImportedData(result);
+            var formatted = JSON.stringify(result, null, 2);
+            console.log(formatted);
+        }
+ 
+        document.getElementById('import-file').addEventListener('change', importFileInputOnChange);
+
+        // 导入文件相关 - 结束
     },
     methods: {
         // 用于获取新的 Object Id
@@ -691,6 +700,10 @@ let vm = new Vue({
         },
         // 通过 id 获取组件 al-name
         getALNameById: function(id) {
+          console.log('----------');
+          console.log(id);
+          if (id=='') {return '';}
+          console.log(document.getElementById('al-object-'+id).getAttribute('al-name'));
           return document.getElementById('al-object-'+id).getAttribute('al-name');
         },
         exportToJsonFile: function() {
@@ -743,5 +756,82 @@ let vm = new Vue({
           linkElement.setAttribute('download', exportFileDefaultName);
           linkElement.click();
         },
+        uploadFile: function() {
+          document.getElementById('import-file').click();
+        },
+        initPageWithImportedData: function(data) {
+          // 清空页面中的组件
+          if (this.selectedObject !== null) {
+            let objectToDelete = this.selectedObject;
+            this.selectedObject = null;
+            this.deleteObject(objectToDelete);
+          }
+          for(let i=0;i<this.objects.length;i++) {
+            let obj = this.objects[i];
+            this.deleteObject(obj);
+          }
+          // 清空约束
+          this.constraints = null;
+
+          // 导入 objects
+          let importedObjects = data.objects;
+
+          for(let i=0;i<importedObjects.length;i++) {
+            let item = importedObjects[i];
+            let newObject = ComponentsService.newObjectByTypeId(item.type, item.id);
+            newObject.setAttribute('al-name', item.name);
+            this.screenArea.appendChild(newObject);
+            this.objects.push(newObject);
+
+            // 初始化相关样式
+            let styleKeys = Object.keys(item.style);
+            for(let j=0;j<styleKeys.length;j++) {
+              item.style[styleKeys[j]] = item.style[styleKeys[j]];
+            }
+            // 初始化相关数据
+            let dataKeys = Object.keys(item.data);
+            for(let j=0;j<dataKeys.length;j++) {
+              newObject.setAttribute(dataKeys[j], item.data[dataKeys[j]]);
+            }
+
+            let newLayer = ComponentsService.newLayerByObject(newObject);
+            // 将图层添加到 图层操作面板
+            this.layerList.insertBefore(newLayer, this.layerList.firstChild);
+
+            // 初始化组件相关样式、事件
+            ComponentsService.handleObject(newObject, item.id, this.layerList.childElementCount);
+            // 初始化图层相关事件
+            ComponentsService.handleLayer(newLayer);
+
+            // 导入 constraints
+            this.constraints = data.constraints;
+          }
+
+          // 更新 Objects Outline 提示信息显示状态
+          this.showOutlineMsg = false
+        },
+        deleteObject: function(objectToDelete) {
+          // 考虑到删除组件的场景：
+          // - 删除选中单个组件
+          // - 删除选中多个组件
+          // - 删除未选中单个组件
+          // 暂时将取消组件选中状态放在外面，需要在对应场景手动进行。
+          // 之后可以重新设计该方法
+
+          // 重置 selectedObjectStatus
+          this.selectedObjectStatus = null;
+          this.isSelectedObjectStatusSet = false;
+          // 从 组件列表 移除
+          this.objects.splice(this.objects.indexOf(objectToDelete), 1);
+
+          let layerToDelete = ComponentsService.getLayerByObject(objectToDelete);
+          objectToDelete.parentNode.removeChild(objectToDelete);
+          layerToDelete.parentNode.removeChild(layerToDelete);
+
+          // 更新 Objects Outline 提示信息显示状态
+          if (this.layersCount === 0) {
+              this.showOutlineMsg = true
+          }
+        }
     }
 })
