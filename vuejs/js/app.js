@@ -776,6 +776,9 @@ let vm = new Vue({
           // 导入 objects
           let importedObjects = data.objects;
 
+          // 更新 objectsLastId
+          this.objectsLastId = parseInt(importedObjects[importedObjects.length-1].id)+1;
+
           for(let i=0;i<importedObjects.length;i++) {
             let item = importedObjects[i];
             let newObject = ComponentsService.newObjectByTypeId(item.type, item.id);
