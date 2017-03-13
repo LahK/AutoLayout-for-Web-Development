@@ -255,10 +255,7 @@ let vm = new Vue({
 
         function onReaderLoad(event){
             var result = JSON.parse(event.target.result);
-            console.log(result);
             vm.initPageWithImportedData(result);
-            var formatted = JSON.stringify(result, null, 2);
-            console.log(formatted);
         }
  
         document.getElementById('import-file').addEventListener('change', importFileInputOnChange);
@@ -700,10 +697,7 @@ let vm = new Vue({
         },
         // 通过 id 获取组件 al-name
         getALNameById: function(id) {
-          console.log('----------');
-          console.log(id);
           if (id=='') {return '';}
-          console.log(document.getElementById('al-object-'+id).getAttribute('al-name'));
           return document.getElementById('al-object-'+id).getAttribute('al-name');
         },
         exportToJsonFile: function() {
@@ -762,12 +756,13 @@ let vm = new Vue({
         initPageWithImportedData: function(data) {
           // 清空页面中的组件
           if (this.selectedObject !== null) {
-            let objectToDelete = this.selectedObject;
             this.selectedObject = null;
-            this.deleteObject(objectToDelete);
           }
-          for(let i=0;i<this.objects.length;i++) {
-            let obj = this.objects[i];
+          if (this.selectedObjects.length !== 0) {
+            this.selectedObjects = [];
+          }
+          while(this.objects.length > 0) {
+            let obj = this.objects[0];
             this.deleteObject(obj);
           }
           // 清空约束
@@ -781,6 +776,7 @@ let vm = new Vue({
 
           for(let i=0;i<importedObjects.length;i++) {
             let item = importedObjects[i];
+            console.log('Import '+item.name);
             let newObject = ComponentsService.newObjectByTypeId(item.type, item.id);
             newObject.setAttribute('al-name', item.name);
             this.screenArea.appendChild(newObject);
@@ -789,12 +785,16 @@ let vm = new Vue({
             // 初始化相关样式
             let styleKeys = Object.keys(item.style);
             for(let j=0;j<styleKeys.length;j++) {
-              item.style[styleKeys[j]] = item.style[styleKeys[j]];
+              newObject.style[styleKeys[j]] = item.style[styleKeys[j]];
             }
             // 初始化相关数据
             let dataKeys = Object.keys(item.data);
             for(let j=0;j<dataKeys.length;j++) {
-              newObject.setAttribute(dataKeys[j], item.data[dataKeys[j]]);
+              if (dataKeys[i] == 'al-text') {
+                ComponentsService.setObjectALText(newObject, item.data[dataKeys[j]]);
+              } else {
+                newObject.setAttribute(dataKeys[j], item.data[dataKeys[j]]);
+              }
             }
 
             let newLayer = ComponentsService.newLayerByObject(newObject);
@@ -820,6 +820,8 @@ let vm = new Vue({
           // - 删除未选中单个组件
           // 暂时将取消组件选中状态放在外面，需要在对应场景手动进行。
           // 之后可以重新设计该方法
+
+          console.log('Delete '+objectToDelete.getAttribute('al-name'));
 
           // 重置 selectedObjectStatus
           this.selectedObjectStatus = null;
