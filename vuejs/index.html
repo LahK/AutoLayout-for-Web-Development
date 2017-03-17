@@ -1,75 +1,74 @@
 <!DOCTYPE html>
 <html>
-<head>
-	<title>AL</title>
+	<head>
+		<title>AL</title>
+		<meta charset="utf-8">
+		<!-- CSS -->
+		<link rel="stylesheet" href="./css/normalize.css">
+		<link rel="stylesheet" href="./css/main.css">
+		<link rel="stylesheet" href="./css/al-object.css">
+		<link rel="stylesheet" href="./css/al.css">
+	</head>
+	<body>
+		<div id="al-lahk">
+			<div id="screen">
+				
+			</div>
 
-	<!-- CSS -->
-	<link rel="stylesheet" href="./css/normalize.css">
-	<link rel="stylesheet" href="./css/main.css">
-	<link rel="stylesheet" href="./css/al-object.css">
-	<link rel="stylesheet" href="./css/al.css">
-</head>
-<body>
-	<div id="al-lahk">
-		<div id="screen">
-			
-		</div>
-		<div class="tool components-lib" @dragstart="toolOnDragStart($event)" @drag="toolOnDrag($event)" draggable>
-			<h4>Components</h4>
-			<a v-for="(value, key) in Config.components" @click="addNewObjectByType(value)" href="#">{{ key }}</a>
-		</div>
-
-		<div class="tool attributes-inspector" v-show="selectedObject !== null" @dragstart="toolOnDragStart($event)" @drag="toolOnDrag($event)" draggable>
-			<h4>Attributes Inspector</h4>
-			<template v-if="selectedObject !== null">
+			<div class="tool components-lib" @dragstart="toolOnDragStart($event)" @drag="toolOnDrag($event)" draggable>
+				<h4>Components</h4>
+				<a v-for="(value, key) in Config.components" @click="addNewObjectByType(value)" href="#">{{ key }}</a>
+			</div>
+			<div class="tool attributes-inspector" v-show="selectedObject !== null" @dragstart="toolOnDragStart($event)" @drag="toolOnDrag($event)" draggable>
+				<h4>Attributes Inspector</h4>
+				<template v-if="selectedObject !== null">
 				<h5>Style:</h5>
-				<div 
-				class="attributes-inspector-item" 
-				v-for="(value, key, index) in Config.attributes[selectedObject.getAttribute('al-type')].style"
-				>
+				<div
+					class="attributes-inspector-item"
+					v-for="(value, key, index) in Config.attributes[selectedObject.getAttribute('al-type')].style"
+					>
 					<span>{{ key }}</span>
 					<input type="text" :name="value"
-					:value="selectedObjectComputedStyle[value]" 
+					:value="selectedObjectComputedStyle[value]"
 					@keyup="attributesInspectorItemOnKeyUp('style', value, $event)"
-					@focus="inputOnFocus(key)"
+					@focus="inputOnFocus(key, $event)"
 					@blur="inputOnBlur"
 					>
 				</div>
 				<template v-if="Object.keys(Config.attributes[selectedObject.getAttribute('al-type')].data) != 0">
 				<h5>Data:</h5>
-				<div 
-				class="attributes-inspector-item" 
-				v-for="(value, key, index) in Config.attributes[selectedObject.getAttribute('al-type')].data"
-				>
+				<div
+					class="attributes-inspector-item"
+					v-for="(value, key, index) in Config.attributes[selectedObject.getAttribute('al-type')].data"
+					>
 					<span>{{ key }}</span>
 					<input type="text" :name="value"
-					:value="selectedObject.getAttribute(value)" 
+					:value="selectedObject.getAttribute(value)"
 					@keyup="attributesInspectorItemOnKeyUp('data', value, $event)"
-					@focus="inputOnFocus(key)"
+					@focus="inputOnFocus(key, $event)"
 					@blur="inputOnBlur"
 					>
 				</div>
 				</template>
-			</template>
-		</div>
-
-		<div class="tool add-new-constraint" v-show="(selectedObject !== null || selectedObjects.length !== 0)" @dragstart="toolOnDragStart($event)" @drag="toolOnDrag($event)" draggable>
-			<h4>Add New Constraint</h4>
-			<template v-if="isSelectedObjectStatusSet">
+				</template>
+			</div>
+			<div class="tool add-new-constraint" v-show="(selectedObject !== null || selectedObjects.length !== 0)" @dragstart="toolOnDragStart($event)" @drag="toolOnDrag($event)" draggable>
+				<h4>Add New Constraint</h4>
+				<template v-if="isSelectedObjectStatusSet">
 				<h5>Size: </h5>
 				<div class="add-new-constraint-item-single">
 					<div>
 						<input type="checkbox" :value="Config.constraints.single.Size.Width" v-model="addConstraintSelectionSingle">
 						<span>Width</span>
 					</div>
-					<input type="text" :name="Config.constraints.single.Size.Width" v-model="selectedObjectStatus.width" @focus="inputOnFocus(Config.constraints.single.Size.Width)" @blur="inputOnBlur" >
+					<input type="text" :name="Config.constraints.single.Size.Width" v-model="selectedObjectStatus.width" @focus="inputOnFocus(Config.constraints.single.Size.Width, $event)" @blur="inputOnBlur" >
 				</div>
 				<div class="add-new-constraint-item-single">
 					<div>
 						<input type="checkbox" :value="Config.constraints.single.Size.Height" v-model="addConstraintSelectionSingle">
 						<span>Height</span>
 					</div>
-					<input type="text" :name="Config.constraints.single.Size.Height" v-model="selectedObjectStatus.height" @focus="inputOnFocus(Config.constraints.single.Size.Height)" @blur="inputOnBlur" >
+					<input type="text" :name="Config.constraints.single.Size.Height" v-model="selectedObjectStatus.height" @focus="inputOnFocus(Config.constraints.single.Size.Height, $event)" @blur="inputOnBlur" >
 				</div>
 				<h5>Spacing: </h5>
 				<div class="add-new-constraint-item-single">
@@ -77,7 +76,7 @@
 						<input type="checkbox" :value="Config.constraints.single.Spacing['Leading Space']" v-model="addConstraintSelectionSingle">
 						<span>Leading Space</span>
 					</div>
-					<input type="text" :name="Config.constraints.single.Spacing['Leading Space']" v-model="selectedObjectStatus.leading.value" @focus="inputOnFocus(Config.constraints.single.Spacing['Leading Space'])" @blur="inputOnBlur" >
+					<input type="text" :name="Config.constraints.single.Spacing['Leading Space']" v-model="selectedObjectStatus.leading.value" @focus="inputOnFocus(Config.constraints.single.Spacing['Leading Space'], $event)" @blur="inputOnBlur" >
 				</div>
 				<div class="add-new-constraint-item-single-footnote">
 					to {{ getConstraintToObjectMessage('leading') }}
@@ -87,7 +86,7 @@
 						<input type="checkbox" :value="Config.constraints.single.Spacing['Trailing Space']" v-model="addConstraintSelectionSingle">
 						<span>Trailing Space</span>
 					</div>
-					<input type="text" :name="Config.constraints.single.Spacing['Trailing Space']" v-model="selectedObjectStatus.trailing.value" @focus="inputOnFocus(Config.constraints.single.Spacing['Trailing Space'])" @blur="inputOnBlur" >
+					<input type="text" :name="Config.constraints.single.Spacing['Trailing Space']" v-model="selectedObjectStatus.trailing.value" @focus="inputOnFocus(Config.constraints.single.Spacing['Trailing Space'], $event)" @blur="inputOnBlur" >
 				</div>
 				<div class="add-new-constraint-item-single-footnote">
 					to {{ getConstraintToObjectMessage('trailing') }}
@@ -97,7 +96,7 @@
 						<input type="checkbox" :value="Config.constraints.single.Spacing['Top Space']" v-model="addConstraintSelectionSingle">
 						<span>Top Space</span>
 					</div>
-					<input type="text" :name="Config.constraints.single.Spacing['Top Space']" v-model="selectedObjectStatus.top.value" @focus="inputOnFocus(Config.constraints.single.Spacing['Top Space'])" @blur="inputOnBlur" >
+					<input type="text" :name="Config.constraints.single.Spacing['Top Space']" v-model="selectedObjectStatus.top.value" @focus="inputOnFocus(Config.constraints.single.Spacing['Top Space'], $event)" @blur="inputOnBlur" >
 				</div>
 				<div class="add-new-constraint-item-single-footnote">
 					to {{ getConstraintToObjectMessage('top') }}
@@ -107,7 +106,7 @@
 						<input type="checkbox" :value="Config.constraints.single.Spacing['Bottom Space']" v-model="addConstraintSelectionSingle">
 						<span>Bottom Space</span>
 					</div>
-					<input type="text" :name="Config.constraints.single.Spacing['Bottom Space']" v-model="selectedObjectStatus.bottom.value" @focus="inputOnFocus(Config.constraints.single.Spacing['Bottom Space'])" @blur="inputOnBlur" >
+					<input type="text" :name="Config.constraints.single.Spacing['Bottom Space']" v-model="selectedObjectStatus.bottom.value" @focus="inputOnFocus(Config.constraints.single.Spacing['Bottom Space'], $event)" @blur="inputOnBlur" >
 				</div>
 				<div class="add-new-constraint-item-single-footnote">
 					to {{ getConstraintToObjectMessage('bottom') }}
@@ -126,141 +125,137 @@
 					</div>
 				</div>
 				<a class="button" href="#" v-show="addConstraintSelectionSingle.length" @click="addConstraintSingleOnClick">Add Contraint(s)</a>
-			</template>
-			<template v-if="selectedObjects.length !== 0">
+				</template>
+				<template v-if="selectedObjects.length !== 0">
 				<span>{{ getFirstSelectedObject().getAttribute('al-name') }} to other selected objects</span>
 				<div
-				class="add-new-constraint-item-multi"
-				v-for="(value, key) in Config.constraints.multi"
-				>
+					class="add-new-constraint-item-multi"
+					v-for="(value, key) in Config.constraints.multi"
+					>
 					<input type="checkbox" :value="value" v-model="addConstraintSelectionMulti">
 					<span>{{ key }}</span>
 				</div>
 				<a class="button" href="#" v-show="addConstraintSelectionMulti.length" @click="addConstraintMultiOnClick">Add Contraint(s)</a>
-			</template>
-		</div>
-
-		<div 
-		class="tool constraints-inspector" 
-		v-show="selectedObject !== null"
-		@dragstart="toolOnDragStart($event)" 
-		@drag="toolOnDrag($event)" 
-		draggable
-		>
-			<h4>Constraints Inspector</h4>
-			<template v-if="selectedObject !== null">
+				</template>
+			</div>
+			<div
+				class="tool constraints-inspector"
+				v-show="selectedObject !== null"
+				@dragstart="toolOnDragStart($event)"
+				@drag="toolOnDrag($event)"
+				draggable
+				>
+				<h4>Constraints Inspector</h4>
+				<template v-if="selectedObject !== null">
 				<div v-if="constraintsOfSelectedObject.length === 0">
 					No Constraint Yet.
 				</div>
 				<h5 v-if="constraintsOfSelectedObject.length !== 0">
-					{{ getALNameById(selectedObject.getAttribute('al-id')) }}:
+				{{ getALNameById(selectedObject.getAttribute('al-id')) }}:
 				</h5>
-				<div 
-				class="AL-Constraint-Item"
-				v-for="item in constraintsOfSelectedObject"
-				@click="constraintOnClick(item, $event)"
-				>
+				<div
+					class="AL-Constraint-Item"
+					v-for="item in constraintsOfSelectedObject"
+					@click="constraintOnClick(item, $event)"
+					>
 					<div class="AL-Constraint-Item-row1">
 						<span>{{ getConstraintText(item) }}:</span>
 						<span>{{ item.toItem === '' ? item.constant : item.toItem == '0' ? 'Screen' : item.toItem != selectedObject.getAttribute('al-id') ? getALNameById(item.toItem) : getALNameById(item.item) }}</span>
 					</div>
-					<div 
-					class="AL-Constraint-Item-row2"
-					v-if="(item.toItem !== '' && (item.constant !== 0 || item.multiplier !== 1))"
-					>
+					<div
+						class="AL-Constraint-Item-row2"
+						v-if="(item.toItem !== '' && (item.constant !== 0 || item.multiplier !== 1))"
+						>
 						<span></span>
 						<span>{{ item.multiplier != 1 ? 'x'+item.multiplier : '' }}</span>
 						<span>{{ item.constant != 0 ? '+'+item.constant : '' }}</span>
 						<span></span>
+					</div>
 				</div>
+				</template>
+			</div>
+			<div
+				v-show="selectedConstraintEle !== null"
+				class="tool edit-constraint"
+				@dragstart="toolOnDragStart($event)"
+				@drag="toolOnDrag($event)"
+				draggable
+				>
+				<h4>Edit Constraint</h4>
+				<template v-if="selectedConstraintEle !== null">
+				<div class="edit-constraint-item">
+					<span>Object:</span>
+					<span>{{ getALNameById(selectedConstraint.item) }}</span>
 				</div>
-			</template>
-		</div>
-
-		<div 
-		v-show="selectedConstraintEle !== null"
-		class="tool edit-constraint" 
-		@dragstart="toolOnDragStart($event)" 
-		@drag="toolOnDrag($event)" 
-		draggable
-		>
-			<h4>Edit Constraint</h4>
-			<template v-if="selectedConstraintEle !== null">
-			<div class="edit-constraint-item">
-				<span>Object:</span>
-				<span>{{ getALNameById(selectedConstraint.item) }}</span>
-			</div>
-			<div class="edit-constraint-item">
-				<span>Attribute:</span>
-				<span>{{ selectedConstraint.attribute }}</span>
-			</div>
-			<div class="edit-constraint-item">
-				<span>Relation:</span>
-				<span>{{ selectedConstraint.relatedBy }}</span>
-			</div>
-			<div v-if="(selectedConstraint.toItem != '')" class="edit-constraint-item">
-				<span>To Object:</span>
-				<span>{{ selectedConstraint.toItem == '0' ? 'Screen' : getALNameById(selectedConstraint.toItem) }}</span>
-			</div>
-			<div class="edit-constraint-item">
-				<span>To Attribute:</span>
-				<span>{{ selectedConstraint.toAttribute }}</span>
-			</div>
-			<div class="edit-constraint-item">
-				<span>Multiplier:</span>
-				<span>
-					<input type="number" name="c-multiplier" :value="selectedConstraint.multiplier"
-					@focus="inputOnFocus('c-multiplier')"
-					@blur="inputOnBlur"
-					@keyup="editConstraintInputOnKeyUp"
+				<div class="edit-constraint-item">
+					<span>Attribute:</span>
+					<span>{{ selectedConstraint.attribute }}</span>
+				</div>
+				<div class="edit-constraint-item">
+					<span>Relation:</span>
+					<span>{{ selectedConstraint.relatedBy }}</span>
+				</div>
+				<div v-if="(selectedConstraint.toItem != '')" class="edit-constraint-item">
+					<span>To Object:</span>
+					<span>{{ selectedConstraint.toItem == '0' ? 'Screen' : getALNameById(selectedConstraint.toItem) }}</span>
+				</div>
+				<div class="edit-constraint-item">
+					<span>To Attribute:</span>
+					<span>{{ selectedConstraint.toAttribute }}</span>
+				</div>
+				<div class="edit-constraint-item">
+					<span>Multiplier:</span>
+					<span>
+						<input type="number" name="c-multiplier" :value="selectedConstraint.multiplier"
+						@focus="inputOnFocus('c-multiplier', $event)"
+						@blur="inputOnBlur"
+						@keyup="editConstraintInputOnKeyUp"
+						>
+					</span>
+				</div>
+				<div class="edit-constraint-item">
+					<span>Constant:</span>
+					<span>
+						<input type="number" name="c-constant" :value="selectedConstraint.constant"
+						@focus="inputOnFocus('c-constant', $event)"
+						@blur="inputOnBlur"
+						@keyup="editConstraintInputOnKeyUp"
+						>
+					</span>
+				</div>
+				<a class="button" href="#"
+					@click="saveConstraintChange"
 					>
-				</span>
-			</div>
-			<div class="edit-constraint-item">
-				<span>Constant:</span>
-				<span>
-					<input type="number" name="c-constant" :value="selectedConstraint.constant"
-					@focus="inputOnFocus('c-constant')"
-					@blur="inputOnBlur"
-					@keyup="editConstraintInputOnKeyUp"
+					Save Change
+				</a>
+				<a class="button is-delete" href="#"
+					@click="deleteSelectedConstraint"
 					>
-				</span>
+					Remove Constraint
+				</a>
+				</template>
 			</div>
-			<a class="button" href="#"
-			@click="saveConstraintChange"
-			>
-				Save Change
-			</a>
-			<a class="button is-delete" href="#"
-			@click="deleteSelectedConstraint"
-			>
-				Remove Constraint
-			</a>
-			</template>
-		</div>
-
-		<div class="tool objects-outline" @dragstart="toolOnDragStart($event)" @drag="toolOnDrag($event)" draggable>
-			<h4>Objects Outline</h4>
-			<div v-if="showOutlineMsg">
-				No Objects Yet.
+			<div class="tool objects-outline" @dragstart="toolOnDragStart($event)" @drag="toolOnDrag($event)" draggable>
+				<h4>Objects Outline</h4>
+				<div v-if="showOutlineMsg">
+					No Objects Yet.
+				</div>
+				<div id="layer-list" class="AL-Layer-List">
+					
+				</div>
 			</div>
-			<div id="layer-list" class="AL-Layer-List">
-				
+			<div class="tool menu" @dragstart="toolOnDragStart($event)" @drag="toolOnDrag($event)" draggable>
+				<a href="#" @click="exportToJsonFile">Export</a>
+				<a href="#" @click="uploadFile">Import</a>
+			</div>
+			<div class="hidden">
+				<input type="file" id="import-file" value="Import" />
 			</div>
 		</div>
-		<div class="tool menu" @dragstart="toolOnDragStart($event)" @drag="toolOnDrag($event)" draggable>
-			<a href="#" @click="exportToJsonFile">Export</a>
-			<a href="#" @click="uploadFile">Import</a>
-		</div>
-		<div class="hidden">
-			<input type="file" id="import-file" value="Import" />
-		</div>
-	</div>
-	<script src="https://unpkg.com/vue/dist/vue.js"></script>
-	<script src="./js/config.js"></script>
-	<script src="./js/ComponentsService.js"></script>
-
-	<!-- Vue js related -->
-	<script src="./js/app.js"></script>
-</body>
+		<script src="https://unpkg.com/vue/dist/vue.js"></script>
+		<script src="./js/config.js"></script>
+		<script src="./js/ComponentsService.js"></script>
+		<!-- Vue js related -->
+		<script src="./js/app.js"></script>
+	</body>
 </html>
