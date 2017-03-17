@@ -141,8 +141,9 @@ define(["require", "autolayout-update", "autolayout-global", "autolayout-public"
                     if (Global.objectMoving) {
                         if (e.pageX == 0 && e.pageY == 0) {
                             return;
+                            
                         } // 消除特殊情况（鼠标松开时，有一个偏差坐标 (0，0)）
-
+                        console.log(e.pageX);
                         let newX = (e.pageX - Global.mouseDownPosition.x) / Global.screenScale + Global.objectLastStatus.x,
                             newY = (e.pageY - Global.mouseDownPosition.y) / Global.screenScale + Global.objectLastStatus.y;
 
@@ -160,6 +161,7 @@ define(["require", "autolayout-update", "autolayout-global", "autolayout-public"
 
                         object.style.left = newX + "px";
                         object.style.top = newY + "px";
+
                         Update.updateStyleEditor();
                     }
                 };
