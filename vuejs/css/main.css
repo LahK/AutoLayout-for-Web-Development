@@ -93,6 +93,10 @@
 	flex: 7;
 	color: #34495e
 }
+.attributes-inspector-item>select {
+	flex: 7;
+	color: #34495e
+}
 .add-new-constraint {
 	position: fixed;
 	top: 500px;

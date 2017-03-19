@@ -29,11 +29,24 @@
 					>
 					<span>{{ key }}</span>
 					<input type="text" :name="value"
+					v-if="!isCustomStyle(value)"
 					:value="selectedObjectComputedStyle[value]"
 					@keyup="attributesInspectorItemOnKeyUp('style', value, $event)"
 					@focus="inputOnFocus(key, $event)"
 					@blur="inputOnBlur"
 					>
+					<select :name="value"
+					v-if="isCustomStyle(value)"
+					:value="getCustomStyleValue(value)"
+					@change="customStyleValueChange(value, $event)"
+					>
+						<option
+						v-for="(val, k, idx) in Config.customStyles[value]"
+						:value="k"
+						>
+							{{ k }}
+						</option>
+					</select>
 				</div>
 				<template v-if="Object.keys(Config.attributes[selectedObject.getAttribute('al-type')].data) != 0">
 				<h5>Data:</h5>
@@ -252,6 +265,7 @@
 				<input type="file" id="import-file" value="Import" />
 			</div>
 		</div>
+		<script src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>
 		<script src="https://unpkg.com/vue/dist/vue.js"></script>
 		<script src="./js/config.js"></script>
 		<script src="./js/ComponentsService.js"></script>
