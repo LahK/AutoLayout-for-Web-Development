@@ -41,7 +41,8 @@ var ALConfig = {
 				'Padding': 'padding',
 				'Border': 'border',
 				'Bd-Radius': 'border-radius',
-				'Bg-Color': 'background-color'
+				'Bg-Color': 'background-color',
+				'Text-Align': 'Text-Align'
 			},
 			data: {
 				'Text': 'al-text'
@@ -61,6 +62,7 @@ var ALConfig = {
 				'Bd-Radius': 'border-radius',
 				'Bg-Color': 'background-color',
 				'Text-Color': 'color',
+				'Text-Align': 'Text-Align'
 			},
 			data: {
 				'Text': 'al-text'
@@ -76,8 +78,7 @@ var ALConfig = {
 				'Border': 'border',
 				'Bd-Radius': 'border-radius',
 				'Image-Url': 'background-image',
-				'Image-Pos': 'background-position',
-				'Image-Size': 'background-size'
+				'Image-Mode': 'Image-Mode',
 			},
 			data: {}
 		},
@@ -109,6 +110,58 @@ var ALConfig = {
 			'Align Botton Edges': 'c-align-bottom-edges',
 			'Horizontally Align': 'c-horizontally-align',
 			'Vertically Align': 'c-vertically-align',
+		}
+	},
+	// 自定义样式
+	customStyles: {
+		'Text-Align': {
+			'Center': {
+				'justify-content': 'center',
+				'align-items': 'center'
+			},
+			'Left': {
+				'justify-content': 'flex-start',
+				'align-items': 'center'
+			},
+			'Right': {
+				'justify-content': 'flex-end',
+				'align-items': 'center'
+			},
+			'Top Center': {
+				'justify-content': 'center',
+				'align-items': 'flex-start'
+			},
+			'Top Left': {
+				'justify-content': 'flex-start',
+				'align-items': 'flex-start'
+			},
+			'Top Right': {
+				'justify-content': 'flex-end',
+				'align-items': 'flex-start'
+			},
+			'Bottom Center': {
+				'justify-content': 'center',
+				'align-items': 'flex-end'
+			},
+			'Bottom Left': {
+				'justify-content': 'flex-start',
+				'align-items': 'flex-end'
+			},
+			'Bottom Right': {
+				'justify-content': 'flex-end',
+				'align-items': 'flex-end'
+			}
+		},
+		'Image-Mode': {
+			'Scall To Fill': {
+				'background-size': '100% 100%'
+			},
+			'Aspect Fit': {
+				'background-size': 'contain'
+			},
+			'Aspect Fill': {
+				'background-size': 'cover'
+			}
 		}
 	}
 };

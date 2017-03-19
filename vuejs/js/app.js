@@ -292,6 +292,38 @@ let vm = new Vue({
         }
       }
     },
+    isCustomStyle: function(name) {
+      let keys = Object.keys(this.Config.customStyles);
+      return keys.indexOf(name) !== -1;
+    },
+    getCustomStyleValue: function(name) {
+      let style = {};
+      let customStyleDict = this.Config.customStyles[name];
+      let customStyleDictKeys = Object.keys(customStyleDict);
+
+      Object.assign(style, customStyleDict[customStyleDictKeys[0]]);
+      let styleKeys = Object.keys(style);
+
+      for (let i = 0; i < styleKeys.length; i++) {
+        style[styleKeys[i]] = this.selectedObjectComputedStyle[styleKeys[i]];
+      }
+
+      for (let i = 0; i < customStyleDictKeys.length; i++) {
+        let item = customStyleDict[customStyleDictKeys[i]];
+        if (_.isEqual(style, item)) {
+          return customStyleDictKeys[i];
+        }
+      }
+      return customStyleDictKeys[0];
+    },
+    customStyleValueChange: function(name, event) {
+      let customStyleDict = this.Config.customStyles[name];
+      let style = customStyleDict[event.target.value];
+      let keys = Object.keys(style);
+      for (let i = 0; i < keys.length; i++) {
+        this.selectedObject.style[keys[i]] = style[keys[i]];
+      }
+    },
     // 当退出文字输入状态时
     // 重置 isFocus 为 false，保证 “删除” 事件正常响应
     inputOnBlur: function() {
