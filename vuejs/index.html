@@ -83,6 +83,18 @@
 					</div>
 					<input type="text" :name="Config.constraints.single.Size.Height" v-model="selectedObjectStatus.height" @focus="inputOnFocus(Config.constraints.single.Size.Height, $event)" @blur="inputOnBlur" >
 				</div>
+				<div class="add-new-constraint-item-single">
+					<div>
+						<input type="checkbox" :value="Config.constraints.single.Size['Equal Width To Screen']" v-model="addConstraintSelectionSingle">
+						<span>Equal Width To Screen</span>
+					</div>
+				</div>
+				<div class="add-new-constraint-item-single">
+					<div>
+						<input type="checkbox" :value="Config.constraints.single.Size['Equal Height To Screen']" v-model="addConstraintSelectionSingle">
+						<span>Equal Height To Screen</span>
+					</div>
+				</div>
 				<h5>Spacing: </h5>
 				<div class="add-new-constraint-item-single">
 					<div>

@@ -88,7 +88,9 @@ var ALConfig = {
 		single: {
 			Size: {
 				'Width': 'c-width',
-				'Height': 'c-height'
+				'Height': 'c-height',
+				'Equal Width To Screen': 'c-equal-width-to-box',
+				'Equal Height To Screen': 'c-equal-height-to-box',
 			},
 			Spacing: {
 				'Leading Space': 'c-leading-space',

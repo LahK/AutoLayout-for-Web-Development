@@ -547,6 +547,10 @@ let vm = new Vue({
         if (attr.indexOf('in-box') !== -1) {
           toItem = '0';
         }
+        // 与 Screen 等宽高
+        if (attr.indexOf('to-box') !== -1) {
+          toItem = '0';
+        }
         this.addConstraint(toItem, attr);
       }
       this.addConstraintSelectionSingle = [];
@@ -586,6 +590,10 @@ let vm = new Vue({
         case 'c-equal-width':
           return 'width';
         case 'c-equal-height':
+          return 'height';
+        case 'c-equal-width-to-box':
+          return 'width';
+        case 'c-equal-height-to-box':
           return 'height';
         case 'c-align-leading-edges':
           return 'leading';
