@@ -1,0 +1,57 @@
+{
+    "objects": [{
+        "type": "AL-Button",
+        "id": "1",
+        "name": "AL-Button-1",
+        "style": {
+            "z-index": "1",
+            "font-size": "15px",
+            "font-family": "sans-serif",
+            "width": "285px",
+            "height": "167px",
+            "left": "349px",
+            "top": "84px",
+            "padding": "0px",
+            "border": "0px none rgb(0, 0, 0)",
+            "border-radius": "0px",
+            "background-color": "rgb(18, 3, 204)",
+            "color": "rgb(0, 0, 0)"
+        },
+        "data": {
+            "al-text": "Button"
+        }
+    }, {
+        "type": "AL-View",
+        "id": "2",
+        "name": "AL-View-2",
+        "style": {
+            "z-index": "2",
+            "width": "215px",
+            "height": "143px",
+            "left": "471px",
+            "top": "188px",
+            "padding": "0px",
+            "border": "1px solid rgb(119, 153, 136)",
+            "border-radius": "2px",
+            "background-color": "rgb(255, 0, 0)"
+        },
+        "data": {}
+    }],
+    "constraints": [{
+        "item": "1",
+        "attribute": "width",
+        "relatedBy": "equal",
+        "toItem": "2",
+        "toAttribute": "width",
+        "multiplier": 1,
+        "constant": 0
+    }, {
+        "item": "1",
+        "attribute": "height",
+        "relatedBy": "equal",
+        "toItem": "2",
+        "toAttribute": "height",
+        "multiplier": 1,
+        "constant": 0
+    }]
+}
