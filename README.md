@@ -64,6 +64,7 @@ A tool for web developers to fast set website UI using Xcode-like-AutoLayout.
 - [Key Values](https://developer.mozilla.org/zh-CN/docs/Web/API/KeyboardEvent/key/Key_Values)
 - [Export JSON Data To Downloadable File Using Javascript](http://www.codevoila.com/post/30/export-json-data-to-downloadable-file-using-javascript)
 - [Access data of uploaded json file using javascript](http://stackoverflow.com/questions/23344776/access-data-of-uploaded-json-file-using-javascript)
+- [隐藏 overflow 滚动条](http://jsfiddle.net/H47fp/134/)
 
 ## Project Design
 - [全部文件](https://github.com/LahK/AutoLayout-for-Web-Development/tree/master/design-docs)
