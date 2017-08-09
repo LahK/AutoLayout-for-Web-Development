@@ -1,0 +1,39 @@
+{
+	"objects": [
+		{
+			"type": "AL-Label",
+			"id": "0",
+			"name": "TitleLbl",
+			"style": {
+				"background-color": "#eeeeee",
+				"color": "#000000"
+			},
+			"data": {
+				"al-text": "Home Page"
+			}
+		},
+		{
+			"type": "AL-Label",
+			"id": "1",
+			"name": "DescLbl",
+			"style": {
+				"background-color": "#ffffff",
+				"color": "#000000"
+			},
+			"data": {
+				"al-text": "This is the home page."
+			}
+		}
+	],
+	"constraints": [
+		{
+			"item": "0",
+			"attribute": "width",
+			"relatedBy": "equal",
+			"toItem": "1",
+			"toAttribute": "width",
+			"multiplier": 1,
+			"constant": 60,
+		},
+	]
+}

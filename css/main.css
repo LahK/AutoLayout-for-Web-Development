@@ -1,94 +1,217 @@
 #al-lahk {
 	width: 100vw;
-	height: 100vh;
+	height: 100vh
 }
 #screen {
 	width: 100vw;
-	height: 100vh;
+	height: 100vh
 }
-
+.hidden {
+	display: none
+}
+.button {
+	border: 1px solid #42b983;
+	border-radius: 2em;
+	display: inline-block;
+	color: #42b983;
+	font-size: 0.8em;
+	width: 125px;
+	padding: 4px 0;
+	text-align: center;
+	cursor: pointer
+}
+.button.is-delete {
+	border: 1px solid red;
+	color: red
+}
 .tool {
 	z-index: 99;
-	border: 1px solid #42b983;
+	border: 1px solid #42b983
 }
-
+.menu {
+	position: fixed;
+	bottom: 0;
+	right: 50px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-around;
+	align-items: center;
+	padding: 10px;
+	height: auto;
+	width: auto;
+	background: #f8f8f8
+}
+.menu>a {
+	color: #42b983;
+	padding: 5px 10px
+}
 .components-lib {
 	position: fixed;
 	bottom: 50px;
 	right: 50px;
-
 	display: flex;
 	flex-direction: column;
 	justify-content: space-around;
 	align-items: center;
-
 	padding-left: 10px;
 	padding-right: 10px;
 	padding-bottom: 30px;
 	height: auto;
 	width: auto;
-
-	background: #f8f8f8;
+	background: #f8f8f8
 }
-
 .components-lib>a {
 	color: #42b983;
-	padding: 10px 0;
+	padding: 10px 0
 }
-
 .attributes-inspector {
 	position: fixed;
 	top: 50px;
 	right: 50px;
-
 	display: flex;
 	flex-direction: column;
-
 	padding-left: 10px;
 	padding-right: 10px;
 	padding-bottom: 30px;
-
 	height: auto;
 	width: 300px;
-
-	background: #f8f8f8;
+	background: #f8f8f8
 }
 .attributes-inspector>h4 {
-	align-self: center;
+	align-self: center
 }
 .attributes-inspector-item {
-	display: flex;
+	display: flex
 }
 .attributes-inspector-item>span {
 	flex: 3;
 	text-align: right;
 	align-self: center;
-
-	color: #7f8c8d;
+	color: #7f8c8d
 }
 .attributes-inspector-item>input {
 	flex: 7;
-
-	color: #34495e;
+	color: #34495e
 }
-
+.attributes-inspector-item>select {
+	flex: 7;
+	color: #34495e
+}
+.add-new-constraint {
+	position: fixed;
+	top: 500px;
+	right: 50px;
+	display: flex;
+	flex-direction: column;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 30px;
+	height: auto;
+	width: auto;
+	background: #f8f8f8
+}
+.add-new-constraint>h4 {
+	align-self: center
+}
+.add-new-constraint>span {
+	padding: 10px 0;
+	color: #7f8c8d
+}
+.add-new-constraint>a {
+	align-self: center;
+	margin-top: 20px;
+	text-decoration: none
+}
+.add-new-constraint-item-single {
+	display: flex;
+	flex-direction: row
+}
+.add-new-constraint-item-single>div {
+	flex: 8;
+	flex-direction: row;
+	align-self: center
+}
+.add-new-constraint-item-single>input {
+	flex: 2;
+	width: 100%
+}
+.add-new-constraint-item-single-footnote {
+	color: #7f8c8d;
+	padding-left: 20px;
+	padding-bottom: 5px
+}
+.add-new-constraint-item-multi {
+	padding: 2px 0
+}
+.constraints-inspector {
+	position: fixed;
+	bottom: 350px;
+	left: 50px;
+	display: flex;
+	flex-direction: column;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 20px;
+	height: auto;
+	width: 400px;
+	background: #f8f8f8
+}
+.constraints-inspector>h4 {
+	align-self: center
+}
+.edit-constraint {
+	position: fixed;
+	bottom: 50px;
+	left: 350px;
+	display: flex;
+	flex-direction: column;
+	padding-left: 10px;
+	padding-right: 10px;
+	padding-bottom: 20px;
+	height: auto;
+	width: 300px;
+	background: #f8f8f8
+}
+.edit-constraint>h4 {
+	align-self: center
+}
+.edit-constraint-item {
+	display: flex;
+	flex-direction: row
+}
+.edit-constraint-item>span {
+	flex: 6
+}
+.edit-constraint-item>span:first-child {
+	flex: 4;
+	text-align: right;
+	color: #7f8c8d
+}
+.edit-constraint-item>span:nth-child(2) {
+	padding-left: 10px;
+	flex: 6
+}
+.edit-constraint-item>input {
+	width: 50%
+}
+.edit-constraint>a {
+	align-self: center;
+	margin-top: 20px;
+	text-decoration: none
+}
 .objects-outline {
 	position: fixed;
 	bottom: 50px;
 	left: 50px;
-
 	display: flex;
 	flex-direction: column;
-
 	padding-left: 10px;
 	padding-right: 10px;
 	padding-bottom: 20px;
-
 	height: auto;
 	width: 300px;
-
-	background: #f8f8f8;
+	background: #f8f8f8
 }
 .objects-outline>h4 {
-	align-self: center;
+	align-self: center
 }

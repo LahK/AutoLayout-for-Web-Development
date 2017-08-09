@@ -26,9 +26,7 @@ var ALConfig = {
 				'Bd-Radius': 'border-radius',
 				'Bg-Color': 'background-color'
 			},
-			data: {
-
-			}
+			data: {}
 		},
 		'AL-Label': {
 			style: {
@@ -43,7 +41,8 @@ var ALConfig = {
 				'Padding': 'padding',
 				'Border': 'border',
 				'Bd-Radius': 'border-radius',
-				'Bg-Color': 'background-color'
+				'Bg-Color': 'background-color',
+				'Text-Align': 'Text-Align'
 			},
 			data: {
 				'Text': 'al-text'
@@ -63,6 +62,7 @@ var ALConfig = {
 				'Bd-Radius': 'border-radius',
 				'Bg-Color': 'background-color',
 				'Text-Color': 'color',
+				'Text-Align': 'Text-Align'
 			},
 			data: {
 				'Text': 'al-text'
@@ -78,50 +78,92 @@ var ALConfig = {
 				'Border': 'border',
 				'Bd-Radius': 'border-radius',
 				'Image-Url': 'background-image',
-				'Image-Pos': 'background-position',
-				'Image-Size': 'background-size'
+				'Image-Mode': 'Image-Mode',
 			},
-			data: {
-
-			}
+			data: {}
 		},
 	},
 	// Constraint-inspector Configs
 	constraints: {
 		single: {
-			Shape: {
-				'Width':'width',
-				'Height':'height'
+			Size: {
+				'Width': 'c-width',
+				'Height': 'c-height',
+				'Equal Width To Screen': 'c-equal-width-to-box',
+				'Equal Height To Screen': 'c-equal-height-to-box',
 			},
-			Margins: {
-				'Margin Left':'margin-left',
-				'Margin Right':'margin-right',
-				'Margin Top':'margin-top',
-				'Margin Botton':'margin-bottom'
+			Spacing: {
+				'Leading Space': 'c-leading-space',
+				'Top Space': 'c-top-space',
+				'Trailing Space': 'c-trailing-space',
+				'Bottom Space': 'c-bottom-space'
 			},
-			Alignments: {
-				'Herizontal in Box':'herizontal-in-box',
-				'Vertically in Box':'vertically-in-box'
+			Align: {
+				'Herizontally in Screen': 'c-herizontally-in-box',
+				'Vertically in Screen': 'c-vertically-in-box'
 			}
 		},
-		multiple: {
-			Shape: {
-				'Width':'width',
-				'Height':'height',
+		multi: {
+			'Equal Width': 'c-equal-width',
+			'Equal Height': 'c-equal-height',
+			'Align Leading Edges': 'c-align-leading-edges',
+			'Align Top Edges': 'c-align-top-edges',
+			'Align Trailing Edges': 'c-align-traling-edges',
+			'Align Botton Edges': 'c-align-bottom-edges',
+			'Horizontally Align': 'c-horizontally-align',
+			'Vertically Align': 'c-vertically-align',
+		}
+	},
+	// 自定义样式
+	customStyles: {
+		'Text-Align': {
+			'Center': {
+				'justify-content': 'center',
+				'align-items': 'center'
 			},
-			'Relative Position':{
-				'Leading Edges':'leading-edges',
-				'Trailing Edges':'traling-edges',
-				'Top Edges':'top-edges',
-				'Botton Edges':'bottom-edges'
+			'Left': {
+				'justify-content': 'flex-start',
+				'align-items': 'center'
 			},
-			Aligments:{
-				'Horizontal':'horizontal',
-				'Vertically':'Vertically',
-				'Herizontal in Box':'herizontal-in-box',
-				'Vertically in Box':'vertically-in-box'
+			'Right': {
+				'justify-content': 'flex-end',
+				'align-items': 'center'
+			},
+			'Top Center': {
+				'justify-content': 'center',
+				'align-items': 'flex-start'
+			},
+			'Top Left': {
+				'justify-content': 'flex-start',
+				'align-items': 'flex-start'
+			},
+			'Top Right': {
+				'justify-content': 'flex-end',
+				'align-items': 'flex-start'
+			},
+			'Bottom Center': {
+				'justify-content': 'center',
+				'align-items': 'flex-end'
+			},
+			'Bottom Left': {
+				'justify-content': 'flex-start',
+				'align-items': 'flex-end'
+			},
+			'Bottom Right': {
+				'justify-content': 'flex-end',
+				'align-items': 'flex-end'
 			}
-
+		},
+		'Image-Mode': {
+			'Scall To Fill': {
+				'background-size': '100% 100%'
+			},
+			'Aspect Fit': {
+				'background-size': 'contain'
+			},
+			'Aspect Fill': {
+				'background-size': 'cover'
+			}
 		}
 	}
 };
